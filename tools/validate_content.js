@@ -40,6 +40,7 @@ const dataBox = { window: {} };
 vm.createContext(dataBox);
 vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'data.js'), 'utf8'), dataBox, { filename: 'data.js' });
 vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'history.js'), 'utf8'), dataBox, { filename: 'history.js' });
+vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'icons.js'), 'utf8'), dataBox, { filename: 'icons.js' });
 const DATA = dataBox.window.ME_DATA; const PAPERS = (dataBox.window.ME_HISTORY || {}).papers || {};
 const TECHS = DATA.TECHS.map((x) => x.id);
 const TRAITS = ['scaling', 'infra', 'data_guru', 'safety_mom', 'open_evang', 'rl_wizard', 'product_genius', 'deal_maker',
@@ -600,6 +601,17 @@ const snake = (s) => /^[a-z][a-z0-9_]*$/.test(s || '');
   const grp = {}; DATA.TECHS.forEach((x) => { if (x.excl) (grp[x.excl] = grp[x.excl] || []).push(x.id); });
   for (const k in grp) if (grp[k].length < 2) err(w, '互斥組只有一項 ' + k);
   for (const k in DATA.TECH_EXCL) if (!grp[k]) warn(w, '互斥組沒有科技 ' + k);
+}
+
+// ---------- 圖示 ----------
+{
+  const I = dataBox.window.ME_ICONS;
+  for (const x of DATA.TECHS) if (!I.has('tech', x.id)) err('icons.js', '科技沒有圖示 ' + x.id);
+  for (const x of DATA.GPUS) if (!I.has('gpu', x.id)) err('icons.js', 'GPU 沒有圖示 ' + x.id);
+  for (const k in DATA.TECH_LINES) if (!I.has('line', k) || !I.lineColor(k)) err('icons.js', '路線沒有圖示或顏色 ' + k);
+  for (const x of DATA.ARCHS) if (!I.has('arch', x.id)) err('icons.js', '架構沒有圖示 ' + x.id);
+  for (const x of DATA.DATA_DEALS) if (!I.has('deal', x.id)) err('icons.js', '資料授權沒有圖示 ' + x.id);
+  for (const x of DATA.DATACENTERS) if (!I.dc(x.lv)) err('icons.js', '機房沒有圖示 ' + x.lv);
 }
 
 // ---------- 報告 ----------

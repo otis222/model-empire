@@ -21,6 +21,12 @@
 
 本專案用 `tools/blender/` 的腳本在 Blender 裡自製，授權和程式碼相同（MIT）。
 
+## 圖示（`src/ui.js`、`src/icons.js`）
+
+GPU、機房的物件圖示是本專案自製，授權和程式碼相同（MIT）。
+
+線條圖示有一部分的形狀來自或參考 [Lucide](https://lucide.dev)：Copyright (c) 2026 Lucide Icons and Contributors，ISC 授權，其中部分源自 Feather（MIT 授權）。授權全文見 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
 ## 真實 AI 史
 
 史料庫中的事件、論文與新聞保留原始名稱與出處，相關權利屬於各來源。`research/` 的摘要是本專案自行整理，每筆都附來源。

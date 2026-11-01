@@ -9,7 +9,7 @@ fs.mkdirSync(DIST, { recursive: true });
 const read = (f) => fs.readFileSync(path.join(SRC, f), 'utf8');
 const safe = (js) => js.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--');
 const css = read('style.css');
-const scripts = ['data.js', 'content.js', 'history.js', 'engine.js', 'ui.js'].filter((f) => fs.existsSync(path.join(SRC, f)));
+const scripts = ['data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'ui.js'].filter((f) => fs.existsSync(path.join(SRC, f)));
 if (scripts.indexOf('content.js') < 0) console.warn('⚠️ 找不到 content.js，事件與新聞將為空');
 
 const head = `<title>模型帝國</title>

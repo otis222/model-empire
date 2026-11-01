@@ -36,6 +36,9 @@
     mute: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M2 2l20 20"/>',
   };
   function svg(id, s, cls) { return `<svg class="ico${cls ? ' ' + cls : ''}" width="${s || 18}" height="${s || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[id] || ''}</svg>`; }
+  // 科技、路線與設備的圖示（src/icons.js）
+  const IC = window.ME_ICONS;
+  const techTile = (t, big) => `<span class="tk-ic${big ? ' big' : ''}" style="--ln:${IC.lineColor(t.line)}">${IC.tech(t.id, big ? 28 : 20)}</span>`;
   /* ================= 音樂與音效：Web Audio 即時合成，不用音檔 =================
      背景音樂是四和弦循環的氛圍曲：時間暫停時只有鋪底與琶音，時間跑起來才加鼓點，四倍速再加密集的鈸。
      瀏覽器規定要等玩家第一次點擊才能出聲，所以第一次點擊時才建立 AudioContext。 */
@@ -1602,7 +1605,7 @@
         <div class="wiz-sec"><h4>名稱</h4>
           <div class="row"><input type="text" id="wiz-name" data-w="name" maxlength="24" value="${esc(wiz.name)}" style="flex:1">
           ${teachers.length ? `<select data-w="teacher" aria-label="蒸餾老師"><option value="">不蒸餾</option>${teachers.map((m) => `<option value="${m.id}" ${wiz.teacher === m.id ? 'selected' : ''}>老師：${esc(m.name)}（${G.composite(m.stats).toFixed(0)}）</option>`).join('')}</select>` : ''}</div></div>
-        <div class="wiz-sec"><h4>架構</h4><div class="archs">${D.ARCHS.map((a) => { const ok = G.archUnlocked(a.id); return `<button data-act="wiz-arch" data-id="${a.id}" class="${wiz.arch === a.id ? 'on' : ''}" ${ok ? '' : 'disabled'} title="${esc(a.desc)}"><b>${a.name}</b><span class="muted">${ok ? esc(a.desc.slice(0, 26)) + '…' : '🔒 需研究「' + esc(ME.TECH[a.tech].name) + '」'}</span></button>`; }).join('')}</div></div>
+        <div class="wiz-sec"><h4>架構</h4><div class="archs">${D.ARCHS.map((a) => { const ok = G.archUnlocked(a.id); return `<button data-act="wiz-arch" data-id="${a.id}" class="${wiz.arch === a.id ? 'on' : ''}" ${ok ? '' : 'disabled'} title="${esc(a.desc)}"><b>${IC.arch(a.id, 16)}${a.name}</b><span class="muted">${ok ? esc(a.desc.slice(0, 26)) + '…' : '🔒 需研究「' + esc(ME.TECH[a.tech].name) + '」'}</span></button>`; }).join('')}</div></div>
         <div class="wiz-sec"><h4>規模<span class="h">參數上限 ${par(G.maxSize())}${G.has('t_3d') ? '' : '（研究 3D 平行可解鎖更大）'}</span></h4>
           <div class="slider-row"><span>總參數</span><input type="range" min="0" max="${maxSizeIdx}" step="1" value="${Math.min(sizeIdx, maxSizeIdx)}" data-w="size" aria-label="參數量"><span class="v" id="w-size"></span></div>
           <div class="slider-row"><span>訓練資料</span><input type="range" min="0" max="${D.TOKEN_STEPS.length - 1}" step="1" value="${tokIdx}" data-w="tokens" aria-label="訓練 token 數"><span class="v" id="w-tokens"></span></div>
@@ -1704,9 +1707,9 @@
   VIEWS.tech = function () {
     const s = G.s; const lw = s.lastWeek || {}; const ready = techReady(); const groups = techTabs();
     const cur = groups.find((g) => g.id === techTab); if (!cur) techTab = 'can';
-    const tabs = `<button class="tk-cat${!cur ? ' on' : ''}" data-act="tech-tab" data-id="can" aria-pressed="${!cur}">可研究 <span>${ready.length}</span></button>` + groups.map((g) => `<button class="tk-cat${cur === g ? ' on' : ''}" data-act="tech-tab" data-id="${g.id}" aria-pressed="${cur === g}">${g.icon} ${esc(g.name)} <span>${g.list.filter((t) => G.has(t.id)).length}/${g.list.length}</span></button>`).join('');
+    const tabs = `<button class="tk-cat${!cur ? ' on' : ''}" data-act="tech-tab" data-id="can" aria-pressed="${!cur}">可研究 <span>${ready.length}</span></button>` + groups.map((g) => `<button class="tk-cat${cur === g ? ' on' : ''}" data-act="tech-tab" data-id="${g.id}" aria-pressed="${cur === g}" style="--ln:${IC.lineColor(g.id)}">${IC.line(g.id, 16)}${esc(g.name)} <span>${g.list.filter((t) => G.has(t.id)).length}/${g.list.length}</span></button>`).join('');
     const sel = !cur && ready.find((t) => t.id === techSel);
-    const body = cur ? techTree(cur) : ready.length ? `<div class="tk-nodes">${ready.map((t) => techNode(t, true)).join('')}</div>${sel ? techDetail(sel) : ''}` : '<div class="empty">現在沒有能研究的科技，先把研究中的項目做完。</div>';
+    const body = cur ? techTree(cur) : ready.length ? `<div class="tk-nodes">${ready.map((t) => techNode(t)).join('')}</div>${sel ? techDetail(sel) : ''}` : '<div class="empty">現在沒有能研究的科技，先把研究中的項目做完。</div>';
     return `
     <div class="view-head"><h2>科技</h2><div class="btn-row"><button class="btn" data-act="codex" data-tab="papers">📜 史料庫</button></div><p>研究點 <b class="num">${num(s.rp)}</b>（+${Math.round(lw.rp || 0)}/週${lw.rpIdle ? '，含閒置算力 +' + Math.round(lw.rpIdle) : ''}）。已掌握 ${D.TECHS.filter((t) => G.has(t.id)).length} / ${D.TECHS.length} 項。研究要花時間，開始時先扣研究點。世界還沒公開的科技比較貴也比較久，率先做出來會提升聲望。</p></div>
     ${techSlots()}
@@ -1718,7 +1721,7 @@
     const jobs = techJobs(); const n = Math.max(G.researchSlots(), jobs.length); let html = '';
     for (let i = 0; i < n; i++) {
       const j = jobs[i]; const t = j && ME.TECH[j.id];
-      html += t ? `<button class="tk-slot" data-act="tech-sel" data-id="${t.id}"><span>研究線 ${i + 1} · 還要 ${j.left} 週</span><b>${esc(t.name)}</b><i aria-hidden="true"><em style="width:${techPct(j)}%"></em></i></button>`
+      html += t ? `<button class="tk-slot" data-act="tech-sel" data-id="${t.id}"><span class="ic">${IC.tech(t.id, 24)}</span><span>研究線 ${i + 1} · 還要 ${j.left} 週</span><b>${esc(t.name)}</b><i aria-hidden="true"><em style="width:${techPct(j)}%"></em></i></button>`
         : `<div class="tk-slot idle"><span>研究線 ${i + 1}</span><b>空閒中，挑一項科技開始</b></div>`;
     }
     const heads = G.roleHeads('res'); const nx = (D.BAL.RES_SLOTS || []).find((x) => heads < x);
@@ -1736,12 +1739,11 @@
   }
   function techWeeks(t) { return G.techDur ? G.techDur(t.id) : t.dur; }  // 世界還沒公開的技術會久一點，要問引擎
   function techExclName(t) { const n = D.TECHS.filter((x) => x.excl === t.excl).length; return (EXN[n] || n) + '選一'; }
-  function techNode(t, showLine) {
+  function techNode(t) {
     const st = techState(t); const job = st === 'doing' ? techJobs().find((j) => j.id === t.id) : null; const rec = G.s.techs[t.id]; const wk = techWeeks(t);
-    const line = showLine && D.TECH_LINES && D.TECH_LINES[t.line];
     const meta = st === 'owned' ? '已掌握' + (rec && rec.pioneer ? ' · 首創' : '') : st === 'doing' ? '研究中 · 還要 ' + job.left + ' 週' : st === 'blocked' ? '已選其他路線' : st === 'locked' ? '需要前置科技' : num(G.techCost(t.id)) + ' 點' + (wk ? ' · ' + wk + ' 週' : '');
     return `<button class="tk-node st-${st}${techSel === t.id ? ' sel' : ''}" data-act="tech-sel" data-id="${t.id}" aria-expanded="${techSel === t.id}">
-      <span class="nm">${t.key ? '<span class="ky" title="關鍵科技">★</span>' : ''}${line ? line.icon + ' ' : ''}${esc(t.name)}</span><span class="mt">${esc(meta)}</span>${t.spec ? '<span class="fr sp">推測</span>' : st !== 'owned' && !G.isPublic(t.id) ? '<span class="fr">前沿</span>' : ''}${t.excl && st !== 'owned' && st !== 'blocked' ? `<span class="ex">${techExclName(t)}</span>` : ''}${job ? `<i aria-hidden="true"><em style="width:${techPct(job)}%"></em></i>` : ''}</button>`;
+      ${techTile(t)}<span class="nm">${t.key ? '<span class="ky" title="關鍵科技">★</span>' : ''}${esc(t.name)}</span><span class="mt">${esc(meta)}</span>${t.spec ? '<span class="fr sp">推測</span>' : st !== 'owned' && !G.isPublic(t.id) ? '<span class="fr">前沿</span>' : ''}${t.excl && st !== 'owned' && st !== 'blocked' ? `<span class="ex">${techExclName(t)}</span>` : ''}${job ? `<i aria-hidden="true"><em style="width:${techPct(job)}%"></em></i>` : ''}</button>`;
   }
   function techDetail(t) {
     const st = techState(t); const cost = G.techCost(t.id); const rec = G.s.techs[t.id]; const wk = techWeeks(t);
@@ -1754,7 +1756,7 @@
     else if (st === 'locked') foot = `<span class="muted">需要：</span>${reqs.map((r) => `<button class="link" data-act="tech-sel" data-id="${r}">${esc(ME.TECH[r].name)}</button>`).join('、')}`;
     else foot = `<span class="num">${num(cost)} 研究點${wk ? ' · ' + wk + ' 週' : ''}</span><span class="spacer"></span>${full ? '<span class="muted">研究線已滿</span>' : ''}<button class="btn sm ${st === 'can' && !full ? 'primary' : ''}" data-act="research" data-id="${t.id}" ${st === 'can' && !full ? '' : 'disabled'}>${st === 'can' ? '開始研究' : '研究點不足'}</button>`;
     const group = t.excl && D.TECH_EXCL ? D.TECH_EXCL[t.excl] : '';
-    return `<div class="tk-detail"><div class="tt"><b>${esc(t.name)}</b>${t.key ? '<span class="pill warn">★ 關鍵科技</span>' : ''}${t.spec ? '<span class="pill">推測的未來技術</span>' : G.isPublic(t.id) ? '<span class="pill">已公開</span>' : `<span class="pill warn">前沿 · ${esc(t.pub.slice(0, 7))} 公開</span>`}</div>
+    return `<div class="tk-detail"><div class="tt">${techTile(t, true)}<b>${esc(t.name)}</b>${t.key ? '<span class="pill warn">★ 關鍵科技</span>' : ''}${t.spec ? '<span class="pill">推測的未來技術</span>' : G.isPublic(t.id) ? '<span class="pill">已公開</span>' : `<span class="pill warn">前沿 · ${esc(t.pub.slice(0, 7))} 公開</span>`}</div>
       <p>${esc(t.desc)}</p>${paperLine(t.id)}
       ${others.length && st !== 'owned' && st !== 'blocked' ? `<p class="tk-warn">${techExclName(t)}${group ? '：' + esc(group) : ''}。研究這項之後，就不能研究「${esc(others.map((x) => x.name).join('」「'))}」。</p>` : ''}
       <div class="ft">${foot}</div></div>`;
@@ -1821,8 +1823,8 @@
     <div class="view-head"><h2>算力</h2><p>算力同時用來「訓練」與「推理服務」。預設推理優先：用戶在用的卡先保留，剩下才給訓練，閒置的卡會加速研究。</p></div>
     <section class="showcase" aria-label="設備展台"><img src="assets/bg_studio.webp" alt="設備展台：GB200 NVL72 整櫃、DGX H100、B300 與 H100 封裝" loading="lazy">
       <div class="sc-info"><span class="cap">DEVICE SHOWCASE · 設備展台</span><b>${num(G.cardCount())} 張卡 · ≈ ${num(owned)} H100</b>
-        <div class="plaques">${mix.length ? mix.map((g) => `<span class="plaque"><b>${esc(ME.GPU[g.type].name)}</b>×${num(g.n)}</span>`).join('') : '<span class="plaque">還沒有自有 GPU</span>'}</div>
-        ${soon.length ? `<span class="soon">即將上市：${soon.map((g) => `<b>${esc(g.name)}</b> ${g.from.replace('-', '.')}`).join('　')}</span>` : ''}</div></section>
+        <div class="plaques">${mix.length ? mix.map((g) => `<span class="plaque">${IC.gpu(g.type, 30)}<b>${esc(ME.GPU[g.type].name)}</b>×${num(g.n)}</span>`).join('') : '<span class="plaque">還沒有自有 GPU</span>'}</div>
+        ${soon.length ? `<span class="soon">即將上市：${soon.map((g) => `${IC.gpu(g.id, 24)}<b>${esc(g.name)}</b> ${g.from.replace('-', '.')}`).join('　')}</span>` : ''}</div></section>
     <div class="grid g4">
       <div class="stat-tile"><span class="l">🖥️ 自有算力</span><span class="v">${num(owned)}</span><span class="s">H100 等效 · ${num(G.cardCount())} 張卡</span></div>
       <div class="stat-tile"><span class="l">🗄️ 機房槽位</span><span class="v">${num(G.cardCount())} / ${num(G.dcSlots())}</span><span class="s">${dc.icon} ${dc.name}</span></div>
@@ -1839,12 +1841,12 @@
     <div class="card" style="margin-top:12px"><h3>採購 GPU <span class="right small muted">卡價每年約降 20%；新卡每槽位效能更高</span></h3>
       ${s.embargo ? '<p class="small bad" style="margin:0 0 8px">⛓️ 出口管制中：高階 GPU 無法購買，境外雲租價 ×2.2。</p>' : s.flags && s.flags.cityControl ? '<p class="small bad" style="margin:0 0 8px">⛓️ 出口管制中：高階 GPU 購卡價 ×1.6、境外雲租價 ×1.3。</p>' : ''}
       <div class="table-wrap"><table class="t"><thead><tr><th>型號</th><th class="n">H100 等效</th><th class="n">單價</th><th class="n">每等效單價</th><th>購買</th></tr></thead><tbody>
-      ${avail.map((g) => { const p = G.gpuPrice(g.id); return `<tr><td><b>${g.name}</b></td><td class="n">${g.pf}×</td><td class="n">${money(p)}</td><td class="n">${money(p / g.pf)}</td><td><div class="btn-row">${D.GPU_PACKS.filter((n) => n <= Math.max(64, G.dcSlots())).map((n) => `<button class="btn sm" data-act="buy-gpu" data-id="${g.id}" data-n="${n}" ${s.cash >= p * n && G.cardCount() + n <= G.dcSlots() ? '' : 'disabled'}>+${num(n)}</button>`).join('')}</div></td></tr>`; }).join('')}
+      ${avail.map((g) => { const p = G.gpuPrice(g.id); return `<tr><td><span class="hw">${IC.gpu(g.id, 50)}<b>${g.name}</b></span></td><td class="n">${g.pf}×</td><td class="n">${money(p)}</td><td class="n">${money(p / g.pf)}</td><td><div class="btn-row">${D.GPU_PACKS.filter((n) => n <= Math.max(64, G.dcSlots())).map((n) => `<button class="btn sm" data-act="buy-gpu" data-id="${g.id}" data-n="${n}" ${s.cash >= p * n && G.cardCount() + n <= G.dcSlots() ? '' : 'disabled'}>+${num(n)}</button>`).join('')}</div></td></tr>`; }).join('')}
       </tbody></table></div></div>
     <div class="grid g2" style="margin-top:12px">
-      <div class="card"><h3>庫存</h3>${s.gpus.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>型號</th><th class="n">數量</th><th class="n">等效</th><th>出售（半價）</th></tr></thead><tbody>${s.gpus.map((g) => `<tr><td>${ME.GPU[g.type].name}</td><td class="n">${num(g.n)}</td><td class="n">${num(g.n * ME.GPU[g.type].pf)}</td><td><button class="btn sm danger" data-act="sell-gpu" data-id="${g.type}" data-n="${Math.max(1, Math.floor(g.n / 2))}">賣一半</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted" style="margin:0">沒有自有 GPU。</p>'}</div>
-      <div class="card"><h3>機房</h3>${s.dcBuild ? `<p class="small" style="margin:0">🏗️ 「${D.DATACENTERS[s.dcBuild.lv].name}」興建中，第 ${s.dcBuild.done} 週完工。</p>` : dcNx ? `<div class="row"><div><b>${dcNx.icon} ${dcNx.name}</b><div class="small muted">槽位 ${num(dcNx.slots)} · 工期 ${dcNx.weeks} 週 · 週維運 ${money(dcNx.upkeep)}${dcNx.from ? ' · ' + dcNx.from + ' 後可建' : ''}</div></div><span class="spacer"></span><button class="btn primary sm" data-act="dc" ${s.cash >= dcNx.cost && (!dcNx.from || G.ym >= dcNx.from) ? '' : 'disabled'}>興建 ${money(dcNx.cost)}</button></div>` : '<p class="small muted" style="margin:0">已是最高等級。</p>'}
-        <p class="small muted" style="margin:8px 0 0">每張卡每週電費維運約 $${D.BAL.OPEX_PER_CARD}；超出槽位的卡無法上架。</p></div>
+      <div class="card"><h3>庫存</h3>${s.gpus.length ? `<div class="table-wrap"><table class="t"><thead><tr><th>型號</th><th class="n">數量</th><th class="n">等效</th><th>出售（半價）</th></tr></thead><tbody>${s.gpus.map((g) => `<tr><td><span class="hw">${IC.gpu(g.type, 38)}${ME.GPU[g.type].name}</span></td><td class="n">${num(g.n)}</td><td class="n">${num(g.n * ME.GPU[g.type].pf)}</td><td><button class="btn sm danger" data-act="sell-gpu" data-id="${g.type}" data-n="${Math.max(1, Math.floor(g.n / 2))}">賣一半</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted" style="margin:0">沒有自有 GPU。</p>'}</div>
+      <div class="card"><h3>機房</h3><div class="row hw-dc">${IC.dc(s.dc, 72)}<div><b>現在：${dc.name}</b><div class="small muted">槽位 ${num(dc.slots)} · 週維運 ${money(dc.upkeep)}</div></div></div>${s.dcBuild ? `<div class="row hw-dc">${IC.dc(s.dcBuild.lv, 72)}<p class="small" style="margin:0">🏗️ 「${D.DATACENTERS[s.dcBuild.lv].name}」興建中，第 ${s.dcBuild.done} 週完工。</p></div>` : dcNx ? `<div class="row hw-dc">${IC.dc(dcNx.lv, 72)}<div><b>${dcNx.name}</b><div class="small muted">槽位 ${num(dcNx.slots)} · 工期 ${dcNx.weeks} 週 · 週維運 ${money(dcNx.upkeep)}${dcNx.from ? ' · ' + dcNx.from + ' 後可建' : ''}</div></div><span class="spacer"></span><button class="btn primary sm" data-act="dc" ${s.cash >= dcNx.cost && (!dcNx.from || G.ym >= dcNx.from) ? '' : 'disabled'}>興建 ${money(dcNx.cost)}</button></div>` : '<p class="small muted" style="margin:0">已是最高等級。</p>'}
+        <p class="small muted" style="margin:8px 0 0">本週電費 ${money((lw.cost || {}).power || 0)}：效能越高的卡越耗電；超出槽位的卡無法上架。</p></div>
     </div>`;
   };
 
@@ -1868,7 +1870,7 @@
         ${G.has('t_synth') ? '<div class="row"><div><b>🧬 合成資料</b><div class="small muted">用自家模型生成語料，突破資料牆</div></div><span class="spacer"></span><button class="btn sm primary" data-act="open-synth">開始</button></div>' : '<p class="small muted" style="margin:0">研究「合成資料管線」後可用自家模型生成資料。</p>'}
       </div></div>
       <div class="card"><h3>授權交易 <span class="right small muted">每項每年可買一次</span></h3><div class="stack">
-        ${D.DATA_DEALS.map((d) => { const ok = G.dealAvailable(d); const p = G.dealPrice(d); return `<div class="row"><div style="min-width:0;flex:1"><b>${d.name}</b><div class="small muted">${D.DATA_POOLS[d.pool].icon} +${tok(d.amt)} · 品質 ${Math.round(d.q * 100)} · ${esc(d.desc)}</div></div><button class="btn sm" data-act="deal" data-id="${d.id}" ${ok && s.cash >= p ? '' : 'disabled'}>${ok ? money(p) : d.from && G.ym < d.from ? d.from + ' 開放' : '今年已購'}</button></div>`; }).join('')}
+        ${D.DATA_DEALS.map((d) => { const ok = G.dealAvailable(d); const p = G.dealPrice(d); return `<div class="row"><span class="tk-ic">${IC.deal(d.id)}</span><div style="min-width:0;flex:1"><b>${d.name}</b><div class="small muted">${D.DATA_POOLS[d.pool].icon} +${tok(d.amt)} · 品質 ${Math.round(d.q * 100)} · ${esc(d.desc)}</div></div><button class="btn sm" data-act="deal" data-id="${d.id}" ${ok && s.cash >= p ? '' : 'disabled'}>${ok ? money(p) : d.from && G.ym < d.from ? d.from + ' 開放' : '今年已購'}</button></div>`; }).join('')}
       </div></div>
     </div>`;
   };
@@ -2192,7 +2194,7 @@
         <div class="hist">${list.slice(0, 200).map((it) => { const r = it.real || {}; const nm = [r.org].concat(r.names || []).filter(Boolean).join(' · '); const src = (it.sources || [])[0];
           return `<article id="hist-${esc(it.id)}" class="${codexState.focus && codexState.focus === it.id ? 'focus' : ''}"><div class="d mono">${esc(it.date)}</div><div><b>${esc(it.title)}</b> <span class="pill">${esc(HCAT[it.cat] || it.cat)}</span><p>${esc(it.text)}</p><div class="small muted">${nm ? esc(nm) : ''}${src ? ` · <a href="${esc(src)}" target="_blank" rel="noopener">來源</a>` : ''}</div></div></article>`; }).join('') || '<p class="muted small">沒有符合的條目。</p>'}</div>`;
     } else if (codexState.tab === 'papers') {
-      body = `<p class="small muted" style="margin:0 0 8px">每項科技對應的真實論文或技術報告。已掌握的科技會標成綠色。</p><div class="table-wrap"><table class="t"><thead><tr><th>科技</th><th>論文 / 報告</th><th>發表</th></tr></thead><tbody>${D.TECHS.map((t) => { const p = (h.papers || {})[t.id] || {}; return `<tr><td><b class="${G && G.has(t.id) ? 'good' : ''}">${esc(t.name)}</b></td><td>${p.paper ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.paper)}</a>` : esc(p.paper)) + `<div class="small muted">${esc(p.oneLine || '')}</div>` : '<span class="muted">—</span>'}</td><td class="small muted">${esc([p.authors, p.venue, p.date].filter(Boolean).join(' · '))}</td></tr>`; }).join('')}</tbody></table></div>`;
+      body = `<p class="small muted" style="margin:0 0 8px">每項科技對應的真實論文或技術報告。已掌握的科技會標成綠色。</p><div class="table-wrap"><table class="t"><thead><tr><th>科技</th><th>論文 / 報告</th><th>發表</th></tr></thead><tbody>${D.TECHS.map((t) => { const p = (h.papers || {})[t.id] || {}; return `<tr><td><span class="hw">${techTile(t)}<b class="${G && G.has(t.id) ? 'good' : ''}">${esc(t.name)}</b></span></td><td>${p.paper ? (p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.paper)}</a>` : esc(p.paper)) + `<div class="small muted">${esc(p.oneLine || '')}</div>` : '<span class="muted">—</span>'}</td><td class="small muted">${esc([p.authors, p.venue, p.date].filter(Boolean).join(' · '))}</td></tr>`; }).join('')}</tbody></table></div>`;
     } else {
       body = `<div class="memes">${(h.memes || []).map((m) => `<div class="meme"><b>${esc(m.term)}</b><p>${esc(m.meaning)}</p>${m.origin ? `<div class="small muted">出處：${esc(m.origin)}</div>` : ''}</div>`).join('') || '<p class="muted small">尚無資料。</p>'}</div>`;
     }
@@ -2243,6 +2245,7 @@
         <div><b>吉祥物「大肥魚」</b>：B 站 AI 娘社群的鯨魚娘角色。形象源自 UP 主「上善無形」的 AI 原創角色「溟月」，後來社群加入 DeepSeek 元素與女僕裝，再衍生出 Q 版大肥魚。角色著作權歸原作者與社群創作者所有。</div>
         <div><b>立繪</b>：以<a href="https://treapgogo.github.io/deepseek-whale-girl/" target="_blank" rel="noopener">鯨魚娘開源資產庫</a>（TreapGoGo）的 Q 版角色設定圖為參考，用 AI 生圖後去背。生圖提示詞取自資產庫，依 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-SA 4.0</a> 使用；本作改寫的提示詞同樣以 CC BY-SA 4.0 分享。</div>
         <div><b>其他 AI 娘</b>（白龍娘、小克、哈基米、Grok、Kimi、千問、小狐娘）：形象來自 B 站 UP 主 <a href="https://www.bilibili.com/video/BV1tE9XBbErS/" target="_blank" rel="noopener">ZipZipPipe《大 AI 與小 AI 們》</a>，Q 版由 ApprenTice 再創作（<a href="https://github.com/Apprentice-Geo/AI-Fanworks" target="_blank" rel="noopener">AI-Fanworks</a>），兩者皆依 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權。本作以這些 Q 版為參考，用 ChatGPT 改成白底後去背，改作的立繪同樣以 CC BY-NC-SA 4.0 分享。</div>
+        <div><b>圖示</b>：線條圖示有一部分的形狀來自或參考 <a href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a>（Copyright (c) 2026 Lucide Icons and Contributors，ISC 授權，其中部分源自 Feather，MIT 授權）。</div>
         <div><b>非商用</b>：所有吉祥物只用於本作的非商業版本。商業版本須另外取得授權，或改用自己的角色。</div>
         <div><b>聲明</b>：吉祥物都是粉絲二次創作的虛構擬人角色，與各 AI 產品官方、運營主體及相關公司沒有任何關聯，也不代表對任何產品的評價。</div>
         <div><b>靈感來源</b>：B 站 Toy《鯨魚娘養成計劃》（作者 Anria_）與《手機帝國》。</div>

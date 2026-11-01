@@ -1357,6 +1357,37 @@ input[type="password"]:focus { outline: none; background-color: #fff; box-shadow
   .fn-bar .btn { flex: 1; }
 }
 
+
+/* ---------- 科技與設備圖示（src/icons.js） ---------- */
+.gly, .dev { flex: none; }
+.dev { display: block; filter: drop-shadow(0 1px 1px rgba(20, 30, 50, .2)); }
+.dev.dc { filter: none; }
+.tk-ic { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: var(--ln, var(--sec)); background: color-mix(in srgb, var(--ln, var(--sec)) 13%, #fff); }
+.tk-ic.big { width: 44px; height: 44px; border-radius: 13px; color: #fff; background: var(--ln, var(--sec)); }
+.tk-nodes { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.tk-node { grid-template-columns: 34px minmax(0, 1fr); column-gap: 9px; row-gap: 2px; align-items: start; }
+.tk-node .tk-ic { grid-row: 1 / span 2; }
+.tk-node .nm, .tk-node .mt { grid-column: 2; }
+.tk-node .nm { padding-right: 0; }
+.tk-node:has(.fr) .nm { padding-right: 34px; }
+.tk-node.st-owned .tk-ic { color: #fff; background: var(--ln, var(--sec)); }
+.tk-node.st-locked .tk-ic, .tk-node.st-blocked .tk-ic { color: #8792a3; background: #e6eaf0; }
+.tk-slot { position: relative; padding-right: 48px; }
+.tk-slot .ic { position: absolute; right: 13px; top: 50%; opacity: 1; transform: translateY(-50%); line-height: 0; }
+.tk-cat { align-items: center; }
+.tk-cat .gly { color: var(--ln, var(--sec)); }
+.tk-cat.on .gly { color: inherit; }
+.hw { display: inline-flex; align-items: center; gap: 9px; }
+.hw-dc { gap: 10px; flex-wrap: nowrap; margin-bottom: 8px; }
+.hw-dc:last-of-type { margin-bottom: 0; }
+.plaque { align-items: center; }
+.showcase .soon .dev { display: inline-block; margin: 0 3px 0 6px; vertical-align: -5px; }
+.archs button b .gly { margin-right: 4px; vertical-align: -3px; color: var(--sec); }
+@media (max-width: 760px) {
+  .plaque .dev, .showcase .soon .dev { display: none; }
+  .hw .dev { width: 36px; height: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .bg, .mascot-stage, .stage[data-mode="lobby"] .nav { transform: none !important; }
