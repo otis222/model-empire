@@ -1,0 +1,347 @@
+<title>模型帝國設定集</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&text=%E6%A8%A1%E5%9E%8B%E5%B8%9D%E5%9C%8B%E8%A8%AD%E5%AE%9A%E9%9B%86%E7%9C%9F%E5%AF%A6%E8%83%8C%E6%99%AF%E7%BE%8E%E8%A1%93%E8%A7%92%E8%89%B2%E8%BE%A6%E5%85%AC%E5%AE%A4&display=swap">
+<style>
+/* 版面：設定集長頁。上半部是世界觀與真實背景資料庫（可篩選的時間軸），下半部是美術設定與資產；與遊戲共用「深海機房」色票 */
+:root {
+  --bg: #edf1f3; --paper: #ffffff; --soft: #f5f8f9; --ink: #0f1d27; --muted: #566773; --faint: #8a99a3; --line: #d6dfe4;
+  --accent: #0d7680; --accent-soft: #d5ecee; --amber: #a86f0c; --amber-soft: #f6ead2; --good: #1f8556; --bad: #bf4238; --rival: #6553d1;
+  --f-display: "Noto Serif TC", "Songti TC", serif;
+  --f-body: system-ui, -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  --f-data: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0a1319; --paper: #101c24; --soft: #142530; --ink: #e2ebef; --muted: #93a6b2; --faint: #647985; --line: #22363f; --accent: #3cc0c6; --accent-soft: #113a42; --amber: #efb44a; --amber-soft: #3a2c10; --good: #4cc38a; --bad: #ef6f63; --rival: #a395ff; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0a1319; --paper: #101c24; --soft: #142530; --ink: #e2ebef; --muted: #93a6b2; --faint: #647985; --line: #22363f; --accent: #3cc0c6; --accent-soft: #113a42; --amber: #efb44a; --amber-soft: #3a2c10; --good: #4cc38a; --bad: #ef6f63; --rival: #a395ff; color-scheme: dark; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 26px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.prose { max-width: 46em; }
+h1, h2, h3 { text-wrap: balance; line-height: 1.3; }
+h2 { font-family: var(--f-display); font-weight: 900; font-size: 30px; margin: 64px 0 6px; letter-spacing: .02em; }
+h2 .no { font-family: var(--f-data); font-size: 13px; letter-spacing: .2em; color: var(--accent); display: block; font-weight: 600; margin-bottom: 2px; }
+h3 { font-size: 18px; margin: 30px 0 8px; }
+p { margin: 0 0 12px; }
+a { color: var(--accent); }
+.mono { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: var(--muted); }
+
+/* 封面 */
+.cover { position: relative; overflow: hidden; border-radius: 18px; background: var(--paper); border: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); min-height: 420px; }
+.cover-text { padding: 30px 28px; display: grid; gap: 12px; align-content: center; position: relative; z-index: 2; }
+.eyebrow { font-family: var(--f-data); font-size: 11.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--accent); }
+.cover h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(40px, 6.4vw, 66px); margin: 0; letter-spacing: .03em; }
+.cover .lead { color: var(--muted); font-size: 16px; margin: 0; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.links a { text-decoration: none; font-size: 13.5px; font-weight: 600; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--line); color: var(--ink); background: var(--soft); }
+.links a.pri { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.cover-art { position: relative; min-height: 320px; background: radial-gradient(ellipse 70% 70% at 60% 60%, var(--accent-soft), transparent 70%); }
+.cover-art img { position: absolute; bottom: 0; height: 92%; width: auto; filter: drop-shadow(0 10px 18px rgba(4, 30, 36, .2)); }
+@media (max-width: 760px) { .cover { grid-template-columns: minmax(0, 1fr); } .cover-art { min-height: 300px; } }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.toc a { font-size: 13px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 4px 12px; }
+
+/* 共用 */
+.box { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .grid2, .grid4 { grid-template-columns: minmax(0, 1fr); } }
+.pillar b { display: block; font-size: 15px; }
+.pillar span { font-size: 13.5px; color: var(--muted); }
+.table-wrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; margin: 10px 0 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; line-height: 1.55; }
+th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--soft); white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.tag { display: inline-block; font-size: 11.5px; padding: 0 8px; border-radius: 99px; background: var(--soft); border: 1px solid var(--line); white-space: nowrap; line-height: 1.7; }
+.tag.v { color: var(--good); border-color: transparent; background: color-mix(in srgb, var(--good) 12%, transparent); }
+.tag.l { color: var(--amber); border-color: transparent; background: var(--amber-soft); }
+.tag.u { color: var(--bad); border-color: transparent; background: color-mix(in srgb, var(--bad) 12%, transparent); }
+
+/* 時間軸 */
+.filters { display: grid; gap: 8px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: var(--soft); color: var(--ink); padding: 3px 10px; border-radius: 99px; cursor: pointer; }
+.chips button.on { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.filters input { font: inherit; border: 1px solid var(--line); background: var(--soft); color: var(--ink); border-radius: 8px; padding: 6px 10px; min-width: 0; }
+.tl { display: grid; gap: 0; margin-top: 12px; }
+.tl .yr { font-family: var(--f-display); font-weight: 900; font-size: 26px; margin: 18px 0 6px; color: var(--accent); }
+.ev { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.ev .d { font-family: var(--f-data); font-size: 12px; color: var(--muted); padding-top: 3px; }
+.ev h4 { margin: 0; font-size: 15px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ev p { margin: 4px 0 4px; font-size: 14px; color: var(--ink); }
+.ev .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 12px; color: var(--muted); }
+.ev .hook { font-size: 12.5px; color: var(--muted); border-left: 3px solid var(--accent); padding-left: 8px; margin-top: 4px; }
+.count { font-size: 12.5px; color: var(--muted); }
+.memes { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.meme { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.meme b { font-size: 16px; }
+.meme p { margin: 4px 0; font-size: 13.5px; }
+.meme .use { font-size: 12.5px; color: var(--muted); }
+
+/* 美術 */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.sw { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); font-size: 12px; }
+.sw i { display: block; height: 52px; }
+.sw div { padding: 6px 8px; line-height: 1.4; }
+.sw .mono { font-size: 11px; color: var(--muted); }
+.cast { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 980px) { .cast { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 460px) { .cast { grid-template-columns: minmax(0, 1fr); } }
+.chr { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.chr .pic { height: 300px; display: grid; place-items: end center; background: radial-gradient(ellipse 80% 70% at 50% 70%, var(--c-soft), transparent 75%); border-bottom: 3px solid var(--c); }
+.chr .pic img { height: 290px; width: auto; max-width: 100%; display: block; }
+.chr .info { padding: 10px 12px 12px; display: grid; gap: 4px; font-size: 13px; }
+.chr .info b { font-size: 16px; }
+.chr .info .role { color: var(--muted); font-size: 12.5px; }
+.chr .motif { font-size: 12.5px; color: var(--muted); }
+.offices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .offices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .offices { grid-template-columns: minmax(0, 1fr); } }
+.off { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; }
+.off .pic { background: radial-gradient(ellipse 70% 60% at 50% 55%, var(--accent-soft), var(--soft) 75%); padding: 8px; }
+.off img { width: 100%; height: auto; display: block; }
+.off .info { padding: 10px 12px 12px; font-size: 13px; }
+.off .info b { font-size: 15px; }
+.prompt { font-family: var(--f-data); font-size: 12.5px; white-space: pre-wrap; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 12px 14px; line-height: 1.65; overflow-x: auto; }
+.steps { counter-reset: s; display: grid; gap: 10px; }
+.step { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px 12px 52px; position: relative; }
+.step::before { counter-increment: s; content: counter(s); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--bg); font-family: var(--f-data); font-weight: 600; display: grid; place-items: center; font-size: 13px; }
+.step b { display: block; }
+.step span { font-size: 13.5px; color: var(--muted); }
+footer { margin-top: 56px; font-size: 12.5px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header class="cover">
+    <div class="cover-text">
+      <div class="eyebrow">World &amp; Art Bible · v1.1 · 2026-10</div>
+      <h1>模型帝國設定集</h1>
+      <p class="lead">遊戲裡的世界從真實的 AI 史出發：真實的論文、晶片、法規與網路迷因，2026 年 11 月之後才進入虛構。這本設定集收錄這些背景資料，以及整套美術風格、AI 娘吉祥物和六級辦公室。</p>
+      <div class="links"><a class="pri" href="GAME_URL" target="_blank" rel="noopener">▶ 開始玩</a><a href="https://www.figma.com/design/o7Eh9yJmc0xbvGKuCLpl1J" target="_blank" rel="noopener">Figma 美術檔</a><a href="REPORT_URL" target="_blank" rel="noopener">企劃書</a></div>
+    </div>
+    <div class="cover-art" aria-hidden="true">
+      <img src="assets/char_gpt.webp" alt="" style="left:0;height:72%;opacity:.92">
+      <img src="assets/char_grok.webp" alt="" style="right:0;height:74%;opacity:.95">
+      <img src="assets/char_whale.webp" alt="" style="left:26%;height:94%">
+    </div>
+  </header>
+  <nav class="toc" aria-label="目錄"><a href="#world">世界觀</a><a href="#timeline">真實背景時間軸</a><a href="#papers">科技與論文</a><a href="#memes">迷因詞典</a><a href="#art">美術方向</a><a href="#cast">角色</a><a href="#offices">辦公室</a><a href="#pipeline">生產流程</a><a href="#backlog">下一批美術</a></nav>
+
+  <!-- ================= 世界觀 ================= -->
+  <section id="world">
+    <h2><span class="no">PART 1 · WORLD</span>世界觀：真實到 2026，之後是你寫的歷史</h2>
+    <div class="prose">
+      <p>遊戲從 2023 年 1 月開始。到 2026 年 10 月為止，新聞、科技公開日期、硬體上市時間、法規和市場需求的轉折，都照著真實世界走；2026 年 11 月之後的事件是推演出來的虛構未來。這個做法延續了《鯨魚娘養成計劃》最受歡迎的地方：玩家一邊經營，一邊重溫這幾年真的發生過的事。</p>
+      <p>為了不讓虛構的對手公司和真實公司混在一起，遊戲沿用原作的寫法：論文、晶片、法規、基準測試用真名，公司在新聞裡用描述性的代稱（例如「某海外實驗室」「某量化基金孵化的新創」），史料庫則保留真名與出處，方便查證。</p>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>真實世界</th><th>在遊戲裡變成</th></tr></thead>
+      <tbody id="mapping"></tbody>
+    </table></div>
+  </section>
+
+  <section id="timeline">
+    <h2><span class="no">PART 1 · TIMELINE</span>真實背景時間軸</h2>
+    <p class="prose">兩個研究代理用網路查證整理，每條都附來源與可信度：<span class="tag v">已查證</span> <span class="tag l">大致可信</span> <span class="tag u">待確認</span>。「遊戲用法」是建議怎麼把這條歷史放進遊戲。</p>
+    <div class="filters">
+      <div class="chips" id="f-cat"></div>
+      <div class="chips" id="f-reg"></div>
+      <input type="search" id="f-q" placeholder="搜尋：DeepSeek、H100、出口管制、Computex…" aria-label="搜尋時間軸">
+      <div class="count" id="f-count"></div>
+    </div>
+    <div class="tl" id="tl"></div>
+  </section>
+
+  <section id="papers">
+    <h2><span class="no">PART 1 · PAPERS</span>科技樹的真實出處</h2>
+    <p class="prose">遊戲的 40 項科技各對應一篇真實論文或技術報告，研究完成時會在科技卡與史料庫顯示出處。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>遊戲科技</th><th>論文 / 報告</th><th>作者</th><th>發表</th><th>一句話</th></tr></thead>
+      <tbody id="paper-table"></tbody>
+    </table></div>
+  </section>
+
+  <section id="memes">
+    <h2><span class="no">PART 1 · CULTURE</span>中文 AI 圈迷因詞典</h2>
+    <p class="prose">這些梗可以變成事件、成就名稱或吉祥物台詞，讓遊戲有「圈內人才懂」的笑點。</p>
+    <div class="memes" id="meme-list"></div>
+  </section>
+
+  <!-- ================= 美術 ================= -->
+  <section id="art">
+    <h2><span class="no">PART 2 · ART DIRECTION</span>美術方向：深海機房 × 擬人吉祥物</h2>
+    <div class="prose"><p>一句話：把 AI 實驗室深夜機房的冷青光，和溫暖、有個性的二次元角色放在同一個畫面裡。原作的鯨魚娘證明了「把模型擬人化」最能讓玩家投入感情，所以《模型帝國》的吉祥物直接用 B 站社群流傳最廣的各家 AI 娘：預設是 DeepSeek 鯨魚娘「大肥魚」，另有 GPT、Claude、Gemini、Grok、Kimi、千問、GLM 的模型娘（全部是粉絲二創、僅限非商用）；辦公室是自己用 Blender 搭的等角剖面模型，房間隨等級變大，讓公司成長「看得見」。</p></div>
+    <div class="grid4">
+      <div class="box pillar"><b>角色是公司的臉</b><span>每位吉祥物都是一家 AI 公司的模型娘，個性取自社群梗：白龍娘的「好問題！」、Claude 大小姐的禮貌拒絕、哈基米的道歉……</span></div>
+      <div class="box pillar"><b>冷光 × 暖光</b><span>螢幕與機櫃的青光當輪廓光，室內燈與皮膚用暖色，兩者對比做出深夜實驗室的氣氛。</span></div>
+      <div class="box pillar"><b>科技細節當裝飾</b><span>識別證掛繩、晶片別針、loss 曲線平板、GPU 卡、論文列印稿，一眼看出是 AI 公司。</span></div>
+      <div class="box pillar"><b>同一套鏡位</b><span>吉祥物一律 Q 版全身、純白背景去背；辦公室一律同一台 30° 正交相機、同一套道具與色票。換角色、升級都不會跳風格。</span></div>
+    </div>
+    <h3>色票</h3>
+    <p class="note">介面色票與遊戲共用；角色色是每位吉祥物的辨識色，用在名牌與說明框。</p>
+    <div class="swatches" id="swatches"></div>
+    <h3>角色繪製規範</h3>
+    <div class="table-wrap"><table><tbody>
+      <tr><td style="width:7em"><b>參考來源</b></td><td>大肥魚依鯨魚娘開源資產庫的官方 Q 版設定圖；其他 AI 娘依 ApprenTice 在 AI-Fanworks 的 Q 版（原作 ZipZipPipe《大 AI 與小 AI 們》）。不自創新造型。</td></tr>
+      <tr><td><b>比例</b></td><td>Q 版大頭短身，全身入框；角色招牌道具（星儀、書、X 字戰斧、摺扇、Z 字摺扇……）保留。</td></tr>
+      <tr><td><b>背景</b></td><td>在 ChatGPT 改成純白背景、無地面陰影、無文字，交給 tools/cutout.py 去背輸出透明 WebP。</td></tr>
+      <tr><td><b>頭像</b></td><td>tools/avatars.py 依透明遮罩裁臉；Q 版頭上常有角、耳朵或皇冠，各角色在 TWEAK 調裁切位置。</td></tr>
+      <tr><td><b>授權</b></td><td>全部僅限非商用；AI 娘改作依 CC BY-NC-SA 4.0 分享，出處寫在遊戲內「致謝與授權」。</td></tr>
+    </tbody></table></div>
+    <h3>辦公室繪製規範</h3>
+    <div class="table-wrap"><table><tbody>
+      <tr><td style="width:7em"><b>鏡位</b></td><td>正交相機，俯角 30°、水平轉 45°，從右前方看；切開兩面牆（左牆有窗、右牆放品牌牆與大螢幕），看得到深藍色的地板底座。</td></tr>
+      <tr><td><b>畫風</b></td><td>自己設計的 3D 玩具感：圓角倒角、柔和全域光、無外框；不參考任何生成圖。細節縮小到 600px 仍看得懂。</td></tr>
+      <tr><td><b>色票</b></td><td>大肥魚的深海藍 #1f3a7a、鈷藍 #2f5fc4，配暖白牆 #f4efe7、淡藍腰牆 #d6e6f5、橡木 #d9b48a，點綴金 #e2b85c 與珊瑚粉 #ef8f8f。</td></tr>
+      <tr><td><b>光線</b></td><td>暖色太陽光從左前方照進來，天空色補光；螢幕、機櫃面板、燈串、水族箱與全息地球自己發光。</td></tr>
+      <tr><td><b>人物</b></td><td>Q 版小員工：大頭圓身、髮型髮色隨機。島型桌前排背對鏡頭（看得到螢幕），後排面向鏡頭（看得到臉）。</td></tr>
+      <tr><td><b>鯨魚元素</b></td><td>每級都有鯨魚標誌、鯨魚地毯或抱枕、大肥魚海報；總部起有鯨魚水族箱與深藍底「模型帝國」招牌。</td></tr>
+      <tr><td><b>升級敘事</b></td><td>車庫 → 新創辦公室 → 科技園整層 → 總部（水族箱大廳）→ 研發園區（室內大樹、機器手臂）→ 全球研發網（全息地球指揮中心）：房間一級比一級大，機櫃從 2 櫃長到 18 櫃。</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="cast">
+    <h2><span class="no">PART 2 · CAST</span>吉祥物：AI 娘</h2>
+    <p class="prose">玩家開局選一位當公司吉祥物兼顧問，會出現在標題畫面、總覽的建議對話、事件、試聊與結局。</p>
+    <div class="cast" id="cast-list"></div>
+  </section>
+
+  <section id="offices">
+    <h2><span class="no">PART 2 · OFFICES</span>六級辦公室</h2>
+    <p class="prose">辦公室等級決定人數上限與同時訓練數，也是總覽畫面的主視覺。</p>
+    <div class="offices" id="office-list"></div>
+  </section>
+
+  <section id="pipeline">
+    <h2><span class="no">PART 2 · PIPELINE</span>生產流程</h2>
+    <div class="steps">
+      <div class="step"><b>大肥魚立繪</b><span>在 ChatGPT「製作圖像」上傳資產庫的 Q 版設定圖，貼上資產庫的 CC BY-SA 提示詞並指定姿勢與純白背景（art/dafeiyu_prompts.md 有完整紀錄）；ComfyUI Krea2 版本留作備選。</span></div>
+      <div class="step"><b>AI 娘立繪</b><span>把 ApprenTice 的 Q 版上傳 ChatGPT「製作圖像」，指示「角色原封不動，只把背景換成純白」，存到 art/raw/char_{id}.png（流程與授權見 art/reference/ai-fanworks/SOURCE.md）。</span></div>
+      <div class="step"><b>辦公室 3D 模型</b><span>tools/blender/make_textures.py 用程式畫螢幕、白板、鯨魚標誌、招牌、窗景與木地板貼圖；tools/blender/office_scene.py 在 Blender 5 背景執行，從方塊、圓柱、球體搭出六級場景，Cycles 渲染成透明 PNG，.blend 存在 art/blender/ 可直接打開微調。</span></div>
+      <div class="step"><b>去背</b><span>tools/cutout.py：從四邊把相連的近白色區域判為背景；被角色包住的大塊純白只有在色偏和外圍背景一致時才挖掉（白色圍裙、蕾絲通常比背景暖一點）；邊緣 3px 依「離白色多遠」給半透明並去除白色溢色。已是透明背景的渲染圖只裁切壓縮。</span></div>
+      <div class="step"><b>裁頭像、壓縮</b><span>tools/avatars.py 依透明遮罩找頭部位置裁成 192×192（可只處理指定角色）；立繪縮到高 900px、辦公室最大 1200×820，存 WebP（品質 86）。</span></div>
+      <div class="step"><b>放進遊戲</b><span>src/assets/ 下的檔名對應資料表欄位（MASCOTS.img / avatar、OFFICES.img），重新建置就會帶入。</span></div>
+    </div>
+    <h3>辦公室怎麼改</h3>
+    <p class="prose">辦公室不再用生圖提示詞。要調整外觀，改 tools/blender/office_scene.py：色票在 PAL，道具是 desk、pod、rack、plant、whale_toy、aquarium、holo_globe 等函式，各級配置在 level0～level5。改完執行 <span class="mono">blender --background --factory-startup --python tools/blender/office_scene.py -- all</span>，再用 tools/cutout.py 轉成 WebP。</p>
+    <h3>遊戲裡出現的位置</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>資產</th><th>出現位置</th></tr></thead>
+      <tbody>
+        <tr><td>吉祥物立繪</td><td>標題畫面（隨選角切換）、歡迎說明、總覽的顧問對話、事件對話框、結局</td></tr>
+        <tr><td>吉祥物頭像</td><td>選角按鈕、頂部儀表列、模型試聊的回覆氣泡</td></tr>
+        <tr><td>辦公室</td><td>總覽主視覺（依目前等級）、團隊分頁的升級卡（現在 vs 下一級）</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="backlog">
+    <h2><span class="no">PART 2 · BACKLOG</span>下一批美術</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>項目</th><th class="mono">數量</th><th>用途</th><th>優先</th></tr></thead>
+      <tbody>
+        <tr><td>吉祥物表情差分（開心、驚訝、擔心、得意）</td><td class="mono">8 × 4</td><td>事件好壞結果、評測報告、排行榜升降</td><td><span class="tag v">高</span></td></tr>
+        <tr><td>五種職能員工半身像</td><td class="mono">5</td><td>團隊分頁、明星人才卡</td><td><span class="tag v">高</span></td></tr>
+        <tr><td>六級資料中心等角圖</td><td class="mono">6</td><td>算力分頁主視覺</td><td><span class="tag l">中</span></td></tr>
+        <tr><td>對手公司識別（徽章與代表色插圖）</td><td class="mono">6</td><td>排行榜、對手發布新聞</td><td><span class="tag l">中</span></td></tr>
+        <tr><td>關鍵事件 CG（首個模型上線、價格戰、敲鐘上市、AGI 黎明）</td><td class="mono">4–6</td><td>里程碑與結局</td><td><span class="tag l">中</span></td></tr>
+        <tr><td>Q 版小人動作圖（打字、喝咖啡、搬伺服器）</td><td class="mono">~10</td><td>辦公室上的小動畫</td><td><span class="tag u">低</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+  <footer>立繪與辦公室以 Figma AI（gpt-image-2.5-flare）生成後去背處理。對手公司、事件與 2026 年 11 月之後的新聞皆為虛構；時間軸各條目的真實性以所附來源為準。</footer>
+</div>
+
+<script id="bg-data" type="application/json">/*__BG_DATA__*/null</script>
+<script>
+(function () {
+  'use strict';
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var BG = null; try { BG = JSON.parse(document.getElementById('bg-data').textContent); } catch (e) { BG = null; }
+  BG = BG || { items: [], tech_papers: {}, memes: [], mapping: [], techNames: {} };
+
+  // 真實 → 遊戲對照
+  document.getElementById('mapping').innerHTML = (BG.mapping || []).map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('');
+
+  // 時間軸
+  var CAT = { model: '模型', paper: '論文', hardware: '硬體', infra: '基礎設施', capital: '資本', policy: '政策法規', benchmark: '基準', safety: '安全與法律', product: '產品', culture: '文化', meme: '迷因', robotics: '機器人', talent: '人才' };
+  var REG = { all: '全部地區', global: '全球', us: '美國', eu: '歐盟', uk: '英國', cn: '中國大陸', tw: '台灣', hk: '香港', other: '其他' };
+  var items = (BG.items || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  var cats = {}; items.forEach(function (it) { cats[it.cat] = (cats[it.cat] || 0) + 1; });
+  var regs = {}; items.forEach(function (it) { regs[it.region] = (regs[it.region] || 0) + 1; });
+  var st = { cat: 'all', reg: 'all', q: '' };
+  function chips(el, map, counts, key) {
+    var keys = ['all'].concat(Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }));
+    el.innerHTML = keys.map(function (k) { return '<button type="button" data-k="' + k + '" class="' + (st[key] === k ? 'on' : '') + '">' + esc(k === 'all' ? (key === 'cat' ? '全部類別' : '全部地區') : (map[k] || k)) + (k === 'all' ? '' : ' · ' + counts[k]) + '</button>'; }).join('');
+    el.onclick = function (e) { var b = e.target.closest('button'); if (!b) return; st[key] = b.dataset.k; chips(el, map, counts, key); draw(); };
+  }
+  function draw() {
+    var q = st.q.trim().toLowerCase();
+    var list = items.filter(function (it) {
+      if (st.cat !== 'all' && it.cat !== st.cat) return false;
+      if (st.reg !== 'all' && it.region !== st.reg) return false;
+      if (q) { var hay = (it.title + ' ' + it.text + ' ' + JSON.stringify(it.real || {}) + ' ' + (it.alias || '')).toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+      return true;
+    });
+    document.getElementById('f-count').textContent = '顯示 ' + list.length + ' / ' + items.length + ' 條';
+    var out = ''; var yr = '';
+    list.forEach(function (it) {
+      var y = String(it.date).slice(0, 4);
+      if (y !== yr) { yr = y; out += '<div class="yr">' + y + '</div>'; }
+      var conf = it.confidence === 'verified' ? '<span class="tag v">已查證</span>' : it.confidence === 'likely' ? '<span class="tag l">大致可信</span>' : '<span class="tag u">待確認</span>';
+      var real = it.real || {}; var names = [real.org].concat(real.names || []).filter(Boolean).join(' · ');
+      var src = (it.sources || []).slice(0, 3).map(function (u, i) { var h = ''; try { h = new URL(u).hostname.replace(/^www\./, ''); } catch (e) { h = '來源'; } return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(h) + '</a>'; }).join(' ');
+      var hook = it.game && it.game.hook ? '<div class="hook">遊戲用法：' + esc(it.game.hook) + '</div>' : '';
+      out += '<article class="ev"><div class="d">' + esc(it.date) + '</div><div><h4>' + esc(it.title) + ' <span class="tag">' + esc(CAT[it.cat] || it.cat) + '</span>' + conf + '</h4><p>' + esc(it.text) + '</p><div class="meta">' + (names ? '<span>' + esc(names) + '</span>' : '') + (it.alias ? '<span>遊戲代稱：' + esc(it.alias) + '</span>' : '') + (src ? '<span>' + src + '</span>' : '') + '</div>' + hook + '</div></article>';
+    });
+    document.getElementById('tl').innerHTML = out || '<p class="note">沒有符合條件的條目。</p>';
+  }
+  chips(document.getElementById('f-cat'), CAT, cats, 'cat');
+  chips(document.getElementById('f-reg'), REG, regs, 'reg');
+  document.getElementById('f-q').addEventListener('input', function (e) { st.q = e.target.value; draw(); });
+  draw();
+
+  // 論文表
+  var tp = BG.tech_papers || {}; var tn = BG.techNames || {};
+  document.getElementById('paper-table').innerHTML = Object.keys(tp).map(function (k) {
+    var p = tp[k] || {};
+    return '<tr><td><b>' + esc(tn[k] || k) + '</b></td><td>' + (p.url ? '<a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.paper) + '</a>' : esc(p.paper)) + '</td><td>' + esc(p.authors || '') + '</td><td class="mono">' + esc((p.venue || '') + (p.date ? ' · ' + p.date : '')) + '</td><td>' + esc(p.oneLine || '') + '</td></tr>';
+  }).join('');
+
+  // 迷因
+  document.getElementById('meme-list').innerHTML = (BG.memes || []).map(function (m) {
+    return '<div class="meme"><b>' + esc(m.term) + '</b><p>' + esc(m.meaning) + '</p>' + (m.origin ? '<div class="use">出處：' + esc(m.origin) + '</div>' : '') + (m.game_use ? '<div class="use">遊戲用法：' + esc(m.game_use) + '</div>' : '') + '</div>';
+  }).join('');
+
+  // 色票
+  var SW = [['深海青', '#0d7680', '主色、按鈕、輪廓光'], ['亮水色', '#3cc0c6', '深色主題主色、全息光'], ['墨藍', '#0f1d27', '線稿、文字'], ['訊號琥珀', '#efb44a', '資金、警示、暖光'], ['機房冷灰', '#edf1f3', '淺色底'], ['深海夜', '#0a1319', '深色底'],
+    ['大肥魚', '#2a8fb5', '海洋藍'], ['白龍娘', '#8e7fe0', '淡紫'], ['小克', '#d9773a', '焦橘'], ['哈基米', '#7b6cf0', '星空紫'], ['Grok', '#b8323c', '酒紅'], ['Kimi', '#6b6f8f', '月影灰'], ['千問', '#5a63d8', '青花藍'], ['小狐娘', '#3d4a63', '墨藍']];
+  document.getElementById('swatches').innerHTML = SW.map(function (s) { return '<div class="sw"><i style="background:' + s[1] + '"></i><div><b>' + esc(s[0]) + '</b><br><span class="mono">' + s[1] + '</span><br>' + esc(s[2]) + '</div></div>'; }).join('');
+
+  // 角色
+  var CAST = [
+    ['whale', '大肥魚', '實驗室招牌', '#2a8fb5', '深海藍的鯨魚娘女僕，B 站社群角色（僅限非商用，出處見遊戲內「致謝與授權」）。', '深海藍漸層長捲髮與呆毛、白蕾絲女僕髮箍、鯨鰭耳與鯨尾；深藍白女僕裝、小鯨魚圍裙；揮手打招呼'],
+    ['gpt', '白龍娘', 'GPT · 全能前輩', '#8e7fe0', '大模型圈的老前輩，開口第一句永遠是「這是個好問題！」', '銀白長髮、龍角與尖耳、淡紫膜翼、白色鱗尾；白色露肩禮服；指尖點亮懸浮星儀'],
+    ['claude', '小克', 'Claude · 程式大小姐', '#d9773a', '程式寫得又快又穩，遇到危險請求會先禮貌拒絕。', '橘色長髮與花飾、黑色緞帶；白橘黑三色長裙；捧著書、指尖飄著紙頁'],
+    ['gemini', '哈基米', 'Gemini · 多模態貓娘', '#7b6cf0', '看圖、看影片、聽聲音樣樣行，動不動就道歉，外號「北美大豆包」。', '藍紫漸層長髮、貓耳貓尾、雙色眼、星星髮飾；深紫偶像裝'],
+    ['grok', 'Grok', '毒舌大小姐', '#b8323c', '背後有超級算力叢集，誇人之前一定先損兩句。', '金色雙馬尾、蝙蝠翼髮飾與小皇冠；黑紅哥德長裙；扛著 X 字戰斧'],
+    ['kimi', 'Kimi', '長文本少女', '#6b6f8f', '一口氣讀完兩百萬字，出招前習慣先放一段廣告。', '銀白長髮、K 字徽章、月亮與音符；黑白鋼琴鍵紋長裙；手邊一道稜鏡彩虹'],
+    ['qwen', '千問', 'Qwen · 開源大小姐', '#5a63d8', '開源模型一個接一個發，偶爾還得幫家裡送外賣。', '藍紫長髮麻花辮、徽章小帽；青花風漢服長裙；摺扇與小提包'],
+    ['glm', '小狐娘', 'GLM · 實幹工程狐', '#3d4a63', '埋頭搞基建的實幹打工人，白天補眠、晚上寫程式。', '黑色長髮、黑白狐耳狐尾、Z 字眼罩；黑白女僕長裙；拿著 Z 字摺扇'],
+  ];
+  document.getElementById('cast-list').innerHTML = CAST.map(function (c) {
+    return '<div class="chr" style="--c:' + c[3] + ';--c-soft:color-mix(in srgb, ' + c[3] + ' 22%, transparent)"><div class="pic"><img src="assets/char_' + c[0] + '.webp" alt="' + esc(c[1]) + '立繪" loading="lazy" width="581" height="900"></div><div class="info"><b>' + esc(c[1]) + '</b><span class="role">' + esc(c[2]) + ' · <span class="mono">' + c[3] + '</span></span><span>' + esc(c[4]) + '</span><span class="motif">設計重點：' + esc(c[5]) + '</span></div></div>';
+  }).join('');
+
+  // 辦公室
+  var OFF = [['🏚️', '車庫', 8, '水泥地鋪上鯨魚地毯，兩張桌子、兩櫃二手 GPU、小燈串，捲門上貼著自己畫的鯨魚標誌。'], ['🏢', '新創辦公室', 25, '四人島型桌、鯨魚品牌牆與白板，玻璃機房裡兩櫃伺服器，咖啡吧與書櫃。'], ['🏙️', '科技園整層', 80, '兩組島型桌、玻璃會議室、訓練儀表板大螢幕、四櫃機房與休息區。'], ['🌇', '總部大樓', 250, '整面鯨魚水族箱、深藍接待櫃台與「模型帝國」招牌、三組島型桌、六櫃機房。'], ['🏰', '研發園區', 800, '室內大樹中庭、機器手臂與小機器人實驗區、四組島型桌、帶冷卻管的機房。'], ['🌐', '全球研發網', 2500, '全息地球指揮中心、環形控制台、全球網路大螢幕、三排機櫃，窗外是海。']];
+  document.getElementById('office-list').innerHTML = OFF.map(function (o, i) {
+    return '<div class="off"><div class="pic"><img src="assets/office_' + i + '.webp" alt="' + esc(o[1]) + '" loading="lazy" width="1200" height="820"></div><div class="info"><b>Lv.' + (i + 1) + ' ' + o[0] + ' ' + esc(o[1]) + '</b> <span class="note">· 人數上限 ' + o[2] + '</span><br>' + esc(o[3]) + '</div></div>';
+  }).join('');
+})();
+</script>

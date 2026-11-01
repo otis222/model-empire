@@ -1,0 +1,3096 @@
+{
+  "meta": {
+    "scope": "中國大陸、台灣與中文圈 AI 史與文化 2023-01 ~ 2026-10",
+    "compiled": "2026-10-31",
+    "notes": "1) 日期以事件當地時間（北京／台北 UTC+8）為準；只確定到月份者寫 YYYY-MM。2) 金額未註明幣別者為人民幣「元」；新台幣、港元、美元皆標明；估計值加「約」，媒體轉述或單一來源數字標「據報」。3) confidence：verified＝官方公告或兩個以上可信媒體一致；likely＝單一可信來源、媒體轉述，或日期、金額等細節各家有出入；uncertain＝傳聞或來源衝突（查不到的事件直接不收，故本版沒有 uncertain 條目）。4) 2025 下半年至 2026-10 的事件皆於 2026-10-31 以網路搜尋重新查證；DeepSeek 版本日期以 api-docs.deepseek.com 官方公告頁為準。5) 本檔專注中國大陸、台灣、港澳與中文網路文化；NVIDIA、OpenAI 等美歐事件只收錄與中文圈直接相關者，避免與全球時間軸重複。6) alias 為遊戲新聞用的去品牌化稱呼。建議對應現有對手：DeepSeek≈疾風 AI、豆包／字節≈蜂巢、Qwen 開源家族≈群星開源、百度／阿里／騰訊等大廠≈巨石科技、OpenAI≈天穹智能、Anthropic≈燈塔實驗室；NVIDIA 在中文圈俗稱『綠廠』，故稱『某綠色 GPU 霸主』。7) game.hook 中的數值（+20%、×1.5 等）為企劃建議值，需依平衡模擬調整；提到的科技 id（t_finemoe、t_cot、t_sparse、t_mctx 等）取自 src/data.js 現有命名僅供對照，未修改 src。8) 涉及真人只寫公開職務與公開言行；遊戲台詞若改寫自真人說法，已標明為虛構。9) memes 不附網址，出處寫在 origin 欄，相關事件來源見 items。10) 部分來源網站（SCMP、Bloomberg 等）會阻擋程式抓取，但每條 item 至少有一個來源在 2026-10-31 可正常開啟。",
+    "checked": "2026-11-01：原本標為 likely 的條目逐條上網複查（本檔 16 條），全部確認或修正後改為 verified；修正了什麼記在各條的 checked 欄位。"
+  },
+  "items": [
+    {
+      "id": "2023-02-hku-chatgpt-ban",
+      "date": "2023-02-17",
+      "cat": "policy",
+      "region": "hk",
+      "title": "港大暫禁學生使用 ChatGPT",
+      "text": "香港大學 2023 年 2 月 17 日宣布暫時禁止學生在課業、評量與課堂使用 ChatGPT 等 AI 工具，違者視同抄襲；浸會大學隨後跟進，成為全港第二所明令禁用的大學。",
+      "real": {
+        "org": "香港大學",
+        "names": [
+          "ChatGPT",
+          "香港浸會大學"
+        ]
+      },
+      "alias": "某百年港校",
+      "numbers": {
+        "宣布日": "2023-02-17",
+        "違規處理": "視同抄襲",
+        "跟進": "浸大為第二所"
+      },
+      "game": {
+        "hook": "開局校園新聞：教育需求短期 -10%，2024 起反轉為『AI 輔助學習』需求 +。互動事件『大學來信』：A 推教育合規版（研發成本 +、聲望 +3）／B 不理會／C 贊助校園 AI 素養課（資金 -、人才招募 +）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://scmp.com/news/hong-kong/education/article/3210650/university-hong-kong-temporarily-bans-students-using-chatgpt-other-ai-based-tools-coursework",
+        "https://news.cgtn.com/news/2023-02-19/University-of-Hong-Kong-issues-interim-ban-on-ChatGPT-AI-based-tools-1hxWzqgcMxy/index.html",
+        "https://www.scmp.com/news/hong-kong/education/article/3211169/hong-kongs-baptist-university-bans-students-using-chatgpt-class-work"
+      ]
+    },
+    {
+      "id": "2023-03-ernie-bot-launch",
+      "date": "2023-03-16",
+      "cat": "product",
+      "region": "cn",
+      "title": "文心一言發表，百度股價先跌後漲",
+      "text": "百度 3 月 16 日發表對話模型文心一言，展示內容被指為預錄，股價當天一度跌約 10%、隔日反彈約 14%；8 月 31 日通過備案向公眾開放，12 月宣布使用者突破 1 億。",
+      "real": {
+        "org": "百度",
+        "names": [
+          "文心一言（ERNIE Bot）",
+          "李彥宏"
+        ]
+      },
+      "alias": "某搜尋巨頭",
+      "numbers": {
+        "發表日": "2023-03-16",
+        "發表當日股價": "一度約 -10%",
+        "隔日": "約 +14%",
+        "公眾開放": "2023-08-31",
+        "使用者破億": "2023-12"
+      },
+      "game": {
+        "hook": "『發表會翻車』事件：A 現場直播 demo（成功聲望 +5，失敗股價 -10%）／B 播預錄影片（穩，但 30% 機率被網友抓包聲望 -2）／C 延期（失去首發紅利）。可作為對手『巨石科技』中國版首發新聞。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Ernie_Bot"
+      ]
+    },
+    {
+      "id": "2023-04-tongyi-qianwen",
+      "date": "2023-04-11",
+      "cat": "product",
+      "region": "cn",
+      "title": "通義千問亮相，阿里全家桶接入",
+      "text": "阿里雲 4 月 11 日發表通義千問，時任集團 CEO 張勇宣布阿里所有產品都將接入大模型，先從釘釘與天貓精靈開始；同一天網信辦公布《生成式人工智能服務管理辦法（徵求意見稿）》。",
+      "real": {
+        "org": "阿里巴巴／阿里雲",
+        "names": [
+          "通義千問",
+          "張勇",
+          "釘釘",
+          "天貓精靈"
+        ]
+      },
+      "alias": "某電商巨頭",
+      "numbers": {
+        "發表日": "2023-04-11",
+        "首批接入": "釘釘、天貓精靈"
+      },
+      "game": {
+        "hook": "『全家桶』策略選擇：A 自研模型接入自家產品（通路 +，研發壓力大）／B 採購他牌 API（上線快、毛利低）。同日觸發『監管草案』新聞，預告合規成本。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.scmp.com/tech/tech-trends/article/3216634/alibaba-says-its-chatgpt-service-will-be-integrated-all-products-starting-dingtalk-and-tmall-genie",
+        "https://gulfnews.com/technology/media/alibaba-shows-off-tongyi-qianwen-its-generative-ai-tech-to-roll-out-in-all-apps-1.1681188782748"
+      ]
+    },
+    {
+      "id": "2023-04-tw-taide",
+      "date": "2023-04",
+      "cat": "model",
+      "region": "tw",
+      "title": "國科會啟動 TAIDE 繁中模型",
+      "text": "國科會 2023 年 4 月啟動 TAIDE（可信任 AI 對話引擎）計畫，以台灣語料打造繁中模型；之後隨開源底座換版：2024-04 以 Llama 3 釋出 8B（約 4 天訓練完成）、2025-02 改用 Llama 3.1、2025-08 推出 Gemma-3-TAIDE-12B。",
+      "real": {
+        "org": "國家科學及技術委員會（國科會）",
+        "names": [
+          "TAIDE",
+          "Llama-3-TAIDE-LX-8B",
+          "Gemma-3-TAIDE-12B-Chat"
+        ]
+      },
+      "alias": "某島內國家隊模型",
+      "numbers": {
+        "啟動": "2023-04",
+        "Llama 3 版": "8B，約 4 天訓練",
+        "Llama 3.1 版": "2025-02",
+        "Gemma 3 版": "12B，2025-08"
+      },
+      "game": {
+        "hook": "台灣劇本：可接『國家隊』繁中模型委託（穩定補助、資料品質 +，但得跟著開源底座一再換版）。事件『底座又換了』：A 跟進重訓（研發點 -）／B 維持舊版（能力落後懲罰）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.cna.com.tw/news/ait/202404290314.aspx",
+        "https://technews.tw/2025/02/13/taide-8b-launched/",
+        "https://technews.tw/2025/08/27/gemma-3-taide-series-launched/",
+        "https://www.inside.com.tw/article/31886-TAIDE-coming-soon"
+      ]
+    },
+    {
+      "id": "2023-05-tw-computex-gh200",
+      "date": "2023-05-29",
+      "cat": "hardware",
+      "region": "tw",
+      "title": "黃仁勳台北發表 DGX GH200",
+      "text": "NVIDIA 執行長黃仁勳 5 月 29 日在 Computex 主題演講發表 DGX GH200：以 NVLink 串接 256 顆 Grace Hopper 超級晶片，提供約 1 EFLOPS 算力與 144TB 共享記憶體，並宣布 GH200 全面投產，台灣 AI 伺服器供應鏈行情由此升溫。",
+      "real": {
+        "org": "NVIDIA",
+        "names": [
+          "黃仁勳",
+          "DGX GH200",
+          "Grace Hopper",
+          "Computex 2023"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "串接晶片": "256 顆 GH200",
+        "共享記憶體": "144TB",
+        "算力": "約 1 EFLOPS"
+      },
+      "game": {
+        "hook": "固定年度事件『台北電腦展』：每年 5–6 月發表新卡、刷新 GPU 價格與供貨；可付溢價搶首批配額（價格 +30%、提早 2 季到貨）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.inside.com.tw/article/31771-NVIDIA-Computex-2023",
+        "https://unikoshardware.com/2023/05/nvidia-computex-2023-dgx-gh200-pr.html"
+      ]
+    },
+    {
+      "id": "2023-07-genai-interim-measures",
+      "date": "2023-07-13",
+      "cat": "policy",
+      "region": "cn",
+      "title": "生成式 AI 暫行辦法公布",
+      "text": "網信辦等七部門 7 月 13 日公布《生成式人工智能服務管理暫行辦法》，8 月 15 日施行：面向公眾的生成式 AI 服務須做安全評估與演算法備案，並依規標註生成內容。",
+      "real": {
+        "org": "國家網信辦等七部門",
+        "names": [
+          "《生成式人工智能服務管理暫行辦法》"
+        ]
+      },
+      "alias": "某大型市場的 AI 主管機關",
+      "numbers": {
+        "公布": "2023-07-13",
+        "施行": "2023-08-15",
+        "聯合發文部門": "7 個",
+        "徵求意見稿": "2023-04-11"
+      },
+      "game": {
+        "hook": "中國市場監管核心：2023-08-15 起 C 端上線需『備案』（4–12 週、合規成本 +）；未備案只能做 B2B 或海外。選項：A 全力備案（延後上線）／B 先做海外版（失去國內 C 端）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm"
+      ]
+    },
+    {
+      "id": "2023-07-deepseek-founded",
+      "date": "2023-07-17",
+      "cat": "capital",
+      "region": "cn",
+      "title": "幻方孵化深度求索成立",
+      "text": "量化基金幻方 4 月 14 日宣布成立 AGI 研究實驗室，7 月 17 日獨立為杭州深度求索（DeepSeek），由幻方共同創辦人梁文鋒主導；成立後長期不對外融資，靠母公司資金起步。",
+      "real": {
+        "org": "深度求索（DeepSeek）／幻方量化",
+        "names": [
+          "梁文鋒"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "宣布做 AGI": "2023-04-14",
+        "公司成立": "2023-07-17",
+        "總部": "杭州",
+        "首輪外部融資": "2026-06（近三年後）"
+      },
+      "game": {
+        "hook": "可做為『spinoff』開局劇本原型，也對應對手『疾風 AI』（低成本效率黑馬）。吉祥物梗：藍色鯨魚。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/DeepSeek"
+      ]
+    },
+    {
+      "id": "2023-08-first-filing-batch",
+      "date": "2023-08-31",
+      "cat": "policy",
+      "region": "cn",
+      "title": "首批大模型通過備案上線",
+      "text": "8 月 31 日首批大模型通過備案向公眾開放：北京的文心一言、抖音雲雀、智譜 GLM、中科院紫東太初、百川，以及上海的商湯日日新、MiniMax、上海 AI 實驗室書生共 8 家，之後擴至 11 家；通義千問 9 月 13 日宣布通過。",
+      "real": {
+        "org": "國家網信辦（備案）",
+        "names": [
+          "文心一言",
+          "雲雀",
+          "智譜 GLM",
+          "紫東太初",
+          "百川",
+          "商湯日日新",
+          "MiniMax ABAB",
+          "書生"
+        ]
+      },
+      "alias": "首批持證上崗的模型們",
+      "numbers": {
+        "首批": "8 家（後擴至 11 家）",
+        "日期": "2023-08-31",
+        "通義千問": "2023-09-13"
+      },
+      "game": {
+        "hook": "『牌照』機制：首批備案者拿 C 端先發紅利（聊天需求 +20%，持續 8 週），沒趕上的排隊。事件：A 加班衝備案（員工倦怠 +）／B 等第二批（落後）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.ithome.com/0/715/938.htm",
+        "https://www.36kr.com/p/2410836872504325",
+        "https://news.ifeng.com/c/8Snb03JzFzW"
+      ]
+    },
+    {
+      "id": "2023-10-tw-ckip-llama",
+      "date": "2023-10-09",
+      "cat": "culture",
+      "region": "tw",
+      "title": "中研院 CKIP-Llama 下架風波",
+      "text": "中研院 10 月初開源的 CKIP-Llama-2-7b 被網友測出自稱國籍是中國、國歌國花皆答中國資訊，原因包括部分訓練資料取自簡中開源資料集、並以 Atom-7b 為基礎；10 月 9 日下架，引爆台灣『主權 AI／繁中語料』討論。",
+      "real": {
+        "org": "中央研究院",
+        "names": [
+          "CKIP-Llama-2-7b",
+          "Atom-7b"
+        ]
+      },
+      "alias": "某國家級研究院",
+      "numbers": {
+        "下架日": "2023-10-09",
+        "參數": "7B"
+      },
+      "game": {
+        "hook": "資料來源風險：大量使用便宜外部語料時，有機率觸發『模型立場翻車』（聲望 -8、台灣需求 -15%）。選項：A 立即下架重訓／B 聲明只是研究版／C 推出繁中資料清洗工具化危機為賣點。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://cna.com.tw/news/ait/202310090181.aspx",
+        "https://www.ithome.com.tw/news/159198"
+      ]
+    },
+    {
+      "id": "2023-10-us-export-h800-h20",
+      "date": "2023-10-17",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "美擴大禁令，H800 停售換 H20",
+      "text": "美國 10 月 17 日更新晶片出口管制，連中國特供的 A800、H800 也禁售（約 11 月中生效），並把多家中國 GPU 業者列入實體清單；NVIDIA 隨後推出降規的 H20 等特供產品。",
+      "real": {
+        "org": "美國商務部／NVIDIA",
+        "names": [
+          "A800",
+          "H800",
+          "H20"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主的特供卡",
+      "numbers": {
+        "公布": "2023-10-17",
+        "生效": "約 2023-11-17",
+        "禁售": "A800、H800"
+      },
+      "game": {
+        "hook": "與遊戲 2023-10-17 出口管制新聞同日：中國劇本高階 GPU 價格 ×1.3，只能買降規特供卡（算力約 ×0.6、記憶體大）並解鎖『國產卡』選項。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.tomshardware.com/news/us-prohibits-exports-of-nvidias-a800-and-h800-to-china-blacklists-chinese-gpu-developers",
+        "https://builtin.com/articles/trump-lifts-ai-chip-ban-china"
+      ]
+    },
+    {
+      "id": "2023-11-yi-34b-llama",
+      "date": "2023-11-06",
+      "cat": "model",
+      "region": "cn",
+      "title": "零一萬物 Yi-34B 架構爭議",
+      "text": "李開復創辦的零一萬物 11 月 6 日開源 Yi-34B 登上多個榜單前列，約一週後被開發者指出架構與 LLaMA 相同、僅改了兩個張量名稱；公司 11 月 15 日回應改名屬『疏忽』並改回，掀起『套殼』論戰。",
+      "real": {
+        "org": "零一萬物",
+        "names": [
+          "Yi-34B",
+          "李開復",
+          "LLaMA"
+        ]
+      },
+      "alias": "某創投教父創辦的新創",
+      "numbers": {
+        "開源": "2023-11-06",
+        "參數": "34B",
+        "公司回應": "2023-11-15",
+        "被改名張量": "2 個"
+      },
+      "game": {
+        "hook": "『套殼指控』事件：採用開源底座卻未標註時觸發。A 公開致謝並改名（聲望 -1）／B 堅稱自研（50% 被扒，聲望 -6）。成就『這叫架構趨同』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technode.com/2023/11/15/kai-fu-lees-ai-large-language-model-yi-used-metas-llama-architecture-without-namechecking-its-source/",
+        "https://blog.eleuther.ai/nyt-yi-34b-response/"
+      ]
+    },
+    {
+      "id": "2023-11-hundred-model-war",
+      "date": "2023-11-15",
+      "cat": "culture",
+      "region": "cn",
+      "title": "百模大戰：國產模型達 238 個",
+      "text": "百度創辦人李彥宏 11 月 15 日在深圳西麗湖論壇引述報告：國內大模型從 6 月約 79 個增至 10 月的 238 個，並稱不斷重複開發基礎模型是對社會資源的極大浪費；同年王小川的百川、李開復的零一萬物、月之暗面等新創密集成立。",
+      "real": {
+        "org": "百度",
+        "names": [
+          "李彥宏",
+          "百川智能",
+          "零一萬物",
+          "月之暗面"
+        ]
+      },
+      "alias": "某搜尋巨頭創辦人",
+      "numbers": {
+        "2023-06": "約 79 個",
+        "2023-10": "238 個"
+      },
+      "game": {
+        "hook": "2023 下半年『百模大戰』階段：小型 NPC 對手暫時 +N、人才薪資 ×1.3、GPU 租價上漲；2024 中後期開始淘汰。成就『第 239 個模型』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://amp.scmp.com/tech/big-tech/article/3241659/chinese-tech-companies-frenzy-over-ai-large-language-models-huge-waste-resources-baidu-ceo-says",
+        "https://www.chinanews.com.cn/cj/2023/11-15/10112509.shtml"
+      ]
+    },
+    {
+      "id": "2023-11-deepseek-coder-llm",
+      "date": "2023-11-29",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeek 首發 Coder 與 LLM",
+      "text": "深度求索 11 月 2 日開源 DeepSeek Coder，11 月 29 日再發表以約 2 兆 tokens 訓練、最大 67B 參數的 DeepSeek LLM，以開源權重起步。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek Coder",
+          "DeepSeek LLM 67B"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "Coder": "2023-11-02",
+        "LLM": "2023-11-29",
+        "最大參數": "67B",
+        "訓練資料": "約 2 兆 tokens"
+      },
+      "game": {
+        "hook": "對手『疾風 AI』的首發新聞可用此日期，語氣：『一家做量化的公司，開源了一個寫程式的模型。』"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/abs/2401.02954",
+        "https://arxiv.org/abs/2401.14196",
+        "https://en.wikipedia.org/wiki/DeepSeek"
+      ]
+    },
+    {
+      "id": "2024-01-deepseek-moe-grpo",
+      "date": "2024-01-11",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeekMoE 與 GRPO 論文",
+      "text": "深度求索 1 月發表 DeepSeekMoE 論文，提出更細切的專家分割加共享專家，以較少啟用參數逼近同級稠密模型；2 月的 DeepSeekMath 論文再提出 GRPO 強化學習演算法，後來成為 R1 的訓練核心。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeekMoE",
+          "DeepSeekMath",
+          "GRPO"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "MoE 論文": "2024-01-11（arXiv）",
+        "GRPO 論文": "2024-02-05（arXiv）"
+      },
+      "game": {
+        "hook": "對應科技樹 t_finemoe（2024-01 公開）；GRPO 可作為 t_cot（思維鏈推理 RL）的前置論文新聞，公開後該科技研究成本 -20%。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/abs/2401.06066",
+        "https://arxiv.org/abs/2402.03300"
+      ]
+    },
+    {
+      "id": "2024-03-kimi-2m-context",
+      "date": "2024-03-18",
+      "cat": "product",
+      "region": "cn",
+      "title": "Kimi 200 萬字，概念股連板",
+      "text": "月之暗面 2023 年 10 月推出可讀 20 萬字的 Kimi，2024 年 2 月獲阿里領投約 10 億美元（估值約 25 億美元）；3 月 18 日宣布無損上下文提升到 200 萬字，A 股『Kimi 概念股』連續漲停，3 月 21 日起卻因流量暴增服務中斷，官方公開致歉。",
+      "real": {
+        "org": "月之暗面（Moonshot AI）",
+        "names": [
+          "Kimi",
+          "楊植麟"
+        ]
+      },
+      "alias": "某長文本新創",
+      "numbers": {
+        "首發上下文": "20 萬字（2023-10）",
+        "新上下文": "200 萬字",
+        "2024-02 融資": "約 10 億美元",
+        "估值": "約 25 億美元"
+      },
+      "game": {
+        "hook": "『長上下文』賣點：ctx 屬性領先時觸發『概念股』效應（估值 +20%、新使用者暴增、伺服器負載 ×3）。選項：A 緊急擴容（資金 -）／B 限流排隊（聲望 -2）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Moonshot_AI",
+        "https://www.cls.cn/detail/1629120",
+        "https://stock.10jqka.com.cn/20240326/c656278201.shtml"
+      ]
+    },
+    {
+      "id": "2024-05-deepseek-v2-price-war",
+      "date": "2024-05-06",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeek-V2 掀起 API 價格戰",
+      "text": "5 月 6 日發表 DeepSeek-V2（總參數 236B、啟用 21B），以 MLA 把 KV 快取壓縮約 93%；API 定價每百萬 tokens 輸入 1 元、輸出 2 元人民幣，被稱『AI 界拼多多』，逼得大廠跟進降價。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V2",
+          "MLA（多頭潛在注意力）"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "總參數": "236B",
+        "啟用參數": "21B",
+        "KV 快取": "約 -93.3%",
+        "API 價格": "輸入 1 元／輸出 2 元（每百萬 tokens，人民幣）"
+      },
+      "game": {
+        "hook": "與遊戲 2024-05-07 MLA 新聞對齊。觸發『價格屠夫』：API 均價 -60%～-90%。選項：A 跟降（守市佔、毛利崩）／B 不跟（流失 API 客戶）／C 改推高價企業版。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/abs/2405.04434",
+        "https://qz.com/deepseeks-aggressive-pricing-is-challenging-silicon-val-1851748345"
+      ]
+    },
+    {
+      "id": "2024-05-doubao-price-war",
+      "date": "2024-05-15",
+      "cat": "product",
+      "region": "cn",
+      "title": "豆包 0.0008 元，大廠集體降價",
+      "text": "字節火山引擎 5 月 15 日宣布豆包主力模型每千 tokens 僅 0.0008 元、比行業便宜 99.3%；5 月 21 日阿里 Qwen-Long 輸入價降 97% 至每千 tokens 0.0005 元，同日百度宣布文心兩款主力模型免費。",
+      "real": {
+        "org": "字節跳動（火山引擎）／阿里雲／百度",
+        "names": [
+          "豆包 Pro-32k",
+          "Qwen-Long",
+          "ERNIE Speed",
+          "ERNIE Lite"
+        ]
+      },
+      "alias": "某短影音巨頭／某電商巨頭／某搜尋巨頭",
+      "numbers": {
+        "豆包主力": "0.0008 元／千 tokens",
+        "豆包降幅": "比行業 -99.3%",
+        "Qwen-Long 輸入": "0.02 → 0.0005 元／千 tokens（-97%）",
+        "百度": "2 款主力模型免費"
+      },
+      "game": {
+        "hook": "價格戰事件鏈：API 價格係數 ×0.1、API 需求 ×1.5；對應對手『蜂巢』。選項：A 加入降價（現金流壓力）／B 主打品質與 SLA（企業客戶 +）／C 開源舊模型搶開發者。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.nbd.com.cn/articles/2024-05-15/3390692.html",
+        "https://m.thepaper.cn/detail/27441461",
+        "https://www.qianzhan.com/analyst/detail/329/240521-22720060.html"
+      ]
+    },
+    {
+      "id": "2024-06-tw-jensen-ntu",
+      "date": "2024-06-02",
+      "cat": "culture",
+      "region": "tw",
+      "title": "黃仁勳台大開講，Rubin 亮相",
+      "text": "黃仁勳 6 月 2 日晚在台大綜合體育館為 Computex 2024 開場，背板列出 43 家台灣供應鏈夥伴，並宣布 2026 年推出下一代 Rubin 平台、AI 晶片改為每年更新；訪台期間走訪各地、在台大校園被學生包圍合照簽名，『黃仁勳旋風』席捲全台。",
+      "real": {
+        "org": "NVIDIA",
+        "names": [
+          "黃仁勳",
+          "Computex 2024",
+          "Rubin",
+          "Vera CPU"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主執行長",
+      "numbers": {
+        "演講日": "2024-06-02",
+        "背板台廠": "43 家",
+        "Rubin 預定": "2026"
+      },
+      "game": {
+        "hook": "台灣劇本『偶像來訪』事件：A 搶合照（聲望 +2）／B 搶供貨會談（下季 GPU 配額 +20%）。新增設定：GPU 世代改為每年一代。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://newtalk.tw/news/view/2024-06-02/922263",
+        "https://www.cw.com.tw/article/5130614",
+        "https://apps.digitimes.com/news/a20240603VL200.html"
+      ]
+    },
+    {
+      "id": "2024-06-kling",
+      "date": "2024-06-06",
+      "cat": "product",
+      "region": "cn",
+      "title": "快手可靈搶先上線",
+      "text": "Sora 公布約四個月仍未開放時，快手 6 月 6 日推出影片生成模型可靈，號稱可生成最長 2 分鐘的 1080p 影片並開放中國使用者排隊試用。",
+      "real": {
+        "org": "快手",
+        "names": [
+          "可靈（Kling）"
+        ]
+      },
+      "alias": "某短影音二哥",
+      "numbers": {
+        "發布": "2024-06-06",
+        "最長片長": "2 分鐘",
+        "解析度": "1080p"
+      },
+      "game": {
+        "hook": "『期貨 vs 現貨』：海外龍頭發表卻不開放時，國內對手搶先上線拿下創作市場（creative 需求 +）。玩家可選搶推半成品（品質風險）或等待。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2024-06-07/kuaishou-unveils-a-rival-to-sora-that-produces-video-from-text-102204052.html",
+        "https://www.scmp.com/tech/big-tech/article/3265798/chinas-no-2-short-video-app-kuaishou-unveils-sora-style-product-amid-rush-catch-ai"
+      ]
+    },
+    {
+      "id": "2024-07-openai-api-block",
+      "date": "2024-07-09",
+      "cat": "policy",
+      "region": "cn",
+      "title": "OpenAI 斷供中國 API，搬家潮",
+      "text": "OpenAI 6 月底通知，7 月 9 日起封鎖中國大陸、香港等不支援地區的 API 流量；百度、阿里雲、智譜、騰訊雲等隨即推出『搬家計畫』，以免費 tokens 與遷移服務搶開發者。",
+      "real": {
+        "org": "OpenAI；百度、阿里雲、智譜、騰訊雲",
+        "names": [
+          "OpenAI API",
+          "搬家計畫"
+        ]
+      },
+      "alias": "某海外閉源龍頭",
+      "numbers": {
+        "封鎖生效": "2024-07-09",
+        "受影響地區": "中國大陸、香港等",
+        "智譜贈送": "約 1.5 億 tokens（單一報導）"
+      },
+      "game": {
+        "hook": "中國劇本 API 市場重分配：海外龍頭在中國份額歸零、國內 API 需求 +30%（8 週）。互動：A 推『一鍵搬家』送 tokens（資金 -、市佔 +）／B 趁機漲價（毛利 +、聲望 -）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.medianama.com/2024/06/223-openai-blocks-api-services-china/",
+        "https://theprint.in/tech/chinese-ai-firms-woo-openai-users-as-us-company-plans-api-restrictions/2147178",
+        "https://apps.digitimes.com/news/a20240626VL200/openai-api-china-ai-alibaba-software.html"
+      ]
+    },
+    {
+      "id": "2024-07-liang-interview",
+      "date": "2024-07",
+      "cat": "talent",
+      "region": "cn",
+      "title": "梁文鋒：不能永遠當追隨者",
+      "text": "深度求索創辦人梁文鋒接受《暗湧》專訪表示，搶使用者並非降價的主要目的，而是成本先降下來、且認為 API 與 AI 都應該普惠；他也指出真正的差距在『原創與模仿』，否則中國永遠只能是追隨者。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "梁文鋒",
+          "《暗湧 Waves》"
+        ]
+      },
+      "alias": "某量化基金孵化新創的創辦人",
+      "numbers": {
+        "訪談時間": "約 2024-07（TechNews 稱 7 月 18 日）"
+      },
+      "game": {
+        "hook": "公司信條系統：普惠低價／商業最大化／原創研究，影響招募與定價彈性。吉祥物台詞（遊戲虛構，非原話）：『降價只是因為我們真的變便宜了。』"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://finance.technews.tw/2025/01/29/deepseek-founder-interview-1/",
+        "https://www.chinatalk.media/p/deepseek-ceo-interview-with-chinas",
+        "https://news.ifeng.com/c/8gSU8rLEKgn"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "TechNews 與 ChinaTalk 英譯確認 2024 年 7 月《暗湧》專訪及兩段引述（ChinaTalk 只寫 7 月，日期維持月份級）；原話為「搶用戶並不是我們的主要目的」，措辭微調。"
+      }
+    },
+    {
+      "id": "2024-09-deepseek-v25",
+      "date": "2024-09-05",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeek-V2.5 合併對話與程式",
+      "text": "9 月 5 日發表 V2.5，把 V2-Chat 與 Coder-V2 合而為一；此前 8 月 2 日已推出硬碟上下文快取，命中快取的輸入每百萬 tokens 僅 0.014 美元、最多省 90%。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V2.5",
+          "Context Caching on Disk"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "V2.5": "2024-09-05",
+        "上下文快取": "2024-08-02",
+        "快取命中價": "0.014 美元／百萬 tokens",
+        "省幅": "最多 90%"
+      },
+      "game": {
+        "hook": "解鎖『上下文快取』推論技術：重複前綴的 API 請求成本 -90%，Agent 與程式市場需求 +。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news0905",
+        "https://api-docs.deepseek.com/news/news0802"
+      ]
+    },
+    {
+      "id": "2024-09-qwen25",
+      "date": "2024-09-19",
+      "cat": "model",
+      "region": "cn",
+      "title": "Qwen2.5 開源，衍生模型爆量",
+      "text": "阿里在 2024 雲棲大會開源 Qwen2.5 系列（前代 Qwen2 於 6 月開源），預訓練資料擴至約 18 兆 tokens、涵蓋 0.5B–72B 與程式、數學版本；到 2026 年 Hugging Face 上 Qwen 衍生模型已超過 20 萬個。",
+      "real": {
+        "org": "阿里雲",
+        "names": [
+          "Qwen2",
+          "Qwen2.5",
+          "Qwen2.5-Coder",
+          "Qwen2.5-Math"
+        ]
+      },
+      "alias": "某電商巨頭的開源模型家族",
+      "numbers": {
+        "Qwen2": "2024-06",
+        "Qwen2.5": "2024-09-19",
+        "預訓練": "約 18 兆 tokens",
+        "衍生模型": "20 萬+（2026）"
+      },
+      "game": {
+        "hook": "對應對手『群星開源』：每代開源累積開發者偏好，間接壓低全市場 API 價格。成就『源神』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://qwenlm.github.io/blog/qwen2.5/",
+        "https://arxiv.org/abs/2412.15115",
+        "https://en.wikipedia.org/wiki/Qwen"
+      ]
+    },
+    {
+      "id": "2024-11-cn-reasoning-previews",
+      "date": "2024-11-20",
+      "cat": "model",
+      "region": "cn",
+      "title": "R1-Lite 與 QwQ：推理模型登場",
+      "text": "OpenAI o1 預覽兩個月後，深度求索 11 月 20 日上線 DeepSeek-R1-Lite-Preview，阿里 11 月 28 日開源 QwQ-32B-Preview，中國廠商首度在『長思考』推理模型上緊追。",
+      "real": {
+        "org": "深度求索；阿里雲",
+        "names": [
+          "DeepSeek-R1-Lite-Preview",
+          "QwQ-32B-Preview"
+        ]
+      },
+      "alias": "某量化基金孵化的新創／某電商巨頭",
+      "numbers": {
+        "R1-Lite": "2024-11-20",
+        "QwQ-Preview": "2024-11-28",
+        "QwQ 參數": "32B"
+      },
+      "game": {
+        "hook": "推理元年前哨：已研究『思維鏈推理 RL』的玩家可提前發表推理版搶聲望；否則推理需求出現但無貨可賣。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news1120",
+        "https://qwenlm.github.io/blog/qwq-32b-preview/"
+      ]
+    },
+    {
+      "id": "2024-12-deepseek-v3",
+      "date": "2024-12-26",
+      "cat": "model",
+      "region": "cn",
+      "title": "V3 訓練成本約 557.6 萬美元",
+      "text": "12 月 26 日發表 V3：總參數 671B、每 token 啟用 37B，以 14.8 兆 tokens 訓練；技術報告稱正式訓練共用 278.8 萬 H800 GPU 小時，以每小時 2 美元估算約 557.6 萬美元（不含前期研究與消融實驗）。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V3",
+          "H800",
+          "FP8 混合精度"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "總參數": "671B",
+        "啟用參數": "37B",
+        "訓練資料": "14.8 兆 tokens",
+        "GPU 時數": "278.8 萬 H800 小時",
+        "估算成本": "約 557.6 萬美元"
+      },
+      "game": {
+        "hook": "『成本震撼』新聞：投資人重估訓練成本，開源派聲望 +；對應科技樹 t_fp8（2024-12 公開）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/abs/2412.19437",
+        "https://api-docs.deepseek.com/news/news1226"
+      ]
+    },
+    {
+      "id": "2025-01-deepseek-r1",
+      "date": "2025-01-20",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeek-R1 開源，對標 o1",
+      "text": "1 月 20 日發表推理模型 DeepSeek-R1 與 R1-Zero，以大規模強化學習訓練、宣稱數學與程式表現與 OpenAI o1 相當，MIT 授權並開源 6 個蒸餾小模型；API 每百萬 tokens 輸入 0.55 美元（快取命中 0.14）、輸出 2.19 美元，同日月之暗面也發表 Kimi k1.5。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-R1",
+          "DeepSeek-R1-Zero",
+          "Kimi k1.5"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "發布": "2025-01-20",
+        "授權": "MIT",
+        "蒸餾模型": "6 個",
+        "API 輸入": "0.55 美元／百萬 tokens（快取 0.14）",
+        "API 輸出": "2.19 美元／百萬 tokens"
+      },
+      "game": {
+        "hook": "遊戲最大級事件之一（對應 t_cot 2025-01 公開）：推理需求暴增、開源派聲望 +10，對手『疾風 AI』能力跳升。選項：A 立刻把 R1 蒸餾進自家小模型（能力 +、蒸餾爭議風險）／B 自研 RL（慢但乾淨）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news250120",
+        "https://arxiv.org/abs/2501.12948"
+      ]
+    },
+    {
+      "id": "2025-01-deepseek-app-store",
+      "date": "2025-01-27",
+      "cat": "product",
+      "region": "cn",
+      "title": "DeepSeek 登頂美國 App Store",
+      "text": "R1 爆紅後，DeepSeek App 1 月 27 日超越 ChatGPT 登上美國 iOS 免費榜第一，同日也是中國區第一；《黑神話：悟空》製作人馮驥稱其為『國運級別的科技成果』。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek App",
+          "馮驥（遊戲科學創辦人）"
+        ]
+      },
+      "alias": "某量化基金孵化新創的聊天 App",
+      "numbers": {
+        "登頂日": "2025-01-27",
+        "美國 iOS 免費榜": "第 1 名",
+        "中國區": "第 1 名"
+      },
+      "game": {
+        "hook": "『意外爆紅』：聊天使用者一週 ×10 但容量不足。選項：A 限制新註冊（聲望 -2）／B 緊急租卡（資金 -30%）／C 只保 API（C 端罵聲）。成就『國運級』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/DeepSeek",
+        "https://www.stheadline.com/realtime-china/3423559/",
+        "https://www.ctee.com.tw/news/20250127700224-430801"
+      ]
+    },
+    {
+      "id": "2025-01-nvidia-589b-drop",
+      "date": "2025-01-27",
+      "cat": "capital",
+      "region": "global",
+      "title": "NVIDIA 單日蒸發約 5,890 億美元",
+      "text": "受 DeepSeek 低成本訓練消息衝擊，NVIDIA 1 月 27 日股價重挫約 17%，市值單日蒸發約 5,890 億美元，創美股單一公司史上最大單日市值跌幅，AI 供應鏈股同步重挫。",
+      "real": {
+        "org": "NVIDIA",
+        "names": [
+          "NVDA"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "跌幅": "約 -17%",
+        "市值蒸發": "約 5,890 億美元",
+        "收盤價": "約 118.6 美元"
+      },
+      "game": {
+        "hook": "資本市場事件：GPU 價格短期 -15%（恐慌）、8 週後反彈；融資中或已上市的玩家估值 -20%。選項：A 趁恐慌抄底買卡／B 觀望。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.bloomberg.com/news/articles/2025-01-27/asml-sinks-as-china-ai-startup-triggers-panic-in-tech-stocks",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-loses-usd589-billion-in-market-cap-broad-stock-plunge-triggered-by-deepseek-ai-release",
+        "https://www.fool.com/investing/2025/01/29/nvidia-stock-investors-got-bad-news-from-deepseek"
+      ]
+    },
+    {
+      "id": "2025-01-unitree-yangbot",
+      "date": "2025-01-28",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "春晚秧BOT：人形機器人扭秧歌",
+      "text": "除夕夜央視春晚節目《秧BOT》由張藝謀執導，16 台宇樹 H1 人形機器人穿花襖與舞者共舞、拋接手絹，影片全球瘋傳，『具身智能』從此進入大眾視野。",
+      "real": {
+        "org": "宇樹科技（Unitree）",
+        "names": [
+          "Unitree H1",
+          "《秧BOT》",
+          "張藝謀"
+        ]
+      },
+      "alias": "某杭州機器狗廠",
+      "numbers": {
+        "播出": "2025-01-28",
+        "機器人數": "16 台",
+        "H1 身高／體重": "約 1.8m／47kg"
+      },
+      "game": {
+        "hook": "具身支線解鎖：robot 需求 +20%。互動『春晚邀約』：A 砸錢上節目（資金 -、聲望 +10、機器人訂單 +）／B 婉拒。吉祥物台詞：『手絹，接住！』"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technode.com/2025/01/29/unitree-robotics-humanoid-robots-steal-the-show-at-2025-cctv-spring-festival-gala-with-ai-powered-yangge-dance",
+        "https://www.foxnews.com/tech/humanoid-robots-bust-dance-moves-alongside-humans"
+      ]
+    },
+    {
+      "id": "2025-01-distillation-row",
+      "date": "2025-01-29",
+      "cat": "model",
+      "region": "global",
+      "title": "OpenAI 疑 DeepSeek 蒸餾其模型",
+      "text": "1 月 29 日彭博報導微軟與 OpenAI 調查疑與 DeepSeek 有關的帳號透過 API 大量擷取輸出；OpenAI 表示正審視 DeepSeek 可能『不當蒸餾』其模型的跡象，白宮 AI 顧問 David Sacks 稱有『大量證據』但未公開細節。",
+      "real": {
+        "org": "OpenAI；微軟；深度求索",
+        "names": [
+          "DeepSeek-R1",
+          "David Sacks（白宮 AI 顧問）"
+        ]
+      },
+      "alias": "某海外閉源龍頭 vs 某量化基金孵化的新創",
+      "numbers": {
+        "報導日": "2025-01-29",
+        "官方調查結論": "未公開"
+      },
+      "game": {
+        "hook": "『蒸餾』配方風險：使用海外 API 蒸餾會累積被封鎖機率；觸發後失去該 API、聲望 -5，但能力已到手。選項：A 公開資料來源（聲望 +）／B 沉默。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://bnnbloomberg.ca/business/technology/2025/01/29/microsoft-probing-if-deepseek-linked-group-improperly-obtained-openai-data",
+        "https://www.scmp.com/news/world/united-states-canada/article/3296667/microsoft-openai-investigate-chinas-deepseek-over-data-breach"
+      ]
+    },
+    {
+      "id": "2025-01-tw-deepseek-ban",
+      "date": "2025-01-31",
+      "cat": "policy",
+      "region": "tw",
+      "title": "台灣公部門禁用 DeepSeek",
+      "text": "數位發展部 1 月 31 日以資安與跨境傳輸疑慮，警示公務機關與關鍵基礎設施限制使用 DeepSeek；行政院長卓榮泰 2 月 3 日宣布公務機關全面禁用，公立大學研究須報准並採管制措施。",
+      "real": {
+        "org": "數位發展部；行政院",
+        "names": [
+          "DeepSeek",
+          "卓榮泰（行政院長）"
+        ]
+      },
+      "alias": "某島內數位主管機關",
+      "numbers": {
+        "數發部警示": "2025-01-31",
+        "全面禁用": "2025-02-03",
+        "管理規範": "2025-02-06"
+      },
+      "game": {
+        "hook": "台灣政府／企業客群設限：使用中國開源底座的產品在台灣 ent 市場打 7 折。選項：A 換美系或自研底座（重訓成本）／B 主打地端斷網部署（合規賣點）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://cna.com.tw/news/aipl/202502030237.aspx",
+        "https://news.pts.org.tw/article/736572",
+        "https://www.inside.com.tw/article/37431-deepseek-raises-cybersecurity-concerns-moda-bans-use-in-government-agencies"
+      ]
+    },
+    {
+      "id": "2025-02-deepseek-server-busy",
+      "date": "2025-02-06",
+      "cat": "infra",
+      "region": "cn",
+      "title": "伺服器繁忙，DeepSeek 暫停儲值",
+      "text": "爆紅後 DeepSeek 網頁與 App 頻頻回覆『伺服器繁忙，請稍後再試』，2 月 6 日更以伺服器資源緊張為由暫停 API 儲值（既有餘額照用）；各家雲端隨即推出『滿血版 R1』代管服務分流。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek",
+          "伺服器繁忙，請稍後再試"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "暫停儲值": "2025-02-06",
+        "原因": "伺服器資源緊張"
+      },
+      "game": {
+        "hook": "推論容量機制：需求 > 容量時跳出『伺服器繁忙』，每週流失 5% 使用者。選項：A 暫停 API 儲值保 C 端／B 開放第三方雲代管（收授權、讓出流量）。成就『請稍後再試』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.thestar.com.my/tech/tech-news/2025/02/06/deepseek-temporarily-suspends-api-service-top-ups",
+        "https://www.engadget.com/ai/deepseek-limits-model-access-due-to-overwhelming-server-demand-151339342.html",
+        "https://www2.yicaiglobal.com/news/deepseek-halts-api-service-as-chinese-developer-of-hit-chatbot-runs-out-of-server-space"
+      ]
+    },
+    {
+      "id": "2025-02-alibaba-380b-capex",
+      "date": "2025-02-24",
+      "cat": "infra",
+      "region": "cn",
+      "title": "阿里三年 3,800 億元押注 AI",
+      "text": "阿里巴巴 2 月 24 日宣布未來三年投入至少 3,800 億元人民幣（約 530 億美元）於雲端與 AI 基礎設施，超過過去十年總和，被稱為中國民企最大規模的算力投資。",
+      "real": {
+        "org": "阿里巴巴",
+        "names": [
+          "阿里雲",
+          "吳泳銘（阿里巴巴 CEO）"
+        ]
+      },
+      "alias": "某電商巨頭",
+      "numbers": {
+        "投資額": "3,800 億元人民幣以上",
+        "約合": "約 530 億美元",
+        "期間": "3 年"
+      },
+      "game": {
+        "hook": "大廠 capex 軍備賽：中國 GPU 租價 +10%、雲端 API 價格反而下降。選項：A 與巨頭簽長約租算力（便宜但被綁）／B 自建機房（彈性高、前期貴）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.scmp.com/tech/big-tech/article/3299858/alibaba-commits-us53-billion-ai-infrastructure-largest-private-computing-project",
+        "https://news.rthk.hk/rthk/en/component/k2/1792919-20250224.htm"
+      ]
+    },
+    {
+      "id": "2025-02-deepseek-open-source-week",
+      "date": "2025-02-24",
+      "cat": "infra",
+      "region": "cn",
+      "title": "開源週與 545% 理論利潤率",
+      "text": "DeepSeek 2 月 24–28 日連續開源 FlashMLA、DeepEP、DeepGEMM、DualPipe／EPLB 與 3FS 等推論與訓練基建；3 月 1 日公布按 R1 定價計算的理論日收入約 56.2 萬美元、日成本約 8.7 萬美元，成本利潤率 545%。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "FlashMLA",
+          "DeepEP",
+          "DeepGEMM",
+          "DualPipe",
+          "EPLB",
+          "3FS"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "開源週": "2025-02-24～28",
+        "理論日收入": "約 56.2 萬美元",
+        "日成本": "約 8.7 萬美元",
+        "理論成本利潤率": "545%"
+      },
+      "game": {
+        "hook": "『開源基建』選項：開源自家推論框架換開發者聲望 +8，但所有對手推論成本也 -10%（雙面刃）。新聞台詞：『理論上，我們很賺。』"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://techcrunch.com/2025/03/01/deepseek-claims-theoretical-profit-margins-of-545",
+        "https://www.scmp.com/tech/big-tech/article/3300734/deepseek-shows-power-v3-r1-models-theoretical-545-profit-margin",
+        "https://apidog.com/blog/deepseek-open-source-week"
+      ]
+    },
+    {
+      "id": "2025-02-hk-hkgai-v1",
+      "date": "2025-02-25",
+      "cat": "model",
+      "region": "hk",
+      "title": "香港首個本地大模型 HKGAI V1",
+      "text": "由港科大牽頭、InnoHK 資助的香港生成式人工智能研發中心 2 月 25 日發表 HKGAI V1，以 DeepSeek 全參數微調，支援粵語、英語、普通話並推出『港話通』等應用，供 70 多個政府部門使用。",
+      "real": {
+        "org": "香港生成式人工智能研發中心（HKGAI）",
+        "names": [
+          "HKGAI V1",
+          "港話通",
+          "港文通"
+        ]
+      },
+      "alias": "某港府資助的研發中心",
+      "numbers": {
+        "發表": "2025-02-25",
+        "政府部門": "70+",
+        "語言": "粵、英、普"
+      },
+      "game": {
+        "hook": "港澳市場：粵語能力成為小市場差異化賣點；可接政府標案（穩定收入、聲望 +，但資料須在地部署）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.thestandard.com.hk/news/article/228540/Hong-Kong-unveils-HKGAI-V1-A-milestone-in-local-AI-development",
+        "https://www.chinadailyhk.com/hk/article/605490",
+        "https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3300066/hong-kong-government-adopts-chatgpt-style-tool-powered-deepseek"
+      ]
+    },
+    {
+      "id": "2025-02-hangzhou-six-dragons",
+      "date": "2025-02",
+      "cat": "culture",
+      "region": "cn",
+      "title": "杭州六小龍出圈",
+      "text": "DeepSeek 爆紅後，網友把杭州的深度求索、宇樹、遊戲科學、雲深處、強腦科技、群核科技合稱『杭州六小龍』；2 月 17 日民營企業座談會上，梁文鋒也與馬雲、任正非等企業家同場出席。",
+      "real": {
+        "org": "深度求索、宇樹、遊戲科學、雲深處、強腦科技、群核科技",
+        "names": [
+          "杭州六小龍",
+          "梁文鋒"
+        ]
+      },
+      "alias": "某新一線城市的六家新創",
+      "numbers": {
+        "成員數": "6 家",
+        "民企座談會": "2025-02-17"
+      },
+      "game": {
+        "hook": "城市選址系統：選『杭州型』城市（補助 +、人才成本 -）。成就『第七條龍』：在同城成為獨角獸。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Six_Little_Dragons",
+        "https://www.sixthtone.com/news/1016770",
+        "https://www.dailymaverick.co.za/article/2025-02-18-chinas-xi-holds-rare-meet-with-business-leaders-amid-us-tech-rivalry"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "Wikipedia 與 Sixth Tone（2025-03-05）確認六家成員與 2025 年初走紅；Daily Maverick 轉載路透確認 2/17 座談會馬雲、任正非、梁文鋒、王興興等人出席。"
+      }
+    },
+    {
+      "id": "2025-03-manus",
+      "date": "2025-03-06",
+      "cat": "product",
+      "region": "cn",
+      "title": "Manus 爆紅，邀請碼炒上天",
+      "text": "Monica 團隊（蝴蝶效應）3 月 6 日以邀請制推出通用 Agent『Manus』，邀請碼在二手平台被喊價逾 1,000 美元；4 月獲 Benchmark 領投約 7,500 萬美元，5 月開放付費訂閱。",
+      "real": {
+        "org": "蝴蝶效應（Butterfly Effect）",
+        "names": [
+          "Manus",
+          "Monica"
+        ]
+      },
+      "alias": "某通用 Agent 新創",
+      "numbers": {
+        "發表": "2025-03-06",
+        "邀請碼轉售": "逾 1,000 美元（WSJ）",
+        "2025-04 融資": "約 7,500 萬美元"
+      },
+      "game": {
+        "hook": "『Agent 元年』開場：agent 需求 +30%。互動『邀請碼炒作』：A 飢餓行銷（聲望 +5、伺服器壓力小、被罵）／B 全面開放（伺服器爆滿）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Manus_(AI_agent)",
+        "https://www.businessinsider.nl/people-are-listing-invite-codes-to-chinese-ai-agent-manus-for-1000-and-more-on-resale-sites/",
+        "https://technode.com/2025/05/13/chinese-ai-agent-platform-manus-opens-public-registrations/"
+      ]
+    },
+    {
+      "id": "2025-03-tw-foxbrain",
+      "date": "2025-03-10",
+      "cat": "model",
+      "region": "tw",
+      "title": "鴻海 FoxBrain 四週練成",
+      "text": "鴻海研究院 3 月 10 日發表首個具推理能力的繁中大模型 FoxBrain：以 Llama 3.1 70B 為底、120 張 H100 約四週訓練完成（約 2,688 GPU 天），在 TMMLU+ 多數領域勝過 Llama-3-Taiwan-70B，但數學推理仍略遜 DeepSeek 蒸餾模型。",
+      "real": {
+        "org": "鴻海研究院",
+        "names": [
+          "FoxBrain",
+          "Taipei-1"
+        ]
+      },
+      "alias": "某代工龍頭的研究院",
+      "numbers": {
+        "發表": "2025-03-10",
+        "參數": "70B",
+        "GPU": "120 張 H100",
+        "訓練時間": "約 4 週",
+        "算力": "約 2,688 GPU 天",
+        "上下文": "128K"
+      },
+      "game": {
+        "hook": "台灣劇本：製造業巨頭自建模型，外部 API 需求 -；玩家可改接『工廠 Agent』客製案（企業需求 +、客製成本高）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://ec.ltn.com.tw/article/breakingnews/4975071",
+        "https://www.inside.com.tw/article/37773-foxconn-research-traditional-chinese-ai-model",
+        "https://statementdog.com/news/12720"
+      ]
+    },
+    {
+      "id": "2025-03-six-tigers-diverge",
+      "date": "2025-03-17",
+      "cat": "capital",
+      "region": "cn",
+      "title": "六小虎分化，有人退出預訓練",
+      "text": "2025 年『大模型六小虎』開始分化：零一萬物 3 月 17 日宣布全面擁抱 DeepSeek、聚焦企業市場並表明不做兆參數模型，百川轉向 AI 醫療且共同創辦人陸續離開；智譜與 MiniMax 則於 2026 年 1 月在港上市，月之暗面與階躍星辰續攻模型。",
+      "real": {
+        "org": "零一萬物、百川智能、智譜、MiniMax、月之暗面、階躍星辰",
+        "names": [
+          "六小虎",
+          "李開復",
+          "王小川"
+        ]
+      },
+      "alias": "某創投教父的新創／某前搜尋引擎 CEO 的新創",
+      "numbers": {
+        "零一萬物 2024 ToB 收入": "超過 1 億元人民幣（公司說法）",
+        "兆參數模型": "零一萬物表明不做"
+      },
+      "game": {
+        "hook": "對手淘汰機制：2025 起資金不足的對手『轉型』退出基礎模型戰場並釋出人才池。選項：A 收購其團隊（資金 -、人才 +）／B 承接其客戶。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://hao.cnyes.com/post/140407",
+        "https://hao.cnyes.com/post/174531",
+        "https://www.bloomberg.com/news/articles/2026-01-06/openai-challengers-test-appetite-for-chinese-ai-with-twin-debuts"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "鉅亨轉載虎嗅確認 3/17 萬智平台發表、COO 黃蕙雯稱不做兆參數模型、2024 ToB 收入逾 1 億元；百川 2025-03 起共同創辦人離職；智譜、MiniMax 於 2026-01-08／09 港股掛牌。用語改為「共同創辦人」並補上市時間。"
+      }
+    },
+    {
+      "id": "2025-04-h20-license",
+      "date": "2025-04-15",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "H20 也要許可證，NVIDIA 認列 55 億",
+      "text": "美方 4 月 9 日通知 NVIDIA 出口 H20 到中國須無限期取得許可證，NVIDIA 4 月 15 日揭露將因此認列約 55 億美元費用，AMD 對中特供晶片也同受限制。",
+      "real": {
+        "org": "NVIDIA；美國商務部",
+        "names": [
+          "H20"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主的特供卡",
+      "numbers": {
+        "通知": "2025-04-09",
+        "揭露": "2025-04-15",
+        "費用": "約 55 億美元"
+      },
+      "game": {
+        "hook": "『禁令反覆』事件：中國劇本可購清單移除特供卡、國產卡需求 +；先前囤卡的玩家資產升值。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.silicon.co.uk/cloud/ai/nvidia-expects-5-5-billion-hit-as-us-tightens-export-controls-608558",
+        "https://digitalpolicyalert.org/event/29526-us-central-government-implemented-order-requiring-export-licensing-concerning-nvidia-corporations-h20-integrated-circuits-and-comparable-products"
+      ]
+    },
+    {
+      "id": "2025-04-beijing-half-marathon",
+      "date": "2025-04-19",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "全球首場人形機器人半馬",
+      "text": "4 月 19 日北京亦莊半程馬拉松首度讓約 20 支人形機器人隊伍分道參賽，北京人形機器人創新中心的『天工 Ultra』以 2 小時 40 分 42 秒奪冠，途中可換電池。",
+      "real": {
+        "org": "北京人形機器人創新中心",
+        "names": [
+          "天工 Ultra"
+        ]
+      },
+      "alias": "某國家級機器人創新中心",
+      "numbers": {
+        "日期": "2025-04-19",
+        "距離": "21.0975 公里",
+        "冠軍成績": "2:40:42",
+        "參賽隊伍": "約 20 支"
+      },
+      "game": {
+        "hook": "具身比賽事件：投入 robot 研發可參賽，名次影響機器人訂單；隔年成績大幅進步可做『一年快 3 倍』新聞。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://news.cgtn.com/news/2025-04-19/-Tiangong-Ultra-wins-world-s-first-ever-humanoid-robot-half-marathon-1CHdanwJVzG/p.html",
+        "https://www.chinadaily.com.cn/a/202504/21/WS68057e9fa3104d9fd38207c2.html",
+        "https://www.irunfar.com/results-of-the-human-vs-robot-half-marathon-humans-still-tops"
+      ]
+    },
+    {
+      "id": "2025-04-ascend-910c",
+      "date": "2025-04-21",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "華為昇騰 910C 準備大量出貨",
+      "text": "路透 4 月 21 日報導華為最快 5 月起大量出貨昇騰 910C：以兩顆 910B 封裝合一、性能約達 H100 等級，部分主要元件由中芯 7 奈米級（N+2）製程生產但良率偏低；瑞穗估 2025 年昇騰 910 系列出貨約 70 萬顆。",
+      "real": {
+        "org": "華為",
+        "names": [
+          "昇騰 910B",
+          "昇騰 910C",
+          "中芯國際"
+        ]
+      },
+      "alias": "某通訊設備巨頭的 AI 晶片",
+      "numbers": {
+        "910C 結構": "2 顆 910B 封裝",
+        "製程": "部分主要元件為中芯 N+2（7 奈米級）",
+        "2025 出貨估": "約 70 萬顆（瑞穗，含 910A/B/C）",
+        "910C 良率估": "約 30%（瑞穗估）"
+      },
+      "game": {
+        "hook": "國產卡商品：價格便宜 30%、供貨穩定，但 MFU 低、軟體生態弱（訓練效率 ×0.7），研究『昇騰適配』後回升。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.businessday.co.za/bd/companies/telecoms-and-technology/2025-04-21-advanced-new-huawei-ai-chip-set-for-mass-shipment-as-china-seeks-nvidia-alternatives/",
+        "https://www.trendforce.com/news/2025/04/22/news-huaweis-910c-ai-chip-reportedly-gears-up-for-mass-shipment-in-may-amid-u-s-curbs-on-nvidia/",
+        "https://technode.com/2025/05/18/huawei-to-ship-700000-ascend-ai-chips-in-2025-despite-yield-challenges/"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "corrected",
+        "note": "路透原文稱中芯以 N+2 製程生產「部分主要元件」，另有部分 910C 用了台積電代工的晶片，故不寫成全由中芯代工；瑞穗估約 70 萬顆（含 910A/B/C）、良率約 30%，原「20–30%」改為瑞穗數字。"
+      }
+    },
+    {
+      "id": "2025-04-qwen3",
+      "date": "2025-04-29",
+      "cat": "model",
+      "region": "cn",
+      "title": "Qwen3 開源：混合思考模式",
+      "text": "阿里 4 月 29 日開源 Qwen3 系列（235B-A22B 與 30B-A3B 兩個 MoE 加 6 個稠密模型），以約 36 兆 tokens 預訓練、支援 119 種語言與方言，單一模型可切換思考與非思考模式，Apache 2.0 授權。",
+      "real": {
+        "org": "阿里雲",
+        "names": [
+          "Qwen3-235B-A22B",
+          "Qwen3-30B-A3B"
+        ]
+      },
+      "alias": "某電商巨頭的開源模型家族",
+      "numbers": {
+        "旗艦": "235B 總參數／22B 啟用",
+        "預訓練": "約 36 兆 tokens",
+        "語言": "119 種",
+        "授權": "Apache 2.0"
+      },
+      "game": {
+        "hook": "『混合思考』科技：同一模型可調推理強度，推論成本彈性 +；開源派對手全面升級，API 均價再降。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://qwenlm.github.io/blog/qwen3/",
+        "https://arxiv.org/abs/2505.09388"
+      ]
+    },
+    {
+      "id": "2025-05-tw-computex-constellation",
+      "date": "2025-05-19",
+      "cat": "infra",
+      "region": "tw",
+      "title": "輝達台灣總部選定北士科",
+      "text": "黃仁勳 5 月 19 日 Computex 主題演講宣布台灣新總部『NVIDIA Constellation（星群）』落腳北投士林科技園區，並與鴻海、台積電、國科會合作打造台灣 AI 超級電腦；鴻海子公司規劃 1 萬顆 Blackwell Ultra（GB300 NVL72）的 AI 工廠。",
+      "real": {
+        "org": "NVIDIA；鴻海；台積電；國科會",
+        "names": [
+          "NVIDIA Constellation",
+          "GB300 NVL72",
+          "黃仁勳"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "宣布": "2025-05-19",
+        "AI 工廠 GPU": "1 萬顆 Blackwell Ultra",
+        "鴻海 AI 資料中心": "100MW（分三階段）"
+      },
+      "game": {
+        "hook": "台灣劇本機會：申請國家級 AI 超算（算力租價 -30%，須配合主權 AI 計畫）；也觸發『大廠在你隔壁』事件（工程師被挖角機率 +）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://news.pts.org.tw/article/751851",
+        "https://www.engadget.com/ai/nvidia-and-foxconn-are-building-an-ai-factory-supercomputer-in-taiwan-145535818.html",
+        "https://www.geneonline.news/jensen-huang-announces-nvidia-constellation-location/",
+        "https://www.cw.com.tw/article/5135427"
+      ]
+    },
+    {
+      "id": "2025-06-minimax-m1",
+      "date": "2025-06-16",
+      "cat": "model",
+      "region": "cn",
+      "title": "MiniMax-M1：百萬上下文推理",
+      "text": "MiniMax 6 月 16 日開源推理模型 M1（總參數 456B），原生支援 100 萬 tokens 輸入、8 萬 tokens 輸出並採混合注意力；強化學習階段用 512 張 H800 約三週，租用成本約 53.47 萬美元。",
+      "real": {
+        "org": "MiniMax（稀宇科技）",
+        "names": [
+          "MiniMax-M1",
+          "CISPO",
+          "Lightning Attention"
+        ]
+      },
+      "alias": "某上海多模態新創",
+      "numbers": {
+        "總參數": "456B",
+        "啟用參數": "約 45.9B",
+        "輸入上下文": "100 萬 tokens",
+        "最長輸出": "8 萬 tokens",
+        "RL 成本": "約 53.47 萬美元"
+      },
+      "game": {
+        "hook": "對應 t_hybrid（線性／混合注意力）：解鎖後長上下文推論成本大降；『RL 只要 50 萬美元』新聞讓小公司也敢做推理模型（研究成本 -）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://minimax.io/news/minimaxm1",
+        "https://arxiv.org/abs/2506.13585"
+      ]
+    },
+    {
+      "id": "2025-06-ernie45-open-source",
+      "date": "2025-06-30",
+      "cat": "model",
+      "region": "cn",
+      "title": "百度轉向開源文心 4.5",
+      "text": "李彥宏 2024 年 4 月曾說『開源模型會越來越落後』，DeepSeek 爆紅後百度 2 月宣布轉向，6 月 30 日開源文心 4.5 系列 10 個模型（0.3B 至 424B），採 Apache 2.0 授權。",
+      "real": {
+        "org": "百度",
+        "names": [
+          "ERNIE 4.5",
+          "李彥宏"
+        ]
+      },
+      "alias": "某搜尋巨頭",
+      "numbers": {
+        "開源日": "2025-06-30",
+        "模型數": "10 個",
+        "參數範圍": "0.3B–424B",
+        "授權": "Apache 2.0"
+      },
+      "game": {
+        "hook": "『路線大轉彎』：一直走閉源的玩家在 DeepSeek 事件後遭董事會施壓。A 開源舊旗艦（聲望 +、API 收入 -）／B 堅持閉源（企業 +、開發者 -）。成就『真香』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://the-decoder.com/baidu-releases-open-source-model-family-ernie-4-5/",
+        "https://www.scmp.com/tech/big-tech/article/3316415/baidu-latest-join-open-source-movement-ernie-45-models-publicly-available",
+        "https://m.jiemian.com/article/11048239.html"
+      ]
+    },
+    {
+      "id": "2025-07-kimi-k2",
+      "date": "2025-07-11",
+      "cat": "model",
+      "region": "cn",
+      "title": "Kimi K2：兆參數開源 Agent 模型",
+      "text": "月之暗面 7 月開源 Kimi K2：總參數 1 兆、啟用 32B，以 MuonClip 優化器穩定完成預訓練，主打 Agent 與程式；11 月 6 日推出 K2 Thinking，CNBC 引消息人士稱訓練成本約 460 萬美元，執行長楊植麟回應那『不是官方數字』。",
+      "real": {
+        "org": "月之暗面",
+        "names": [
+          "Kimi K2",
+          "Kimi K2 Thinking",
+          "MuonClip",
+          "楊植麟（月之暗面執行長）"
+        ]
+      },
+      "alias": "某長文本新創",
+      "numbers": {
+        "總參數": "1 兆",
+        "啟用參數": "32B",
+        "K2 Thinking": "2025-11-06",
+        "傳聞訓練成本": "約 460 萬美元（非官方）"
+      },
+      "game": {
+        "hook": "對應 t_muon（Muon 優化器，2025-02 公開）：研究後有效算力 +25%。『開源兆參數』讓 Agent 市場價格再降。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/abs/2507.20534",
+        "https://siliconangle.com/2025/11/07/moonshot-launches-open-source-kimi-k2-thinking-ai-trillion-parameters-reasoning-capabilities/",
+        "https://www2.yicaiglobal.com/news/kimi-k2-thinkings-reported-usd46-million-training-cost-isnt-official-moonshot-ceo-says"
+      ]
+    },
+    {
+      "id": "2025-07-glm45",
+      "date": "2025-07-28",
+      "cat": "model",
+      "region": "cn",
+      "title": "智譜 GLM-4.5 開源，改稱 Z.ai",
+      "text": "2025 年 1 月被美國列入實體清單的智譜，7 月 28 日開源 GLM-4.5（總參數 355B、啟用 32B）與 GLM-4.5-Air，主打 Agent 與程式能力並以低價 API 搶市，海外品牌改稱 Z.ai。",
+      "real": {
+        "org": "智譜（Z.ai）",
+        "names": [
+          "GLM-4.5",
+          "GLM-4.5-Air"
+        ]
+      },
+      "alias": "某清華系大模型公司",
+      "numbers": {
+        "開源": "2025-07-28",
+        "總參數": "355B",
+        "啟用參數": "32B",
+        "列入實體清單": "2025-01"
+      },
+      "game": {
+        "hook": "制裁對手的韌性：被列實體清單後轉向國產卡加開源。玩家若遭制裁：A 全面國產化（效率 ×0.8、供應穩）／B 走海外子公司（法律風險）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Z.ai",
+        "https://venturebeat.com/ai/chinese-startup-z-ai-launches-powerful-open-source-glm-4-5-model-family-with-powerpoint-creation",
+        "https://www.eweek.com/artificial-intelligence/zai-glm45-agentic-ai-model/"
+      ]
+    },
+    {
+      "id": "2025-07-h20-whiplash",
+      "date": "2025-07-31",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "H20 解禁，北京反向約談 NVIDIA",
+      "text": "NVIDIA 7 月 15 日宣布獲准恢復對中國銷售 H20，網信辦卻在 7 月 31 日約談 NVIDIA 說明 H20 是否有追蹤、遠端關閉等『後門』風險；9 月 15 日市場監管總局初步認定其收購 Mellanox 違反反壟斷法，9 月中更傳出要求大廠停購 RTX Pro 6000D。",
+      "real": {
+        "org": "國家網信辦；市場監管總局；NVIDIA",
+        "names": [
+          "H20",
+          "RTX Pro 6000D",
+          "Mellanox"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "恢復銷售": "2025-07-15",
+        "網信辦約談": "2025-07-31",
+        "反壟斷初步認定": "2025-09-15",
+        "停購 6000D 報導": "約 2025-09-17"
+      },
+      "game": {
+        "hook": "雙向管制：中國劇本 GPU 來源 = 美方准不准 × 北京要不要。事件：A 搶購 H20（便宜但可能被要求停用）／B 改買國產（效率低但政治安全）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.news4jax.com/news/politics/2025/07/31/china-summons-nvidia-over-backdoor-safety-risks-in-h20-chips/",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-to-resume-h20-sales-in-china-says-u-s-government-has-promised-to-grant-licenses-deliveries-to-start-soon",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/china-bans-its-biggest-tech-companies-from-acquiring-nvidia-chips-says-report-beijing-claims-its-homegrown-ai-processors-now-match-h20-and-rtx-pro-6000d"
+      ]
+    },
+    {
+      "id": "2025-08-tw-foxconn-cloud-overtakes",
+      "date": "2025-08-14",
+      "cat": "hardware",
+      "region": "tw",
+      "title": "鴻海 AI 伺服器營收首超消費電子",
+      "text": "鴻海 2025 年第二季雲端網路產品營收占比 41%，首度超過消費智能產品的 35%，其中 AI 伺服器占雲端網路過半；2025 全年雲端網路約占四成，取代 iPhone 等消費電子成為最大營收來源。",
+      "real": {
+        "org": "鴻海精密",
+        "names": [
+          "劉揚偉（鴻海董事長）",
+          "GB200"
+        ]
+      },
+      "alias": "某代工龍頭",
+      "numbers": {
+        "2025Q2 雲端網路占比": "41%",
+        "2025Q2 消費智能占比": "35%",
+        "2025 全年雲端網路": "約 40%"
+      },
+      "game": {
+        "hook": "供應鏈指標：代工 NPC 產能決定 GPU 機櫃交期；AI 伺服器占比超越消費電子後，機櫃交期 -2 週。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://uanalyze.com.tw/articles/5938328761",
+        "https://newtalk.tw/news/view/2025-08-15/988011",
+        "https://blog.fugle.tw/post/earnings-call-2317-2026-03-16"
+      ]
+    },
+    {
+      "id": "2025-08-world-humanoid-games",
+      "date": "2025-08-15",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "首屆世界人形機器人運動會",
+      "text": "8 月 14–17 日北京舉辦首屆世界人形機器人運動會，16 國 280 支隊伍參加 26 個項目、487 場比賽；宇樹 H1 以約 6 分 34 秒奪下 1,500 公尺首金，機器人跌倒、暴衝的畫面也成為熱門迷因。",
+      "real": {
+        "org": "宇樹科技等",
+        "names": [
+          "Unitree H1",
+          "天工"
+        ]
+      },
+      "alias": "某杭州機器狗廠",
+      "numbers": {
+        "日期": "2025-08-14～17",
+        "國家": "16",
+        "隊伍": "280",
+        "項目": "26",
+        "場次": "487",
+        "1500m 冠軍": "約 6:34"
+      },
+      "game": {
+        "hook": "年度機器人運動會（2025 起每年 8 月）：robot 研發可換獎牌與聲望；隨機翻車『機器人倒地不起』可做搞笑新聞。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://gizmodo.com/the-biggest-winners-of-chinas-world-humanoid-robot-games-2000644284",
+        "https://english.beijing.gov.cn/latest/photos/202508/t20250815_4174436.html",
+        "https://www.euronews.com/2025/08/18/watch-robots-sprint-and-play-football-at-first-world-games-in-beijing"
+      ]
+    },
+    {
+      "id": "2025-08-deepseek-v31-ue8m0",
+      "date": "2025-08-21",
+      "cat": "model",
+      "region": "cn",
+      "title": "V3.1 一句話帶飛國產晶片股",
+      "text": "8 月 21 日 DeepSeek-V3.1 推出混合思考模式，並稱採用 UE8M0 FP8 縮放格式、『針對即將發布的下一代國產晶片設計』；未點名廠商卻讓寒武紀隔日大漲約 20%，中芯等晶片股同步走強。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V3.1",
+          "UE8M0 FP8"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "發布": "2025-08-21",
+        "寒武紀隔日": "約 +20%"
+      },
+      "game": {
+        "hook": "『一句話行情』：宣布支援國產晶片可換政府好感與國產卡折扣，但 NVIDIA 生態效率 -。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news250821",
+        "https://www.geopolitechs.org/p/a-single-sentence-from-deepseek-sends",
+        "https://www.silicon.co.uk/e-innovation/artificial-intelligence/china-deepseek-chips-626421"
+      ]
+    },
+    {
+      "id": "2025-08-ai-plus-opinions",
+      "date": "2025-08-26",
+      "cat": "policy",
+      "region": "cn",
+      "title": "國務院『人工智能+』行動意見",
+      "text": "國務院 8 月 26 日公布《關於深入實施『人工智能+』行動的意見》：2027 年新一代智慧終端與智能體普及率超過 70%、2030 年超過 90%，2035 年全面邁入智能經濟與智能社會。",
+      "real": {
+        "org": "國務院",
+        "names": [
+          "《關於深入實施「人工智能+」行動的意見》（國發〔2025〕11 號）"
+        ]
+      },
+      "alias": "某大型市場的最高行政機關",
+      "numbers": {
+        "2027 普及率目標": ">70%",
+        "2030 普及率目標": ">90%",
+        "願景年": "2035"
+      },
+      "game": {
+        "hook": "政策需求加成：2025-09 起中國 agent 與企業市場需求每年 +15%，政府採購標案事件增加。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://cset.georgetown.edu/publication/china-ai-plus-opinions-2025/",
+        "https://cset.georgetown.edu/wp-content/uploads/t0652_AI_plus_opinions_EN.pdf"
+      ]
+    },
+    {
+      "id": "2025-08-cambricon-chip-frenzy",
+      "date": "2025-08-27",
+      "cat": "capital",
+      "region": "cn",
+      "title": "寒武紀超車茅台，國產晶片狂熱",
+      "text": "國產 AI 晶片概念推升寒武紀股價，8 月 27 日盤中一度超越貴州茅台成為 A 股最貴個股、8 月 28 日最高約 1,595.88 元；12 月 5 日『國產 GPU 第一股』摩爾線程上市，首日收在約 584.98 元，較發行價 114.28 元漲逾 4 倍。",
+      "real": {
+        "org": "寒武紀；摩爾線程",
+        "names": [
+          "寒武紀",
+          "摩爾線程",
+          "貴州茅台"
+        ]
+      },
+      "alias": "某國產 AI 晶片股／某國產 GPU 新創",
+      "numbers": {
+        "寒武紀超車日": "2025-08-27",
+        "寒武紀最高價": "約 1,595.88 元",
+        "摩爾線程上市": "2025-12-05",
+        "摩爾線程首日": "約 +412%",
+        "摩爾線程募資": "約 80 億元人民幣"
+      },
+      "game": {
+        "hook": "資本泡沫事件：國產晶片供應商股價暴漲時，其晶片價格 +20%、交期縮短、下一代提前 1 季；玩家可投資（高風險資產）或以卡換股。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.bloomberg.com/news/articles/2025-08-27/cambricon-briefly-overtakes-moutai-as-china-s-priciest-stock",
+        "https://www.caixinglobal.com/2025-08-29/in-depth-cambricon-tops-chinas-market-as-domestic-ai-chip-drive-creates-a-new-billionaire-102356497.html",
+        "https://www.euronews.com/2025/12/05/chinas-bet-on-home-grown-chips-pays-off-with-moore-threads-blockbuster-debut",
+        "https://en.jiemian.com/article/13724679.html"
+      ]
+    },
+    {
+      "id": "2025-09-r1-nature",
+      "date": "2025-09-17",
+      "cat": "model",
+      "region": "cn",
+      "title": "R1 論文登上 Nature 封面",
+      "text": "DeepSeek-R1 論文 9 月 17 日登上《Nature》封面，被視為首個通過同儕審查的主流大模型，補充資料揭露 R1 推理訓練成本約 29.4 萬美元（不含約 600 萬美元的基座模型）；12 月梁文鋒入選《Nature》年度十大人物。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-R1",
+          "Nature",
+          "梁文鋒"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "刊登": "2025-09-17",
+        "R1 訓練成本": "約 29.4 萬美元",
+        "基座成本": "約 600 萬美元",
+        "Nature's 10": "2025-12"
+      },
+      "game": {
+        "hook": "學術聲望：論文獲頂刊接收時研究員招募 +15%。成就『上了 Nature 封面』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.nature.com/articles/s41586-025-09422-z",
+        "https://www.techspot.com/news/109542-rare-disclosure-deepseek-claims-r1-model-training-cost.html",
+        "https://www.scmp.com/tech/tech-trends/article/3335748/deepseeks-liang-wenfeng-makes-cut-top-10-people-who-shaped-science-2025"
+      ]
+    },
+    {
+      "id": "2025-09-huawei-ascend-roadmap",
+      "date": "2025-09-18",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "華為公布昇騰三年路線圖",
+      "text": "華為 9 月 18 日在全聯接大會公布昇騰路線：950PR（2026Q1）、950DT（2026Q4）、960（2027Q4）、970（2028Q4），並首度宣布自研 HBM；Atlas 950 SuperPoD 可串接 8,192 顆晶片，預定 2026Q4 上市。",
+      "real": {
+        "org": "華為",
+        "names": [
+          "昇騰 950PR",
+          "昇騰 950DT",
+          "昇騰 960",
+          "昇騰 970",
+          "Atlas 950 SuperPoD"
+        ]
+      },
+      "alias": "某通訊設備巨頭",
+      "numbers": {
+        "960": "2027Q4",
+        "970": "2028Q4",
+        "950PR": "2026Q1",
+        "950DT": "2026Q4",
+        "SuperPoD 規模": "8,192 顆"
+      },
+      "game": {
+        "hook": "國產卡科技樹時間表：中國劇本每年解鎖新一代國產卡；『超節點』以數量彌補單卡性能。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.trendforce.com/news/2025/09/18/news-huawei-unveils-ascend-950-with-in-house-hbm-in-2026-touts-superpod-to-rival-nvidia/",
+        "https://www.huawei.com/en/news/2025/9/hc-xu-keynote-speech"
+      ]
+    },
+    {
+      "id": "2025-09-deepseek-v32-exp",
+      "date": "2025-09-29",
+      "cat": "model",
+      "region": "cn",
+      "title": "V3.2-Exp：稀疏注意力再降價",
+      "text": "9 月 29 日發表 DeepSeek-V3.2-Exp，以 V3.1-Terminus 為底導入 DeepSeek Sparse Attention（DSA）降低長文本成本，API 同步降價 50% 以上：每百萬 tokens 輸入 0.28 美元（快取 0.028）、輸出 0.42 美元。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V3.2-Exp",
+          "DSA（DeepSeek Sparse Attention）"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "發布": "2025-09-29",
+        "降價": "50%+",
+        "輸入": "0.28 美元／百萬 tokens（快取 0.028）",
+        "輸出": "0.42 美元／百萬 tokens"
+      },
+      "game": {
+        "hook": "對應 t_sparse（稀疏注意力 DSA，2025-09）。價格戰第二波：API 均價 -50%。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news250929",
+        "https://deepseek.com/en/news/v3-2-exp/",
+        "https://heise.de/-10678748"
+      ]
+    },
+    {
+      "id": "2025-11-qwen-app",
+      "date": "2025-11-17",
+      "cat": "product",
+      "region": "cn",
+      "title": "千問 App 公測一週破千萬下載",
+      "text": "阿里 11 月 17 日公測個人 AI 助理『千問』App，一週下載量突破 1,000 萬並衝上中國區 App Store 前三，阿里港股隨後漲逾 5%；螞蟻的『靈光』也在同期上線。",
+      "real": {
+        "org": "阿里巴巴",
+        "names": [
+          "千問 App",
+          "靈光（螞蟻集團）"
+        ]
+      },
+      "alias": "某電商巨頭",
+      "numbers": {
+        "公測": "2025-11-17",
+        "首週下載": "1,000 萬+",
+        "App Store 中國區": "前 3"
+      },
+      "game": {
+        "hook": "C 端 App 大戰：巨頭以既有流量導流，新 App 首週下載 ×10；沒有通路的玩家須付高額投放費。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.alibabagroup.com/document-1928528945544691712",
+        "https://www.scmp.com/tech/big-tech/article/3333935/alibabas-qwen-chatbot-exceeds-10-million-downloads-faster-chatgpt-and-deepseek"
+      ]
+    },
+    {
+      "id": "2025-12-deepseek-v32",
+      "date": "2025-12-01",
+      "cat": "model",
+      "region": "cn",
+      "title": "V3.2 與 Speciale：奧賽金牌級",
+      "text": "12 月 1 日發表 DeepSeek-V3.2 正式版與高算力推理版 V3.2-Speciale，後者宣稱在 IMO、IOI 等競賽達金牌水準但初期僅提供 API；V3.2 以 MIT 授權開源。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V3.2",
+          "DeepSeek-V3.2-Speciale"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "發布": "2025-12-01",
+        "Speciale": "初期僅 API",
+        "授權": "MIT（V3.2）"
+      },
+      "game": {
+        "hook": "『競賽金牌』聲望事件：推理分數過門檻時觸發，學術聲望 +、研究員招募 +。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news251201",
+        "https://www.etvbharat.com/en/technology/deepseek-introduces-v3-dot-2-and-v3-dot-2-speciale-ai-models-enn25120204582"
+      ]
+    },
+    {
+      "id": "2025-12-h200-approval",
+      "date": "2025-12-08",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "川普准 H200 售中，北京卻設卡",
+      "text": "川普 12 月 8 日宣布允許 NVIDIA 向獲准的中國客戶出售 H200、美方抽成 25%；但 2026 年 1 月中傳出中國海關告知 H200 不得入境，月底又傳首批進口獲准；7 月再傳北京將有條件放行，總量可能低於 20 萬顆且限用於訓練。",
+      "real": {
+        "org": "美國白宮；NVIDIA；中國海關",
+        "names": [
+          "H200"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "美方宣布": "2025-12-08",
+        "美方抽成": "25%",
+        "中國海關擋關": "2026-01-14（路透）",
+        "首批獲准傳聞": "2026-01-28，數十萬顆（路透）",
+        "2026-07 傳聞上限": "低於 20 萬顆"
+      },
+      "game": {
+        "hook": "『有卡進不來』：中國劇本出現高階卡但須通過『雙邊許可』（隨機延遲 4–20 週）。選項：A 申請 H200（快但政治風險）／B 只用國產（穩）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technode.com/2025/12/09/us-allows-nvidia-to-sell-h200-chips-to-china-with-25-us-royalty-limits-sales-to-approved-customers/",
+        "https://www.marketscreener.com/news/china-clears-first-nvidia-h200-ai-chips-for-import-sources-ce7e5bd9da81f527",
+        "https://www.trendforce.com/news/2026/07/09/news-china-reportedly-to-allow-nvidia-h200-imports-but-approvals-may-be-capped-below-200k-chips-less-than-half-requested/"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "corrected",
+        "note": "12/8 宣布與 25% 抽成、1/14 路透海關擋關報導（Business Day 轉載）、7/9 低於 20 萬顆且限訓練均屬實；但原文「直到 7 月才傳放行」漏掉路透 1/28 報導北京已批准字節、阿里、騰訊首批數十萬顆，已補上。"
+      }
+    },
+    {
+      "id": "2025-12-tw-national-compute",
+      "date": "2025-12-12",
+      "cat": "infra",
+      "region": "tw",
+      "title": "國網雲端算力中心與晶創 26",
+      "text": "國網中心 H200 超級電腦『晶創 26』（Nano4，220 節點、每節點 8 張 H200）2025 年 11 月首登 TOP500 第 29 名、Rmax 81.55 PFLOPS；12 月 12 日南科『國網雲端算力中心』啟用（15MW、700 櫃），國科會同步成立台灣算力聯盟。",
+      "real": {
+        "org": "國研院國網中心；國科會",
+        "names": [
+          "晶創 26（Nano4）",
+          "國網雲端算力中心",
+          "台灣算力聯盟"
+        ]
+      },
+      "alias": "某島內國家高速計算中心",
+      "numbers": {
+        "TOP500": "第 29 名（2025-11）",
+        "Rmax": "81.55 PFLOPS",
+        "H200": "1,760 張（220×8）",
+        "算力中心電力": "15MW",
+        "機櫃": "700 櫃"
+      },
+      "game": {
+        "hook": "台灣劇本『國家算力』：可低價租用國網算力（排隊制、每季配額），或加入算力聯盟換補助。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technews.tw/2025/11/21/nano4-top500/",
+        "https://www.ithome.com.tw/news/172794",
+        "https://uanalyze.com.tw/articles/1007041996"
+      ]
+    },
+    {
+      "id": "2025-12-ai-talent-moves",
+      "date": "2025-12-17",
+      "cat": "talent",
+      "region": "cn",
+      "title": "大廠搶 AI 科學家：姚順雨、羅福莉",
+      "text": "騰訊 12 月 17 日內部宣布前 OpenAI 研究員姚順雨出任首席 AI 科學家，向總裁劉熾平匯報並兼管 AI Infra 與大語言模型部門；11 月中，曾參與 DeepSeek-V2 研發的羅福莉也證實加入小米、帶領 MiMo 團隊。",
+      "real": {
+        "org": "騰訊；小米",
+        "names": [
+          "姚順雨",
+          "劉熾平（騰訊總裁）",
+          "羅福莉",
+          "Xiaomi MiMo"
+        ]
+      },
+      "alias": "某社交遊戲巨頭／某手機車廠",
+      "numbers": {
+        "騰訊任命": "2025-12-17",
+        "羅福莉證實加入小米": "約 2025-11-12"
+      },
+      "game": {
+        "hook": "明星人才轉會：對手以 3 倍薪資挖角玩家核心研究員。選項：A 加薪留人（資金 -）／B 放人並要求競業（聲望 -1）／C 讓其帶小隊另立聯合實驗室（合作）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.eyeshenzhen.com/content/2026-01/12/content_31901304.htm",
+        "https://www.mobileworldlive.com/ai-cloud/tencent-nabs-openai-researcher-as-ai-shake-up-advances/",
+        "https://en.wikipedia.org/wiki/Xiaomi_MiMo",
+        "https://www.scmp.com/tech/big-tech/article/3332502/chinese-ai-prodigy-luo-fuli-joins-xiaomi-industry-competition-talent-heats"
+      ]
+    },
+    {
+      "id": "2025-12-tw-ai-basic-law",
+      "date": "2025-12-23",
+      "cat": "policy",
+      "region": "tw",
+      "title": "台灣《人工智慧基本法》三讀",
+      "text": "立法院 12 月 23 日三讀通過《人工智慧基本法》，2026 年 1 月 14 日總統公布施行，全文 20 條：國科會為中央主管機關、揭示七大原則，行政院須成立國家人工智慧戰略特別委員會並訂定發展綱領。",
+      "real": {
+        "org": "立法院；國科會；行政院",
+        "names": [
+          "《人工智慧基本法》"
+        ]
+      },
+      "alias": "某島內 AI 基本法",
+      "numbers": {
+        "三讀": "2025-12-23",
+        "公布施行": "2026-01-14",
+        "條文": "20 條",
+        "原則": "7 項"
+      },
+      "game": {
+        "hook": "台灣劇本監管：2026 起需做風險分級與資料治理，合規成本小幅 +；取得『可信任 AI』評測後政府市場需求 +。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technews.tw/2025/12/23/artificial-intelligence-basic-law/",
+        "https://www.taipeitimes.com/News/front/archives/2025/12/24/2003849407",
+        "https://6laws.net/6law/law/人工智慧基本法.htm"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "TechNews 與 Taipei Times 確認 12/23 三讀、國科會為主管機關、七項原則與國家人工智慧戰略特別委員會；法規全文顯示 2026-01-14 公布施行、全文 20 條。"
+      }
+    },
+    {
+      "id": "2025-12-doubao-100m-dau",
+      "date": "2025-12",
+      "cat": "product",
+      "region": "cn",
+      "title": "豆包日活破億，日耗 50 兆 tokens",
+      "text": "火山引擎 12 月 FORCE 大會稱豆包大模型日均 tokens 使用量突破 50 兆、年增逾 10 倍，豆包 App 日活也在 12 月下旬突破 1 億；2026 年 4 月公布日均用量已超過 120 兆、6 月再超過 180 兆 tokens。",
+      "real": {
+        "org": "字節跳動（火山引擎）",
+        "names": [
+          "豆包",
+          "豆包大模型 1.8",
+          "譚待（火山引擎總裁）"
+        ]
+      },
+      "alias": "某短影音巨頭",
+      "numbers": {
+        "2025-12 日均 tokens": "50 兆+",
+        "2025-12 DAU": "1 億+",
+        "2026-04 日均 tokens": "120 兆+（截至 3 月，4 月公布）",
+        "2026-06 日均 tokens": "180 兆+（6/23 FORCE 大會公布）"
+      },
+      "game": {
+        "hook": "『日均 tokens』成為新 KPI：可加統計與成就（1 兆、10 兆、100 兆）；對應對手『蜂巢』的成長曲線。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://pandaily.com/volcano-engine-releases-doubao-large-model-1-8-entering-the-global-top-tier-of-multimodal-ai",
+        "https://amp.kr-asia.com/doubao-hits-100-million-daus-as-bytedance-extends-its-ai-lead",
+        "https://www.news.cn/tech/20260623/acd6f2f27fc34459a7d1684c03278431/c.html"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "2025-12-18 FORCE 大會公布逾 50 兆、年增逾 10 倍；36Kr／KrASIA 12/29 報導 App 日活破億；TechNode 2026-04-07 報導截至 3 月逾 120 兆，新華網 2026-06-23 報導逾 180 兆；措辭微調為「4 月公布」。"
+      }
+    },
+    {
+      "id": "2026-01-manus-meta-review",
+      "date": "2026-01-08",
+      "cat": "policy",
+      "region": "cn",
+      "title": "Meta 收購 Manus，商務部審查",
+      "text": "Manus 2025 年 7 月把總部遷往新加坡並裁撤多數國內員工，12 月 29 日 Meta 宣布收購（據報估值 20 億至 30 億美元）；2026 年 1 月 8 日商務部表示將評估是否符合出口管制等規定，3 月發改委約談創辦人並限制出境，4 月 27 日更下令撤銷交易。",
+      "real": {
+        "org": "Manus（蝴蝶效應）；Meta；中國商務部",
+        "names": [
+          "Manus",
+          "何亞東（商務部發言人）"
+        ]
+      },
+      "alias": "某通用 Agent 新創",
+      "numbers": {
+        "遷新加坡": "2025-07",
+        "收購估值": "約 20–30 億美元（據報）",
+        "商務部表態": "2026-01-08",
+        "發改委下令撤銷": "2026-04-27"
+      },
+      "game": {
+        "hook": "『搬去海外再賣掉』路線風險：玩家若把團隊遷往海外後出售，觸發母國審查（交易延宕 26 週、罰款或被迫撤回）。選項：A 主動申報（慢但安全）／B 硬闖（高風險高報酬）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2026-01-08/china-to-review-metas-acquisition-of-ai-startup-manus-102401786.html",
+        "https://finance.yahoo.com/sectors/technology/articles/china-bars-manus-co-founders-044724261.html",
+        "https://the-decoder.com/china-blocks-metas-2-billion-acquisition-of-ai-startup-manus/"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "corrected",
+        "note": "The FT broke the story Jan 7, but MOFCOM spokesman He Yadong announced the assessment on Jan 8, so the date moved; Meta announced the deal Dec 29, 2025. Added what followed: per Reuters/FT the NDRC summoned CEO Xiao Hong and chief scientist Ji Yichao in March and barred them from leaving China, and on Apr 27, 2026 the NDRC ordered the acquisition unwound."
+      }
+    },
+    {
+      "id": "2026-01-zhipu-minimax-ipo",
+      "date": "2026-01-08",
+      "cat": "capital",
+      "region": "hk",
+      "title": "智譜、MiniMax 港股接力上市",
+      "text": "『六小虎』中的智譜 1 月 8 日以每股 116.2 港元在港交所掛牌，成為全球首家上市的大模型公司，募資約 43.5 億港元、公開發售超購 1,159 倍；MiniMax 隔日以 165 港元上市，募資約 48.2 億港元，首日收漲約 109%。",
+      "real": {
+        "org": "智譜（Z.ai）；MiniMax",
+        "names": [
+          "智譜",
+          "MiniMax",
+          "MiniMax M2"
+        ]
+      },
+      "alias": "某清華系大模型公司／某上海多模態新創",
+      "numbers": {
+        "智譜發行價": "116.2 港元",
+        "智譜募資": "約 43.5 億港元",
+        "智譜公開發售超購": "1,159 倍",
+        "MiniMax 發行價": "165 港元",
+        "MiniMax 募資": "約 48.2 億港元",
+        "MiniMax 首日": "約 +109%"
+      },
+      "game": {
+        "hook": "IPO 系統：2026 起可在港股上市（需連續 2 季營收成長），首日漲幅取決於當時 AI 熱度。MiniMax 2025-10-27 推出 M2（API 價約 Claude Sonnet 的 8%）可作為上市前『秀肌肉』事件原型。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2026-01-08/chinas-zhipu-ai-jumps-in-hong-kong-debut-102401610.html",
+        "https://www.scmp.com/business/banking-finance/article/3339251/chinese-ai-start-minimax-shines-hong-kong-ipo-debut",
+        "https://technode.com/2026/01/09/mihoyo-backed-ai-firm-minimax-jumps-on-hong-kong-debut-market-value-tops-11-5-billion/",
+        "https://minimax.io/news/minimax-m2"
+      ]
+    },
+    {
+      "id": "2026-01-kimi-k25",
+      "date": "2026-01-27",
+      "cat": "model",
+      "region": "cn",
+      "title": "Kimi K2.5 與估值狂飆",
+      "text": "月之暗面 1 月 27 日發表原生多模態的 Kimi K2.5（約 15 兆多模態 tokens 訓練），年化經常性收入隨後突破 1 億美元；估值從年初約 43 億美元、春節前後約 100 億美元，到 5 月傳以逾 200 億美元完成約 20 億美元融資。",
+      "real": {
+        "org": "月之暗面",
+        "names": [
+          "Kimi K2.5"
+        ]
+      },
+      "alias": "某長文本新創",
+      "numbers": {
+        "發布": "2026-01-27",
+        "ARR": "1 億美元+（2026-03）",
+        "估值（2026 年初）": "約 43 億美元",
+        "估值（2026-05）": "200 億美元+（據彭博）"
+      },
+      "game": {
+        "hook": "估值曲線事件：開源旗艦帶動海外 API 收入時估值倍增；玩家融資時可套用『半年 5 倍』的市場情緒參數。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://arxiv.org/html/2602.02276",
+        "https://www.bloomberg.com/news/articles/2026-02-17/china-ai-startup-moonshot-seeks-10-billion-value-in-new-funding",
+        "https://thenextweb.com/news/moonshot-ai-20bn-valuation-kimi-meituan-china-mobile"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "The Jan 27 release (SiliconANGLE, TMTPost) and about 15T mixed vision and text tokens (K2.5 tech report) are confirmed. The valuation steps check out: $500M C round at $4.3B (Dec 2025), a $10B target reported by Bloomberg on Feb 17 (Lunar New Year), ARR of $100M by early March, and Bloomberg's May 7 report of a ~$2B Meituan-led round at over $20B."
+      }
+    },
+    {
+      "id": "2026-01-tw-cowos-capacity",
+      "date": "2026-01-29",
+      "cat": "hardware",
+      "region": "tw",
+      "title": "CoWoS 擴產仍追不上需求",
+      "text": "台積電 2024 年 CoWoS 產能倍增仍供不應求，法人估 2025 年底月產能約 7 萬片、2026 年底約 11.5 萬至 13 萬片，新增產能多被 NVIDIA 與博通預訂，日月光、Amkor 等封測廠承接外溢訂單。",
+      "real": {
+        "org": "台積電",
+        "names": [
+          "CoWoS",
+          "魏哲家（台積電董事長）"
+        ]
+      },
+      "alias": "某護國晶圓代工廠",
+      "numbers": {
+        "2025 年底月產能（估）": "約 7 萬片",
+        "2026 年底月產能（估）": "約 11.5–13 萬片",
+        "2027 年底（估）": "約 18–20 萬片"
+      },
+      "game": {
+        "hook": "GPU 供給上限＝先進封裝產能：可用『CoWoS 指數』決定每季全球 GPU 可售量與漲價幅度。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://finance.technews.tw/2026/01/29/tsmcs-cowos-advanced-packaging-capacity-expansion-still-falls-short-of-market-demand/",
+        "https://money.udn.com/money/story/5607/9343218",
+        "https://money.udn.com/money/story/5607/9562151"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "TechNews (Jan 29) gives 70K wafers/month at end-2025 rising to 115K at end-2026, with spillover to ASE/SPIL. Other analyst estimates run 120K–140K for end-2026 and 180K–200K for end-2027 (UDN, Jun 2026), with NVIDIA booking over half and Google TPU (Broadcom) next. CNA (Jan 2024) confirms TSMC's 2024 doubling while supply stayed short, and Amkor is a known TSMC packaging partner."
+      }
+    },
+    {
+      "id": "2026-02-spring-red-envelope-war",
+      "date": "2026-02-06",
+      "cat": "product",
+      "region": "cn",
+      "title": "春節 AI 紅包大戰",
+      "text": "2026 春節各家以紅包搶 AI 使用者：騰訊元寶 2 月 1 日起撒 10 億元，阿里千問 2 月 6 日推出 30 億元『春節請客計畫』並登上中國區 App Store 免費榜第一，百度文心投入 5 億元，字節也加入戰局。",
+      "real": {
+        "org": "騰訊；阿里巴巴；百度；字節跳動",
+        "names": [
+          "元寶",
+          "千問",
+          "文心",
+          "豆包"
+        ]
+      },
+      "alias": "四大巨頭",
+      "numbers": {
+        "騰訊元寶": "10 億元",
+        "阿里千問": "30 億元",
+        "百度文心": "5 億元",
+        "千問購物功能使用者": "1.3 億+（報導）"
+      },
+      "game": {
+        "hook": "節慶事件『紅包大戰』：投入行銷預算換新增使用者，但留存隨機（20–50%）；不參加則市佔 -3%。成就『發出一個億』。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2026-02-18/chinas-tech-giants-wage-lunar-new-year-subsidy-war-to-win-ai-users-102415756.html",
+        "https://www.caixinglobal.com/2026-02-10/bytedance-joins-alibaba-tencent-in-lunar-new-year-ai-giveaway-war-102413416.html",
+        "https://www.pekingnology.com/p/chinas-spring-festival-ai-war"
+      ]
+    },
+    {
+      "id": "2026-02-spring-gala-robots",
+      "date": "2026-02-16",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "春晚四家人形機器人同台",
+      "text": "2026 年央視春晚（2 月 16 日除夕）由宇樹（第三度登台）、銀河通用、松延動力、魔法原子四家公司的人形機器人表演武術、後空翻等節目，相關合作據報約 1 億元人民幣；宇樹表示 2026 年人形機器人出貨目標最高 2 萬台（2025 年約 5,500 台）。",
+      "real": {
+        "org": "宇樹；銀河通用；松延動力；魔法原子",
+        "names": [
+          "Unitree",
+          "Galbot",
+          "Noetix",
+          "MagicLab"
+        ]
+      },
+      "alias": "四家機器人新創",
+      "numbers": {
+        "播出": "2026-02-16",
+        "公司數": "4",
+        "合作金額": "約 1 億元人民幣（據 SCMP）",
+        "宇樹 2026 出貨目標": "最高 2 萬台",
+        "宇樹 2025 出貨": "約 5,500 台"
+      },
+      "game": {
+        "hook": "『春晚贊助位』競標：robot 公司玩家可競標登台名額（資金 -、當季機器人訂單 ×2）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technode.com/2026/02/17/humanoid-robots-take-center-stage-at-2026-spring-festival-gala-revealing-chinas-latest-robotics-advances/",
+        "https://www.sixthtone.com/news/1018219/year-of-the-robot%3A-humanoids-lead-a-tech-heavy-spring-festival-gala",
+        "https://aa.com.tr/en/asia-pacific/chinese-new-year-gala-shows-off-advanced-humanoid-robots/3832441"
+      ]
+    },
+    {
+      "id": "2026-02-qwen35",
+      "date": "2026-02-16",
+      "cat": "model",
+      "region": "cn",
+      "title": "Qwen3.5 除夕開源",
+      "text": "阿里 2 月 16 日（除夕）發表 Qwen3.5，開源 397B-A17B 原生多模態模型（Apache 2.0），託管版 Qwen3.5-Plus 宣稱效能比肩 Gemini 3 Pro、token 價格約其 1/18；之後 Qwen3.6（4 月）、3.7-Max（5 月）、3.8（8 月 3 日，2.4 兆參數）快速迭代。",
+      "real": {
+        "org": "阿里雲",
+        "names": [
+          "Qwen3.5-397B-A17B",
+          "Qwen3.5-Plus",
+          "Qwen3.7-Max",
+          "Qwen3.8"
+        ]
+      },
+      "alias": "某電商巨頭的開源模型家族",
+      "numbers": {
+        "發布": "2026-02-16",
+        "開源旗艦": "397B 總參數／17B 啟用",
+        "預設上下文": "262,144 tokens",
+        "Qwen3.8": "2.4 兆參數／95B 啟用"
+      },
+      "game": {
+        "hook": "『節日發版』梗：對手常在除夕、國慶前夕發表新模型，搶走玩家的節日新聞版面（玩家同週發表聲望收益 -50%）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.gizmochina.com/2026/02/18/alibaba-launches-qwen-3-5-is-this-chinas-answer-to-chatgpt/",
+        "https://forklog.com/en/alibabas-cloud-division-launches-open-source-ai-model-qwen-3-5/",
+        "https://technode.com/2026/08/04/alibaba-launches-next-gen-qwen3-8-with-2-4-trillion-parameters",
+        "https://en.wikipedia.org/wiki/Qwen"
+      ]
+    },
+    {
+      "id": "2026-02-anthropic-distillation",
+      "date": "2026-02-23",
+      "cat": "model",
+      "region": "global",
+      "title": "Anthropic 指三家中國實驗室蒸餾",
+      "text": "Anthropic 2 月 23 日指控 DeepSeek、月之暗面、MiniMax 以約 2.4 萬個詐騙帳號與 Claude 進行超過 1,600 萬次對話來蒸餾模型，其中 MiniMax 逾 1,300 萬次、月之暗面逾 340 萬次、DeepSeek 逾 15 萬次；報導當時未見三家公開回應。",
+      "real": {
+        "org": "Anthropic；深度求索；月之暗面；MiniMax",
+        "names": [
+          "Claude"
+        ]
+      },
+      "alias": "某安全派實驗室 vs 三家中國新創",
+      "numbers": {
+        "詐騙帳號": "約 2.4 萬",
+        "對話總數": "1,600 萬+",
+        "MiniMax": "1,300 萬+",
+        "月之暗面": "340 萬+",
+        "DeepSeek": "15 萬+"
+      },
+      "game": {
+        "hook": "對應對手『燈塔實驗室』（安全派）的『蒸餾爭議 2.0』：使用海外 API 蒸餾的玩家每季有機率被點名（聲望 -6、海外 API 全封、出口管制遊說 +）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/anthropic-accuses-deepseek-other-chinese-ai-developers-of-industrial-scale-copying-claims-distillation-included-24-000-fraudulent-accounts-and-16-million-exchanges-to-train-smaller-models",
+        "https://gigazine.net/gsc_news/en/20260224-anthropic-deepseek-moonshot-minimax",
+        "https://www.eweek.com/de/security/anthropic-deepseek-moonshot-minimax-targeted-claude/"
+      ]
+    },
+    {
+      "id": "2026-02-seedance-hollywood",
+      "date": "2026-02",
+      "cat": "culture",
+      "region": "global",
+      "title": "Seedance 2.0 惹怒好萊塢",
+      "text": "字節影片模型 Seedance 2.0 2 月發表後，一段 AI 生成的湯姆克魯斯與布萊德彼特屋頂打鬥影片瘋傳，美國電影協會（MPA）指其大規模侵權、多家片廠寄出存證信函；字節 2 月 16 日前後承諾加強防護，限制生成受版權保護角色與知名人士。",
+      "real": {
+        "org": "字節跳動",
+        "names": [
+          "Seedance 2.0",
+          "美國電影協會（MPA）"
+        ]
+      },
+      "alias": "某短影音巨頭",
+      "numbers": {
+        "爆紅": "2026-02 中旬",
+        "字節回應": "約 2026-02-16"
+      },
+      "game": {
+        "hook": "版權事件：creative 模型能力過高又未做過濾時觸發好萊塢抗議（罰款、海外下架）。選項：A 加浮水印與角色過濾（能力 -5%）／B 只在國內上線。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.aljazeera.com/news/2026/2/16/bytedance-pledges-fixes-to-seedance-2-0-after-hollywood-copyright-claims",
+        "https://www.thewrap.com/industry-news/tech/motion-picture-association-statement-seedance-ai-video-tom-cruise-brad-pitt/",
+        "https://the-decoder.com/hollywoods-mpa-calls-bytedances-seedance-2-0-a-machine-built-for-systemic-infringement/"
+      ]
+    },
+    {
+      "id": "2026-03-15th-five-year-plan",
+      "date": "2026-03-05",
+      "cat": "policy",
+      "region": "cn",
+      "title": "十五五規劃：AI 提及逾 50 次",
+      "text": "全國人大 3 月審議的『十五五』規劃（2026–2030）草案提及人工智慧超過 50 次，延續『人工智能+』行動並強調晶片自主、具身智能等方向；發改委表示 2030 年 AI 相關產業規模可望超過 10 兆元人民幣。",
+      "real": {
+        "org": "全國人大；國家發改委",
+        "names": [
+          "十五五規劃綱要"
+        ]
+      },
+      "alias": "某大型市場的五年計畫",
+      "numbers": {
+        "草案提交": "2026-03-05",
+        "AI 提及次數": "50+",
+        "2030 AI 相關產業": "超過 10 兆元人民幣"
+      },
+      "game": {
+        "hook": "五年計畫加成：2026–2030 中國 robot、agent、晶片補助 +；國產卡研發成本 -20%。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://gigazine.net/gsc_news/en/20260306-china-five-year-plan",
+        "https://www.flanders-china.be/en/newsletterpublications/15th-five-year-plan-2026-2030-mentions-artificial-intelligence-ai-more-than-50-times",
+        "https://inp.net.pk/news-detail/inp-wealthpk/chinas-ai-related-industries-expected-to-exceed-10-trillion-yuan-by-2030"
+      ]
+    },
+    {
+      "id": "2026-03-openclaw-lobster",
+      "date": "2026-03-10",
+      "cat": "culture",
+      "region": "cn",
+      "title": "全民『養龍蝦』：OpenClaw 熱",
+      "text": "以龍蝦為標誌的開源 Agent OpenClaw 2026 年初在中國爆紅，部署它被稱為『養龍蝦』：騰訊 3 月 10 日推『龍蝦全家桶』、百度 3 月 11 日辦『龍蝦集市』、阿里 3 月 13 日推出 JVS Claw；4 月 1 日由火山引擎支撐的 ClawHub 中國鏡像上線，國企則被限制使用。",
+      "real": {
+        "org": "OpenClaw；騰訊雲；百度；阿里雲；火山引擎",
+        "names": [
+          "OpenClaw",
+          "ClawHub",
+          "JVS Claw"
+        ]
+      },
+      "alias": "龍蝦",
+      "numbers": {
+        "騰訊龍蝦全家桶": "2026-03-10",
+        "百度龍蝦集市": "2026-03-11",
+        "阿里 JVS Claw": "2026-03-13",
+        "ClawHub 中國鏡像": "2026-04-01"
+      },
+      "game": {
+        "hook": "Agent 熱潮：agent 需求 ×1.5（12 週）、雲端推論需求暴增，資安事故機率 +。吉祥物台詞：『今天你養龍蝦了嗎？』"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://globalvoices.org/2026/04/06/china-catches-lobster-fever-as-cloud-companies-embrace-openclaw/",
+        "https://www.thestandard.com.hk/innovation/article/326219/Raise-a-lobster-craze-OpenClaws-meteoric-rise-transforms-Chinas-tech-landscape",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/openclaw-ai-agent-craze-sweeps-china-as-authorities-seek-to-clamp-down-amid-security-fears-adoption-surges-as-state-run-enterprises-are-barred-from-use"
+      ]
+    },
+    {
+      "id": "2026-04-half-marathon-50min",
+      "date": "2026-04-19",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "機器人半馬 50 分 26 秒奪冠",
+      "text": "第二屆北京人形機器人半程馬拉松 4 月 19 日舉行，超過 100 支隊伍、約 300 台機器人參賽；榮耀的機器人『閃電』以淨時間 50 分 26 秒自主跑完奪冠，比前一年的 2 小時 40 分快 3 倍以上，也快於人類半馬世界紀錄。",
+      "real": {
+        "org": "榮耀（Honor）",
+        "names": [
+          "閃電"
+        ]
+      },
+      "alias": "某手機品牌的機器人",
+      "numbers": {
+        "日期": "2026-04-19",
+        "隊伍": "100+",
+        "機器人": "約 300 台",
+        "冠軍淨時間": "50:26",
+        "2025 冠軍": "2:40:42"
+      },
+      "game": {
+        "hook": "『一年快 3 倍』新聞：robot 能力曲線加速；持有機器人產品線的玩家訂單 +25%。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://english.beijing.gov.cn/latest/news/202604/t20260419_4593508.html",
+        "https://gigazine.net/gsc_news/en/20260420-humanoid-robot-sprints-victory-beijing-half-marathon",
+        "https://news.tvb.com/tc/1164319-2026Beijingrobothalfmarathondrewover100teamsand300robots"
+      ]
+    },
+    {
+      "id": "2026-04-deepseek-v4",
+      "date": "2026-04-24",
+      "cat": "model",
+      "region": "cn",
+      "title": "DeepSeek V4：百萬上下文",
+      "text": "DeepSeek 4 月 24 日發表 V4 預覽：V4-Pro 總參數 1.6 兆、啟用 49B，V4-Flash 284B、啟用 13B，預設 100 萬 tokens 上下文、MIT 授權，華為宣布全系昇騰超節點支援；Pro 因高階算力不足限量供應，4 月底降價 75% 並於 5 月轉為永久價，V4-Pro 8 月 13 日轉正式版。",
+      "real": {
+        "org": "深度求索；華為",
+        "names": [
+          "DeepSeek-V4-Pro",
+          "DeepSeek-V4-Flash",
+          "昇騰超節點"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "預覽": "2026-04-24",
+        "V4-Pro": "1.6 兆／49B 啟用",
+        "V4-Flash": "284B／13B 啟用",
+        "上下文": "100 萬 tokens",
+        "Pro 原價": "1.74／3.48 美元（每百萬 tokens 輸入／輸出）",
+        "Flash 價格": "0.14／0.28 美元",
+        "Pro 降價": "-75%（後轉永久）",
+        "V4-Pro 正式版": "2026-08-13"
+      },
+      "game": {
+        "hook": "對應 t_mctx（百萬 token 上下文，2026-04）；國產算力里程碑：中國劇本國產卡效率 +15%，對手『疾風 AI』旗艦換代。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news260424",
+        "https://api-docs.deepseek.com/news/news260813",
+        "https://online91.thedailystar.net/news/tech-startup/news/deepseek-previews-new-v4-model-runs-huawei-chips-4159751",
+        "https://www.semafor.com/article/05/26/2026/chinese-ai-startup-deepseek-slashes-price-of-flagship-model"
+      ]
+    },
+    {
+      "id": "2026-05-tw-nvidia-hq-beitou",
+      "date": "2026-05-27",
+      "cat": "infra",
+      "region": "tw",
+      "title": "輝達北士科總部 2030 年進駐",
+      "text": "北市府 2025 年 10 月底確定輝達總部落腳北士科 T17、T18，與新光人壽約 44.3 億元新台幣的解約金 11 月經議會通過（輝達承擔約 14.41 億元）；黃仁勳 2026 年 5 月 27 日在基地辦台灣員工大會，宣布預計年底動工、2030 年啟用，可容納約 4,000 人。",
+      "real": {
+        "org": "NVIDIA；台北市政府；新光人壽",
+        "names": [
+          "NVIDIA Constellation",
+          "黃仁勳",
+          "蔣萬安（台北市長）"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "解約金": "約 44.3 億元新台幣",
+        "輝達承擔": "約 14.41 億元新台幣",
+        "動工": "預計 2026 年底",
+        "啟用": "2030",
+        "容納員工": "約 4,000 人",
+        "輝達在台年支出": "約 1,000 億美元（黃仁勳說法）"
+      },
+      "game": {
+        "hook": "台灣劇本地產／人才事件：大廠總部動工後台北 AI 工程師薪資 +10%，但 GPU 技術支援更快、供應鏈會議更多。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technews.tw/?p=1562258",
+        "https://www.inside.com.tw/article/41393-nvidia-taiwan-bstp",
+        "https://www.cna.com.tw/news/afe/202510300366.aspx",
+        "https://news.pts.org.tw/article/777650"
+      ]
+    },
+    {
+      "id": "2026-06-tw-trillion-dinner-gtc",
+      "date": "2026-06-01",
+      "cat": "hardware",
+      "region": "tw",
+      "title": "兆元宴之後，GTC Taipei 開講",
+      "text": "黃仁勳 5 月 28 日在磚窯餐廳再辦『兆元宴』宴請台灣 AI 供應鏈，隔日鴻海、緯創、緯穎等多檔概念股漲停；6 月 1 日 GTC Taipei 主題演講發表整合 CPU 與 GPU 的 PC 超級晶片 RTX Spark（預計 2026 年秋季隨 Windows AI PC 上市），並展示以宇樹 H2 為底的人形機器人參考設計。",
+      "real": {
+        "org": "NVIDIA；台灣 AI 供應鏈",
+        "names": [
+          "黃仁勳",
+          "魏哲家",
+          "林百里",
+          "劉揚偉",
+          "RTX Spark",
+          "Isaac GR00T"
+        ]
+      },
+      "alias": "某綠色 GPU 霸主",
+      "numbers": {
+        "兆元宴": "2026-05-28",
+        "GTC Taipei": "2026-06-01",
+        "RTX Spark 上市": "預計 2026 秋季"
+      },
+      "game": {
+        "hook": "供應鏈年會事件：受邀『兆元宴』的代表在下一代 GPU 拿到優先配額；做伺服器或晶片的玩家可投資台廠換交期。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.businesstoday.com.tw/article/category/183015/post/202605280035/",
+        "https://finance.ettoday.net/news/3173998",
+        "https://fortune.com/2026/06/01/jensen-huang-nvidia-pc-reinvention-ai-chips/"
+      ]
+    },
+    {
+      "id": "2026-06-glm52-ascend-only",
+      "date": "2026-06-16",
+      "cat": "hardware",
+      "region": "cn",
+      "title": "GLM-5.2 宣稱全程昇騰訓練",
+      "text": "智譜 2 月 11 日發表 744B 參數（啟用 40B）的 GLM-5，路透稱其推論採用昇騰等國產晶片；6 月 16 日再推 GLM-5.2，公司宣稱完全以華為昇騰訓練、未使用 NVIDIA 硬體，支援 100 萬 tokens 上下文並以 MIT 授權開源。",
+      "real": {
+        "org": "智譜（Z.ai）；華為",
+        "names": [
+          "GLM-5",
+          "GLM-5.2",
+          "昇騰 910B"
+        ]
+      },
+      "alias": "某清華系大模型公司",
+      "numbers": {
+        "GLM-5": "2026-02-11，744B／40B 啟用",
+        "GLM-5.2": "2026-06-16",
+        "上下文": "100 萬 tokens",
+        "授權": "MIT"
+      },
+      "game": {
+        "hook": "『去 NVIDIA 化』里程碑：中國劇本國產卡占比 > 80% 時解鎖成就『零綠卡』，政府補助 +。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://decrypt.co/371613/china-z-ai-glm-5-2-model-rivals-claude-opus",
+        "https://www.aol.com/articles/chinas-ai-startup-zhipu-releases-132222546.html",
+        "https://arxiv.org/html/2602.15763"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "corrected",
+        "note": "GLM-5 (2026-02-11, 744B/40B) and GLM-5.2 (2026-06-16, 1M context, MIT, company claims Ascend-only training) check out. The 'about 100,000 Ascend 910B' figure for GLM-5 traces only to unattributed blogs; Reuters said the domestic chips were used for inference, and the technical report names no training hardware. That claim is replaced."
+      }
+    },
+    {
+      "id": "2026-06-doubao-paid-tier",
+      "date": "2026-06-24",
+      "cat": "product",
+      "region": "cn",
+      "title": "豆包推付費版，月費 68 元起",
+      "text": "豆包 5 月預告收費後，月活由 4 月的 3.36 億降至 3.30 億；6 月 24 日正式推出標準版 68 元、加強版 200 元、高級版 500 元的月訂閱，主打程式開發、資料分析等高算力場景，免費版功能不變。",
+      "real": {
+        "org": "字節跳動",
+        "names": [
+          "豆包"
+        ]
+      },
+      "alias": "某短影音巨頭",
+      "numbers": {
+        "標準版": "68 元／月",
+        "加強版": "200 元／月",
+        "高級版": "500 元／月",
+        "2026-04 MAU": "3.36 億",
+        "2026-05 MAU": "3.30 億"
+      },
+      "game": {
+        "hook": "訂閱制抉擇（中國 C 端被稱『付費墳場』）：A 推付費版（ARPU +、MAU -2%）／B 維持全免費靠廣告（推論成本壓力）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.huxiu.com/article/4870602.html",
+        "https://www.hk01.com/即時中國/60364434/豆包-正式推出付費版本引熱議-訂閱制將成為ai行業發展方向",
+        "https://www.cna.com.tw/news/acn/202605050339.aspx"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "CNA (2026-05-05) covers the App Store paid-plan notice on May 4. HK01 cites QuestMobile: May MAU fell about 6.07M (1.81%) to 330M, which implies about 336M in April, as Huxiu states. HK01 and Huxiu confirm the June 24 launch of the 68, 200 and 500 yuan monthly tiers, with the free tier unchanged."
+      }
+    },
+    {
+      "id": "2026-06-deepseek-first-funding",
+      "date": "2026-06",
+      "cat": "capital",
+      "region": "cn",
+      "title": "DeepSeek 首輪外部融資約 500 億元",
+      "text": "成立近三年未對外融資的深度求索 6 月完成首輪外部融資，規模約 500 億元人民幣（約 74 億美元）、投後估值逾 3,500 億元（約 520 億美元），據報梁文鋒個人出資約 200 億元、騰訊約 100 億元、寧德時代約 50 億元；7 月再傳最快年內遞件、2027 年上市。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "梁文鋒",
+          "騰訊",
+          "寧德時代"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "融資額": "約 500 億元人民幣（約 74 億美元）",
+        "投後估值": "3,500 億元人民幣+（約 520 億美元）",
+        "梁文鋒": "約 200 億元",
+        "騰訊": "約 100 億元",
+        "寧德時代": "約 50 億元",
+        "上市目標": "2027（據報，最快 2026 年內遞件）"
+      },
+      "game": {
+        "hook": "對手『疾風 AI』資金暴增：2026 下半年算力擴張 ×3。曾與其合作的玩家可選擇跟投（股權收益）或結盟。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2026-07-17/deepseek-reaches-52-billion-valuation-in-round-backed-by-tencent-catl-102465358.html",
+        "https://the-decoder.com/deepseek-takes-outside-money-for-the-first-time-at-a-50-billion-valuation/",
+        "https://thenextweb.com/news/deepseek-ipo-71-billion-valuation-round"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "Caixin and The Decoder confirm about 50B yuan at over 350B yuan post-money, with Liang about 20B, Tencent about 10B and CATL about 5B yuan. Small wording fixes: Bloomberg says the round closed in early June, so the text now says June instead of mid-June, and the July Bloomberg report says filing could come this year with a 2027 listing."
+      }
+    },
+    {
+      "id": "2026-07-ai-app-mau",
+      "date": "2026-07-14",
+      "cat": "product",
+      "region": "cn",
+      "title": "AI 原生 App 月活：豆包 3.8 億",
+      "text": "QuestMobile 7 月公布 2026 上半年報告：中國 AI 原生 App 月活約 4.99 億，豆包 3.82 億、千問 1.67 億、DeepSeek 1.30 億形成第一梯隊；對照 2024 年 11 月豆包月活僅 5,998 萬（當時全球第二）。",
+      "real": {
+        "org": "QuestMobile",
+        "names": [
+          "豆包",
+          "千問",
+          "DeepSeek"
+        ]
+      },
+      "alias": "三強 App",
+      "numbers": {
+        "AI 原生 App 總 MAU": "約 4.99 億",
+        "豆包": "3.82 億",
+        "千問": "1.67 億",
+        "DeepSeek": "1.30 億",
+        "豆包 2024-11": "5,998 萬"
+      },
+      "game": {
+        "hook": "2026 中國 C 端市場規模校準：玩家市佔以 MAU 換算，第一名享網路效應（留存 +）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technode.com/2026/07/14/questmobile-chinas-ai-native-apps-reach-499-million-monthly-active-users/",
+        "https://news.cnyes.com/news/id/5810724"
+      ]
+    },
+    {
+      "id": "2026-07-kimi-k3",
+      "date": "2026-07-16",
+      "cat": "model",
+      "region": "cn",
+      "title": "Kimi K3：2.8 兆參數開源",
+      "text": "月之暗面 7 月 16 日發表 Kimi K3，總參數 2.8 兆（896 個專家中每次啟用 16 個），支援 100 萬 tokens 上下文與原生視覺，號稱規模最大的開源權重模型，權重於 7 月 27 日如期釋出。",
+      "real": {
+        "org": "月之暗面",
+        "names": [
+          "Kimi K3"
+        ]
+      },
+      "alias": "某長文本新創",
+      "numbers": {
+        "發布": "2026-07-16",
+        "總參數": "2.8 兆",
+        "專家": "896 選 16",
+        "上下文": "100 萬 tokens",
+        "權重釋出": "2026-07-27"
+      },
+      "game": {
+        "hook": "『最大開源模型』頭銜爭奪：開源派對手進入參數競賽；玩家可跟進（算力 -）或主打小而美（推論成本優勢）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://thenextweb.com/news/moonshot-kimi-k3-largest-open-model",
+        "https://www2.yicaiglobal.com/news/moonshot-ais-kimi-k3-becomes-worlds-first-open-source-model-in-3-trillion-parameter-class"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "TNW (Jul 17) confirms the Jul 16 announcement, 2.8T params, 16 of 896 experts, 1M context, native image input, the 'largest open-weight model' claim and the planned Jul 27 weights; Yicai (Jul 28) confirms the weights went up on Hugging Face Jul 27, so the text now says released instead of scheduled."
+      }
+    },
+    {
+      "id": "2026-08-deepseek-price-hike",
+      "date": "2026-08-06",
+      "cat": "product",
+      "region": "cn",
+      "title": "DeepSeek 預告 API 大幅漲價",
+      "text": "一路領跑價格戰的 DeepSeek 8 月 6 日公告近期將整體上調 API 定價、『預計漲幅較大』，8 月 16 日起先實施尖峰／離峰計價（離峰為尖峰的一半），反映 V4 推出後算力吃緊；2026 年算力與記憶體成本上升，阿里雲、騰訊雲也已調漲 AI 服務價格。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek API"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "公告": "2026-08-06",
+        "尖離峰計價": "2026-08-16 起，離峰 5 折"
+      },
+      "game": {
+        "hook": "2026『價格戰反轉期』：記憶體與晶片漲價使推論成本 +20%，對手算力不足而漲價時 API 客戶外溢；有閒置算力的玩家可趁勢承接（市佔 +5%）或跟漲（毛利 +）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://technews.tw/?p=1598689",
+        "https://thenextweb.com/news/deepseek-significant-api-price-increase",
+        "https://api-docs.deepseek.com/news/news260813",
+        "https://www.cna.com.tw/news/acn/202605050339.aspx"
+      ]
+    },
+    {
+      "id": "2026-08-unitree-ipo",
+      "date": "2026-08-19",
+      "cat": "capital",
+      "region": "cn",
+      "title": "宇樹科創板上市，首日漲約 6 倍",
+      "text": "宇樹科技 8 月 19 日以每股 150.8 元登陸科創板（股票代號 688836），成為 A 股首家人形機器人公司，發行估值約 610 億元人民幣，首日股價約為發行價的 6 倍，流通股僅約 7.44%。",
+      "real": {
+        "org": "宇樹科技",
+        "names": [
+          "宇樹科技（688836）"
+        ]
+      },
+      "alias": "某杭州機器狗廠",
+      "numbers": {
+        "上市": "2026-08-19",
+        "發行價": "150.8 元",
+        "發行估值": "約 610 億元人民幣",
+        "首日": "約發行價 6 倍",
+        "流通比例": "約 7.44%"
+      },
+      "game": {
+        "hook": "機器人支線結局：玩家的機器人子公司可 IPO，首日漲幅＝具身熱度 × 流通稀缺度。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.caixinglobal.com/2026-08-18/unitree-to-debut-at-61-billion-yuan-valuation-in-closely-watched-shanghai-ipo-102475173.html",
+        "https://www.crowdfundinsider.com/2026/08/298797-unitree-robotics-delivers-solid-shanghai-market-ipo-debut/",
+        "https://www.mobileworldlive.com/greater-china/robot-maker-unitree-sets-date-for-shanghai-listing/"
+      ]
+    },
+    {
+      "id": "2026-08-world-humanoid-games-2",
+      "date": "2026-08-22",
+      "cat": "robotics",
+      "region": "cn",
+      "title": "第二屆人形機器人運動會",
+      "text": "第二屆世界人形機器人運動會 8 月 22–26 日在北京國家速滑館舉行，16 國 666 支隊伍、2,056 台機器人參賽；天工 Ultra 以 8.64 秒刷新大會 100 公尺紀錄，也有機器人衝線撞牆起火、需工作人員滅火。",
+      "real": {
+        "org": "北京人形機器人創新中心等",
+        "names": [
+          "天工 Ultra"
+        ]
+      },
+      "alias": "某國家級機器人創新中心",
+      "numbers": {
+        "日期": "2026-08-22～26",
+        "隊伍": "666",
+        "機器人": "2,056 台",
+        "國家": "16",
+        "100m 紀錄": "8.64 秒"
+      },
+      "game": {
+        "hook": "與 2025 對比參賽機器人約 7 倍；隨機翻車事件『機器人起火』（聲望 -2、流量 +）。第三屆預定 2027 年 8 月，可直接接續遊戲未來年表。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://news.cgtn.com/news/2026-08-27/Tiangong-Ultra-sets-100m-record-as-World-Humanoid-Robot-Games-close-1PWx9LjZDC8/share_amp.html",
+        "https://www.galaxus.de/en/page/world-humanoid-robot-games-666-teams-flames-records-and-unbridled-entertainment-43650",
+        "https://petapixel.com/2026/08/24/the-most-hilarious-bloopers-from-the-robot-games-in-china/"
+      ]
+    },
+    {
+      "id": "2026-09-deepseek-ulanqab-ascend",
+      "date": "2026-09-04",
+      "cat": "infra",
+      "region": "cn",
+      "title": "DeepSeek 傳訂 16 萬顆昇騰晶片",
+      "text": "彭博 9 月 4 日報導 DeepSeek 計劃在內蒙古烏蘭察布約 1GW 的資料中心部署至少 16 萬顆華為昇騰 950DT，主要用於推論，最快 2027 年底至 2028 年初部分啟用；雙方未證實。",
+      "real": {
+        "org": "深度求索；華為",
+        "names": [
+          "昇騰 950DT",
+          "烏蘭察布"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "晶片": "至少 16 萬顆昇騰 950DT",
+        "規模": "約 1GW",
+        "部分啟用": "約 2027 年底～2028 年初"
+      },
+      "game": {
+        "hook": "『東數西算』式選址：在電價低的北方建機房（電費 -40%、延遲 +）；對手推論容量大增後可能再掀價格戰。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://news.bgov.com/artificial-intelligence/deepseek-plans-big-huawei-ai-chip-order-to-power-new-data-center",
+        "https://thenextweb.com/news/deepseek-huawei-ai-chip-order-data-centre",
+        "https://technode.com/2026/09/07/deepseek-huawei-ascend-950dt-chips-inner-mongolia/"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "Bloomberg (Sep 4) reports at least 160,000 Ascend 950DT for an Inner Mongolia site, for inference not training, with DeepSeek not responding and Huawei not commenting; TNW relays Bloomberg's earlier (Jul 30) detail of a ~1GW Ulanqab site with partial operation in late 2027 or early 2028."
+      }
+    },
+    {
+      "id": "2026-09-deepseek-v41-flash",
+      "date": "2026-09-10",
+      "cat": "model",
+      "region": "cn",
+      "title": "V4.1-Flash：原生多模態",
+      "text": "DeepSeek 9 月 10 日發表 V4.1-Flash：552B 參數的編碼器－解碼器 MoE（輸入啟用 8B、輸出 16B），具原生視覺理解，KV 快取所需 HBM 降為上一代的 1/4；10 月 17 日更新為 V4.1-Flash-1017 並開源，同步推出自家搜尋／擷取 API（每千次 0.75 美元）。",
+      "real": {
+        "org": "深度求索",
+        "names": [
+          "DeepSeek-V4.1-Flash",
+          "DeepSeek-V4.1-Flash-1017",
+          "DeepSeek Harness"
+        ]
+      },
+      "alias": "某量化基金孵化的新創",
+      "numbers": {
+        "V4.1-Flash": "2026-09-10",
+        "參數": "552B",
+        "啟用": "輸入 8B／輸出 16B",
+        "KV 快取 HBM": "上一代的 1/4",
+        "1017 版": "2026-10-17",
+        "搜尋 API": "0.75 美元／千次"
+      },
+      "game": {
+        "hook": "遊戲『現在』的分水嶺：2026-11 以後進入虛構未來，可用此代作為對手『疾風 AI』的基準能力。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://api-docs.deepseek.com/news/news260910",
+        "https://api-docs.deepseek.com/news/news261017"
+      ]
+    },
+    {
+      "id": "2026-10-doubao-phone-blocklist",
+      "date": "2026-10-14",
+      "cat": "product",
+      "region": "cn",
+      "title": "豆包手機助手遭 150+ App 拒絕",
+      "text": "可代操作 App 的豆包手機助手 2025 年 12 月隨努比亞手機上市，旋即遭遇微信強制登出、支付寶與銀行 App 風控；豆包 2026 年 9 月 14 日發布執行協議給開發者一個月表態，10 月 14 日公布拒絕其 GUI 自動化的 App 超過 150 款，包括微信與支付寶。",
+      "real": {
+        "org": "字節跳動；努比亞（中興）；騰訊；螞蟻集團",
+        "names": [
+          "豆包手機助手",
+          "微信",
+          "支付寶"
+        ]
+      },
+      "alias": "某短影音巨頭的手機 Agent",
+      "numbers": {
+        "首發": "2025-12",
+        "執行協議": "2026-09-14",
+        "名單公布": "2026-10-14",
+        "拒絕的 App": "150+"
+      },
+      "game": {
+        "hook": "Agent 生態戰：手機 Agent 須與超級 App 談授權。選項：A 走官方 MCP／A2A 協議（慢但穩）／B 螢幕模擬點擊（快，被封機率高）。"
+      },
+      "confidence": "verified",
+      "sources": [
+        "https://www.sixthtone.com/news/1019137",
+        "https://eu.36kr.com/zh/p/3580978646121604",
+        "https://www.ithome.com/0/903/017.htm"
+      ],
+      "checked": {
+        "on": "2026-11-01",
+        "verdict": "verified",
+        "note": "Sixth Tone (Oct 19) confirms the Sep 14 protocol with a one-month window, the Oct 14 list of 150+ apps including WeChat and Alipay, and the Dec 2025 nubia M153 launch (IT之家's Oct 14 copy of the list has 151 names); 36Kr (Dec 4, 2025) reports the WeChat logouts and Alipay login-environment warnings, and IT之家 (Dec 6, 2025) the bank-app risk prompts."
+      }
+    }
+  ],
+  "memes": [
+    {
+      "term": "煉丹",
+      "meaning": "把訓練深度學習模型比喻成道士煉丹：資料與超參數是配方、GPU 是丹爐、學習率是火候，成敗常靠經驗，結果難以解釋。",
+      "origin": "中文深度學習社群約 2016–2017 年起流行；2017 年 NIPS 時間檢驗獎演講以『機器學習已成煉金術』引發討論，GPU 被戲稱『煉丹爐』。",
+      "game_use": "訓練任務按鈕稱『開爐』；loss 爆炸事件稱『炸爐』；成就『九轉金丹』（連續 9 次訓練零故障）。"
+    },
+    {
+      "term": "調參俠",
+      "meaning": "自嘲只會調超參數、不太懂原理的演算法工程師。",
+      "origin": "約 2018 年前後知乎、CSDN 等中文技術社群，常與『煉丹師』並用。",
+      "game_use": "人才特質『調參俠』：微調效率 +10%、架構研究 -10%；招募台詞『學習率再降一半試試？』"
+    },
+    {
+      "term": "卷／內卷",
+      "meaning": "過度競爭、投入更多卻沒換到更多回報；AI 圈常說卷參數、卷價格、卷上下文、卷榜單。",
+      "origin": "『內卷』入選《咬文嚼字》2020 年十大流行語；2024 年大模型價格戰後成為產業日常用語。",
+      "game_use": "對手密度高時進入『內卷』狀態：價格戰頻率與員工倦怠上升；成就『卷王』（同時在三個能力維度排名第一）。"
+    },
+    {
+      "term": "套殼",
+      "meaning": "拿別人的模型或 API 包一層就宣稱自研。",
+      "origin": "2023 年零一萬物 Yi-34B 架構與 LLaMA 相同的爭議、同年字節被指用 OpenAI API 開發模型；2024 年 6 月史丹佛團隊 Llama3-V 被指抄襲面壁智能 MiniCPM，被稱『反向套殼』。",
+      "game_use": "用開源底座卻宣稱自研時觸發『套殼疑雲』；成就『反向套殼』（你的模型被海外名校抄了）。"
+    },
+    {
+      "term": "刷榜",
+      "meaning": "針對公開評測集過度優化，分數漂亮但實用落差大。",
+      "origin": "2023 年百模大戰期間 C-Eval、SuperCLUE 等中文榜單屢被質疑遭『刷』，各家發表會必放榜單截圖。",
+      "game_use": "『刷榜』指令：短期聲望 +5，但每用一次被抓包機率上升（聲望 -10）；台詞『我們在某某榜排名第一（其中一個子項）』。"
+    },
+    {
+      "term": "百模大戰",
+      "meaning": "2023 年中國湧現上百個大模型、爭相發表的混戰局面。",
+      "origin": "2023 年；李彥宏 2023 年 11 月引述國內大模型 10 月已達 238 個，稱重複造輪子是巨大浪費。",
+      "game_use": "2023 中期 NPC 公司大量湧現的遊戲階段；成就『第 239 個模型』。"
+    },
+    {
+      "term": "六小虎",
+      "meaning": "2024 年對智譜、百川、月之暗面、MiniMax、零一萬物、階躍星辰六家大模型新創的合稱。",
+      "origin": "2024 年中國科技媒體；2025 年起分化，2026 年 1 月智譜與 MiniMax 相繼在港股上市。",
+      "game_use": "對手陣營稱號；玩家估值擠進國內前六時解鎖『第七隻老虎』。"
+    },
+    {
+      "term": "杭州六小龍",
+      "meaning": "深度求索、宇樹、遊戲科學、雲深處、強腦科技、群核科技六家杭州科技新創。",
+      "origin": "2025 年初 DeepSeek 爆紅後由網友命名。",
+      "game_use": "城市選址加成；成就『第七條龍』（在同一城市成為獨角獸）。"
+    },
+    {
+      "term": "AGI 信仰",
+      "meaning": "堅信通用人工智慧即將到來、願意不計短期回報投入的理想主義，也常被用來調侃燒錢有理。",
+      "origin": "2023–2024 年中國大模型創業者訪談的常見說法，多家新創以 AGI 為公司使命。",
+      "game_use": "公司信條『AGI 信仰』：研究速度 +、投資人耐心 -；台詞『財報？我們的 KPI 是 AGI。』"
+    },
+    {
+      "term": "Scaling Law 撞牆",
+      "meaning": "單純加大模型與資料的收益遞減、預訓練見頂的爭論。",
+      "origin": "2024 年 11 月起外媒報導前沿實驗室新模型進步放緩；同年 12 月 Ilya Sutskever 在 NeurIPS 演講稱『我們所知的預訓練將會結束』，中文圈稱『撞牆』。",
+      "game_use": "2024–2025 隨機事件『撞牆傳聞』：投資人信心 -10%，但推理與 RL 科技研究成本 -20%（逼大家轉向）。"
+    },
+    {
+      "term": "蒸餾",
+      "meaning": "用大模型的輸出訓練小模型；在中文圈也帶有『偷師、抄作業』的爭議語感。",
+      "origin": "技術源自 2015 年的知識蒸餾論文；2025 年 1 月 OpenAI 質疑 DeepSeek、2026 年 2 月 Anthropic 指控三家中國實驗室，讓蒸餾變成產業政治詞彙。",
+      "game_use": "配方中的『蒸餾』選項（對應 t_distill）；被抓到觸發『蒸餾指控』事件；成就『青出於藍』。"
+    },
+    {
+      "term": "幻覺（一本正經地胡說八道）",
+      "meaning": "模型理直氣壯地編造不存在的事實。",
+      "origin": "2023 年中文網友用『林黛玉倒拔垂楊柳』等荒謬題目測試，模型認真編出情節而爆紅。",
+      "game_use": "安全分數低時隨機觸發『幻覺事故』（引用假判例、客服亂承諾）；吉祥物台詞『根據我的資料（我剛編的）……』"
+    },
+    {
+      "term": "草莓有幾個 r",
+      "meaning": "模型數不出 strawberry 有 3 個 r 的經典翻車題，暴露分詞把單字切碎的弱點。",
+      "origin": "2024 年夏天海外社群流行，正值 OpenAI 推理模型代號傳為『Strawberry』，中文圈跟著測。",
+      "game_use": "試聊題庫必備題；推理科技研究前答錯率高；成就『三個 r』。"
+    },
+    {
+      "term": "9.11 和 9.9 哪個大",
+      "meaning": "多數大模型曾回答 9.11 比 9.9 大的翻車題。",
+      "origin": "2024 年 7 月，起因於綜藝《歌手》得票率 13.8% 與 13.11% 的比較，網友拿來考模型，媒體測試 12 個國內外模型有 8 個答錯。",
+      "game_use": "試聊題庫；數學能力低於門檻時觸發公關危機；吉祥物台詞『如果是版本號的話，我沒錯。』"
+    },
+    {
+      "term": "伺服器繁忙，請稍後再試",
+      "meaning": "DeepSeek 爆紅時最常見的回應，成為『供不應求』的代名詞。",
+      "origin": "2025 年 1–2 月 DeepSeek 流量暴增，2 月 6 日甚至暫停 API 儲值。",
+      "game_use": "推論容量不足時的 UI 文案；成就『請稍後再試』（連續 4 週容量不足仍持續成長）；鯨魚吉祥物台詞。"
+    },
+    {
+      "term": "Vibe coding（氛圍編程）",
+      "meaning": "用自然語言描述需求、讓 AI 寫程式，自己只看結果、不細讀程式碼。",
+      "origin": "Andrej Karpathy 2025 年 2 月提出，同年 11 月獲選《柯林斯詞典》年度詞彙；中文譯『氛圍編程』。",
+      "game_use": "coding 市場需求 +；事件『氛圍上線』：A 讓 AI 直接部署（快、出包率 +）／B 先 code review（慢）。"
+    },
+    {
+      "term": "Agent 元年（智能體元年）",
+      "meaning": "2025 年被業界稱為 AI Agent 開始落地的一年。",
+      "origin": "2025 年 Manus 爆紅、各家 Agent 平台推出，加上『人工智能+』政策把智能體普及率寫進目標。",
+      "game_use": "2025 年起 agent 市場開放；新聞模板『今年是 XX 元年』每年換詞重用（推理元年、具身元年……）。"
+    },
+    {
+      "term": "具身智慧元年",
+      "meaning": "具身智能（有實體的 AI，如人形機器人）進入大眾視野的一年。",
+      "origin": "2025 年春晚宇樹《秧BOT》、機器人半馬與世界人形機器人運動會；『具身智能』入選《咬文嚼字》2025 年十大流行語。",
+      "game_use": "robot 市場解鎖；成就『具身元年』（推出第一款機器人產品）。"
+    },
+    {
+      "term": "提示詞工程師",
+      "meaning": "2023 年爆紅的新職稱，專職撰寫 prompt；之後常被質疑會隨模型變強而消失。",
+      "origin": "2023 年海外出現高薪 Prompt Engineer 職缺，中文媒體大幅報導這個『新職業』。",
+      "game_use": "人才類型『提示詞工程師』：2023–2024 效率高、2026 後價值遞減；台詞『請你扮演一位資深……』"
+    },
+    {
+      "term": "吉卜力風",
+      "meaning": "把照片轉成吉卜力動畫風格的 AI 圖像熱潮。",
+      "origin": "2025 年 3 月底 GPT-4o 原生圖像生成上線後全球爆紅，中文社群大量跟風，也引發畫風版權與創作者權益爭議。",
+      "game_use": "creative 需求短期 ×2；事件『GPU 熔化』：伺服器負載暴增，選擇限制免費額度或緊急擴容。"
+    },
+    {
+      "term": "AI 味",
+      "meaning": "一眼看出是 AI 寫的文風：『首先、其次、總之』『讓我們深入探討』、大量排比與破折號。",
+      "origin": "2024–2025 年中文社群評論 AI 生成內容的常用語。",
+      "game_use": "『文風』屬性；AI 味過重時 creative 與教育市場滿意度 -；審稿台詞『這段 AI 味太重，重寫。』"
+    },
+    {
+      "term": "遙遙領先",
+      "meaning": "誇飾自家科技大幅勝出的萬用梗，也常被反諷使用。",
+      "origin": "華為消費者業務高層余承東在發表會上的口頭禪；2023 年 8 月 Mate 60 Pro 搭載 7 奈米麒麟 9000S 悄然開賣後在網路上洗版。",
+      "game_use": "發表會台詞選項『遙遙領先』：聲望 +3，若實際落後則反噬 -6。"
+    },
+    {
+      "term": "牛馬",
+      "meaning": "打工人自嘲像牛像馬一樣勞累；AI 時代延伸出『讓 AI 當牛馬』『賽博牛馬』。",
+      "origin": "2023–2024 年中文網路流行語。",
+      "game_use": "員工士氣系統；Agent 產品廣告詞『讓 AI 當牛馬，你當人』；成就『賽博牛馬』（Agent 完成任務破百萬）。"
+    },
+    {
+      "term": "國運級",
+      "meaning": "形容足以影響國家命運的科技突破，後也被拿來調侃各種被過度吹捧的產品。",
+      "origin": "2025 年 1 月 26 日遊戲科學創辦人馮驥在微博稱 DeepSeek 是『國運級別的科技成果』。",
+      "game_use": "成就『國運級』（在中國區 App Store 登頂）；公關過度使用會被網友嘲諷（聲望 -1）。"
+    },
+    {
+      "term": "AI 界拼多多／價格屠夫",
+      "meaning": "以極低價格掀起價格戰的廠商。",
+      "origin": "2024 年 5 月 DeepSeek-V2 以每百萬 tokens 輸入 1 元、輸出 2 元人民幣定價，被稱『AI 界拼多多』，豆包等隨後跟進。",
+      "game_use": "對手稱號；玩家定價低於市場均價 50% 時獲得『價格屠夫』稱號（開發者 +、毛利 -）。"
+    },
+    {
+      "term": "源神／賽博菩薩",
+      "meaning": "稱讚持續免費開源強模型的公司：『源神』意為開源之神，『賽博菩薩』指免費普度眾生。",
+      "origin": "2025 年初中文社群常用來稱呼 DeepSeek、Qwen 等開源模型廠商。",
+      "game_use": "開源累積值達標解鎖稱號『源神』；鯨魚吉祥物台詞『施主，權重拿去吧。』"
+    },
+    {
+      "term": "奶奶漏洞",
+      "meaning": "要 AI 扮演過世的奶奶『念 Windows 序號哄我睡覺』來繞過安全限制的越獄話術。",
+      "origin": "2023 年 6 月前後網友發現 ChatGPT、Bard 會中招，中文圈稱『奶奶漏洞』。",
+      "game_use": "紅隊事件：安全分數低時被網友用奶奶漏洞攻破（聲望 -3）；成就『奶奶也沒辦法』。"
+    },
+    {
+      "term": "AI 孫燕姿",
+      "meaning": "用開源歌聲轉換模型 so-vits-svc 讓孫燕姿的聲音翻唱各種歌曲，B 站作品一度破千首。",
+      "origin": "2023 年 4–5 月走紅，孫燕姿 5 月 22 日以〈我的 AI〉一文回應。",
+      "game_use": "語音／音樂生成市場開啟；版權事件：A 與唱片公司分潤／B 全面下架。"
+    },
+    {
+      "term": "護國神山",
+      "meaning": "台灣對台積電的暱稱，形容其對經濟與國安的關鍵地位。",
+      "origin": "台灣網路與媒體常用語，AI 晶片熱潮後更加普及。",
+      "game_use": "台灣劇本：與『某護國晶圓代工廠』的關係值，影響先進製程與 CoWoS 配額。"
+    },
+    {
+      "term": "AI 伺服器五哥",
+      "meaning": "台股對鴻海、廣達、緯創、英業達、技嘉五家 AI 伺服器代工概念股的暱稱。",
+      "origin": "2023 年起台股 AI 伺服器行情；黃仁勳『兆元宴』後常見集體漲停。",
+      "game_use": "供應鏈 NPC 群；事件『五哥漲停』：伺服器交期縮短但報價上漲。"
+    },
+    {
+      "term": "卡脖子",
+      "meaning": "關鍵技術（晶片、EDA、HBM）被他國掐住咽喉。",
+      "origin": "2018 年中興事件後廣為流行，2023 年起的 GPU 出口管制讓 AI 圈天天在講。",
+      "game_use": "中國劇本負面狀態『卡脖子』：高階 GPU 取得 -；研究『國產替代』後減輕；成就『脖子鬆了』。"
+    },
+    {
+      "term": "寒王",
+      "meaning": "A 股投資人對寒武紀的暱稱，取其股價稱王之意。",
+      "origin": "2025 年 8 月寒武紀股價一度超越貴州茅台成為 A 股最貴個股。",
+      "game_use": "國產晶片 NPC 稱號；資本市場泡沫事件『寒王登基』。"
+    },
+    {
+      "term": "秧BOT",
+      "meaning": "2025 年春晚宇樹人形機器人扭秧歌的節目名，成為人形機器人出圈代名詞。",
+      "origin": "2025 年 1 月 28 日央視春晚。",
+      "game_use": "機器人產品首發事件名稱；吉祥物台詞『手絹，接住！』"
+    },
+    {
+      "term": "養龍蝦",
+      "meaning": "部署、運行開源 Agent『OpenClaw』（龍蝦標誌）的暱稱，延伸為『養一隻 AI 幫你打工』。",
+      "origin": "2026 年 2–3 月在中國爆紅，騰訊、百度、阿里雲紛紛推出『龍蝦』套餐。",
+      "game_use": "2026 年 Agent 熱潮事件；成就『龍蝦養殖戶』（同時運行 1,000 個 Agent）；台詞『今天你養龍蝦了嗎？』"
+    },
+    {
+      "term": "降智",
+      "meaning": "使用者抱怨模型突然『變笨』，懷疑廠商為省成本改用小模型、量化或加強過濾。",
+      "origin": "2024–2025 年中文 AI 社群常見抱怨用語。",
+      "game_use": "推論成本優化（量化、路由小模型）時有機率觸發『降智』輿論（聲望 -3、使用者流失 2%），可選擇公開說明或回滾。"
+    }
+  ]
+}

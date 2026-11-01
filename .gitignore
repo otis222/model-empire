@@ -1,0 +1,27 @@
+# 建置產物（由 tools/build.js 產生）
+dist/
+docs/bible.html
+
+# 內部工作文件和本機設定
+HANDOFF.md
+.claude/
+docs/notes/
+docs/report.html
+docs/urls.json
+
+# 美術原始檔很大，也包含第三方參考圖；只留署名和提示詞說明
+art/**
+!art/
+!art/dafeiyu_prompts.md
+!art/reference/
+!art/reference/*/
+!art/reference/*/SOURCE.md
+art/reference/naidou/
+
+# 其他
+*.blend1
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+Thumbs.db
