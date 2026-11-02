@@ -378,6 +378,7 @@
   const RING = { cx: 1200, cy: 537, r: 393 };
   function showGame() {
     cancelAnimationFrame(heroRAF); hudPrev = null; hudWeek = -1; lastTab = null;
+    plDraft = null;
     seedRevHist(); rankPrev = null; logSeen = null;
     if (talk.ctl) talk.ctl.abort();
     talk.mid = null; talk.turns = []; talk.sig = '';  // 換存檔或開新局：對話紀錄不跟過去
@@ -894,7 +895,7 @@
       <div class="meta">${ME.ARCH[m.arch].name} · ${par(m.size)}${m.arch !== 'dense' ? '（啟用 ' + par(m.act) + '）' : ''} · ${tok(m.tokens)} tok · ${ME.dateLabel(m.w).replace(/ 第.*$/, '')}</div>
       ${statBars(m.stats, fr)}
       ${badgesHTML(bs)}
-      ${rel && !rel.retired ? `<div class="row small"><span class="muted">定價</span><select data-act="price" data-id="${m.id}" aria-label="定價">${D.PRICE_TIERS.map((p) => `<option value="${p.id}" ${p.id === rel.price ? 'selected' : ''}>${p.name}</option>`).join('')}</select><span class="spacer"></span><span class="muted">週營收</span><b class="num">${money(m.lastRev || 0)}</b></div>` : ''}
+      ${rel && !rel.retired ? `<div class="row small"><span class="muted">定價</span><select data-act="price" data-id="${m.id}" aria-label="定價">${D.PRICE_TIERS.map((p) => `<option value="${p.id}" ${p.id === rel.price ? 'selected' : ''}>${p.name}</option>`).join('')}</select>${G.s.plans ? '<span class="muted" title="對話 App 的售價由會員方案決定，這裡的定價影響其他市場">對話 App 依方案</span>' : ''}<span class="spacer"></span><span class="muted">週營收</span><b class="num">${money(m.lastRev || 0)}</b></div>` : ''}
       <div class="btn-row">
         ${!rel ? `<button class="btn primary sm" data-act="report" data-id="${m.id}">評測報告 / 發布</button>` : `<button class="btn sm" data-act="report" data-id="${m.id}">評測報告</button>`}
         <button class="btn sm" data-act="chat" data-id="${m.id}">💬 試聊</button>
@@ -1193,6 +1194,7 @@
       [card('[data-act="deal"]'), '授權交易：花錢買高品質資料，每項每年可以買一次。'],
     ],
     market: [
+      ['.pl', '會員方案：調整月費和額度，下面會先算出市佔、營收和算力的變化，按「套用方案」才生效。'],
       ['.gb', '全球佔領圖：顏色是各公司的版圖，你的版圖最亮。拖曳可以轉動地球，點地區可以看誰領先、你還差多少。'],
       ['.seg-tiles', '各市場：每個市場看重的能力不同，這裡看得到規模、參考價和你的市佔。'],
       [card('.rank-t'), '排行榜：依綜合分排名，前三名有獎牌；名字旁的箭頭是和上週相比的名次變化。'],
@@ -1266,7 +1268,7 @@
     '開源': '公開模型權重：換到社群、聲望和人才，但 API 收入會被別人分走。',
   };
   const GLOSS_KEYS = Object.keys(GLOSS).sort((x, y) => y.length - x.length);
-  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org, .gb, .eb, .sc';
+  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org, .gb, .eb, .sc, .pl-rivals';
   function glossify(root) {
     if (!root) return;
     const nodes = [];
@@ -1915,6 +1917,7 @@
     const worth = b && b.weeks && b.weeks <= 104;  // 兩年內回本才算划算
     const plan = b ? `<div class="gap-plan">${IC.gpu(b.x.id, 50)}<div class="tx"><b>買 ${num(b.n)} 張 ${esc(b.x.name)}</b><span class="small">花 ${money(b.cost)}，服務率升到約 ${pct(b.served)}${b.weeks ? `，扣掉營運成本和電費每週多賺約 ${money(b.net)}，約 ${num(b.weeks)} 週回本` : '，但以目前的定價回不了本'}${worth ? '' : '。也可以調高定價來降低需求'}</span></div><button class="btn${worth ? ' primary' : ''}" data-act="gap-buy" data-id="${b.x.id}" data-n="${b.n}">一鍵採購</button></div>`
       : `<p class="small gap-none">${!g.top ? '現在買不到可用的 GPU。' : g.free < 1 ? '機房已滿，要先擴建才能買卡。' : '現金不夠買卡，可以先募資。'}</p>`;
+    if (G.playerShare('chat') > 0) lines.push('<span>也可以收緊會員方案的額度，把對話 App 的算力用量降下來。</span><button class="btn sm" data-act="tab" data-id="market">調整方案</button>');
     return `<section class="gap" aria-label="推理算力缺口">
       <div class="gap-hd"><span class="ic" aria-hidden="true">🔥</span><div><b>推理算力不夠，每週少了約 <em class="num">${money(g.lost)}</em> 營收</b><span class="small muted">服務率 ${pct(g.servedNow)}。沒服務到的用戶還會讓聲望下滑。</span></div></div>
       <div class="alloc" role="img" aria-label="需求 ${num(g.need)}：自有 ${num(g.own)}、租用 ${num(g.rent)}、缺 ${num(g.short)}"><span style="width:${w(g.own)};background:var(--accent)"></span><span style="width:${w(g.rent)};background:color-mix(in srgb, var(--accent) 45%, transparent)"></span><span class="short" style="width:${w(g.short)}"></span></div>
@@ -2010,6 +2013,37 @@
     if (!globe) globe = GLOBE.create({ onPick: gbPick, spin: uiPref('gbSpin', true) });
     globe.setData(gbM, gbSel); globe.mount(slot);
   }
+  /* ---------- 會員方案（engine.js 的 planFx）：先改草稿、看試算，按套用才生效 ---------- */
+  let plDraft = null;
+  function planDraft() { if (!plDraft) plDraft = Object.assign({}, G.s.plans || G.planDefaults()); return plDraft; }
+  function planPanel() {
+    const s = G.s; const P = D.PLANS; const d = planDraft(); const cur = s.plans || G.planDefaults();
+    const dirty = ['fq', 'sp', 'sq', 'mx', 'mp', 'mq'].some((k) => d[k] !== cur[k]);
+    const now = G.planCalc(s.plans); const next = G.planCalc(d); const maxOpen = G.ym >= P.max.from;
+    const seg = (k, list, label, unit) => `<div class="seg-ctl" role="group" aria-label="${label}">${list.map((o) => { const v = o.v == null ? o : o.v; return `<button data-act="pl-set" data-k="${k}" data-v="${v}" class="${d[k] === v ? 'on' : ''}" aria-pressed="${d[k] === v}">${o.name || (unit || '') + o}</button>`; }).join('')}</div>`;
+    const card = (p, cls, price, body) => `<article class="pl-c ${cls}"><div class="hd"><span class="ic" aria-hidden="true">${p.icon}</span><b>${p.name}</b></div>${price == null ? '<div class="pr off">未推出</div>' : `<div class="pr num">$${price}<small>/月</small></div>`}${body}</article>`;
+    const users = (n, t) => `<p class="u"><b class="num">${num(n)}</b> ${t}</p>`;
+    const cmp = (l, a, b, better, fmt) => { const same = !dirty || fmt(a) === fmt(b); const up = b > a; return `<div class="pl-m"><span class="l">${l}</span><span class="v num">${same ? fmt(a) : `<s>${fmt(a)}</s> ${fmt(b)}`}</span>${same ? '' : `<span class="d ${up === better ? 'good' : 'bad'}" aria-hidden="true">${up ? '▲' : '▼'}</span>`}</div>`; };
+    const rep = dirty ? G.planRepDelta(d) : null;
+    const repTxt = !rep ? '調整額度和月費，下面會先算給你看。' : rep.rep ? `聲望 ${rep.rep > 0 ? '+' : ''}${Math.round(rep.rep * 10) / 10}${rep.cut ? '，用戶可能會抗議' : ''}${rep.fickle ? '，而且才剛調整過' : ''}。` : '對聲望沒有影響。';
+    const rivals = D.RIVALS.filter((R) => G.ym >= R.start).map((R) => { const pm = R.freeChat ? 0 : R.open ? 0.5 : s.rivals[R.id].priceMul; return `<span class="pl-rv"><i aria-hidden="true">${R.icon}</i>${esc(R.name)} <b class="num">${pm ? '$' + Math.round(pm * 20) : '免費'}</b></span>`; }).join('');
+    const maxBody = !maxOpen ? `<p class="small muted">市場還不接受這個價位，${P.max.from.replace('-', '.')} 起可以推出。</p>`
+      : `<label class="toggle small"><input type="checkbox" data-act="pl-max" ${d.mx ? 'checked' : ''}> 推出旗艦版</label>${d.mx ? `<span class="l">月費</span>${seg('mp', P.max.prices, '旗艦版月費', '$')}<span class="l">額度（標準版的幾倍）</span>${seg('mq', P.max.quota, '旗艦版額度')}${users(next.flag, '付費用戶')}<p class="small muted">模型越接近前沿越賣得動，現在約 ${pct(next.strong)}。</p>` : '<p class="small muted">給用量最兇的用戶。人數少但單價高，額度給太多會虧在算力上。</p>'}`;
+    const st = G.resetState(); const noUser = G.playerShare('chat') <= 0;
+    const resetBtn = (id) => { const o = P.reset[id]; const after = now.need > 0 ? Math.min(1, (now.own + now.rent) / (now.need + now.chatNeed * (o.load - 1))) : 1; const gain = G.resetGain(id); return `<button class="btn" data-act="pl-reset" data-id="${id}" ${st.wait || noUser ? 'disabled' : ''}><b>${o.name}</b><small>聲望 +${Math.round(gain * 10) / 10} · 服務率約 ${pct(after)}</small></button>`; };
+    const resetNote = noUser ? '對話 App 有用戶之後才能發。' : st.wait ? `才剛發過，再等 ${st.wait} 週。` : st.sorry ? '現在發算是賠罪，聲望效果加倍。' : st.tired ? '半年內發過了，大家開始覺得理所當然，效果會打折。' : '';
+    return `<section class="card pl" aria-label="會員方案"><h3>會員方案 <span class="right small muted">對話 App 的訂閱怎麼賣</span></h3>
+      <div class="pl-grid">
+        ${card(P.free, 'free', 0, `<span class="l">額度</span>${seg('fq', P.free.quota, '免費版額度')}${users(next.active - next.paid - next.flag, '免費用戶')}<p class="small muted">額度大，用戶多、市佔高，但很吃算力，付費轉換也會變低。</p>`)}
+        ${card(P.std, 'std', d.sp, `<span class="l">月費</span>${seg('sp', P.std.prices, '標準版月費', '$')}<span class="l">額度</span>${seg('sq', P.std.quota, '標準版額度')}${users(next.paid, '付費用戶')}`)}
+        ${card(P.max, 'max' + (d.mx ? ' on' : ''), d.mx ? d.mp : null, maxBody)}
+      </div>
+      <div class="pl-rivals"><span class="small muted">對手標準方案</span>${rivals}</div>
+      <div class="pl-sum"><h4>${dirty ? '調整後（試算）' : '目前方案（試算）'}</h4><div class="pl-ms">${cmp('市佔', now.share, next.share, true, (x) => pct(x, 1))}${cmp('每週營收', now.rev, next.rev, true, money)}${cmp('算力需求', now.need, next.need, false, num)}${cmp('服務率', now.served, next.served, true, pct)}</div>
+        <div class="pl-act"><span class="small muted">${repTxt}市佔要幾週才會慢慢變動。</span><span class="spacer"></span>${dirty ? '<button class="btn sm ghost" data-act="pl-undo">還原</button>' : ''}<button class="btn sm ${dirty ? 'primary' : ''}" data-act="pl-apply" ${dirty ? '' : 'disabled'}>套用方案</button></div></div>
+      <div class="pl-reset"><div class="tx"><b><span aria-hidden="true">🎁</span> 發放額度重置</b><span class="small muted">送用戶一輪額度換聲望，接下來 ${P.reset.weeks} 週算力用量會暴增。${resetNote}</span></div>${resetBtn('paid')}${resetBtn('all')}</div>
+    </section>`;
+  }
   VIEWS.market = function () {
     const s = G.s; const lb = G.leaderboard().slice(0, 16); const lw = s.lastWeek || {};
     gbM = gbData();
@@ -2018,6 +2052,7 @@
     return `
     <div class="view-head"><h2>市場</h2><p>每個市場看重的能力不同，加上價格、品牌與通路決定市佔。對手每隔幾個月就會發布新模型。</p></div>
     ${GLOBE.panel(gbM, { sel: gbSel, spin: uiPref('gbSpin', true), esc, money, ym: G.ym.replace('-', '.') })}
+    ${planPanel()}
     <div class="card"><h3>各市場 <span class="right small muted">本週規模、參考價與你的市佔</span></h3>
       <div class="seg-tiles">${segs.map((k) => { const g = D.SEGMENTS[k]; const elig = !g.tech || G.has(g.tech); const sh = G.playerShare(k); return `<div class="seg-tile${elig ? '' : ' locked'}">
         <div class="st-hd"><span class="ic">${g.icon}</span><b>${g.name}</b></div>
@@ -2529,6 +2564,7 @@
         <div><b>模型配方</b>：分數來自「有效算力」：6 × 等效參數 × 有效資料 × Chinchilla 效率 × 資料品質 × 演算法加成 × 人才。參數與資料量要平衡（每參數約 20 token）；資料重複會遞減；MoE 用較少算力撐起更大的等效規模。</div>
         <div><b>能力</b>：資料配比決定能力偏向（程式碼→程式、書籍論文→知識與推理、網頁→語言、圖文→多模態）；後訓練分配給有用性、安全、推理、Agent。綜合分權重會隨時代改變：2024 秋推理變重要，2025 起 Agent 變重要。</div>
         <div><b>市場</b>：7 個市場各看重不同能力。市佔取決於能力（離前沿太遠會被嚴重扣分）、價格、聲望、行銷、通路與賣點。推理服務要佔用 GPU，不夠就會掉線、掉聲望。</div>
+        <div><b>會員方案</b>：市場頁可以調整對話 App 的免費版、標準版和旗艦版。額度越大越吃算力，砍額度會被罵；也能發放額度重置換聲望。不調整就照模型定價賣。</div>
         <div><b>賣點</b>：兩項能力同時達到前沿的特定比例就獲得賣點（銅/銀/金），在相關市場有額外吸引力。</div>
         <div><b>對手</b>：天穹（閉源龍頭）、巨石（巨頭全家桶）、燈塔（安全派）、群星（開源派）、蜂巢（國民 App）、疾風（2024 崛起的效率黑馬）。你開源會讓開源派學得更快。</div>
         <div><b>風險</b>：安全分低 → 事故 → 監管壓力；監管 ≥ 40 前沿模型需安全 ≥ 60 才能發布，≥ 70 會被罰款，≥ 95 全線停業 4 週。激進爬取與使用者資料會累積法律風險。</div>
@@ -2689,6 +2725,15 @@
       }
       case 'research-cancel': { const r = G.cancelResearch(ds.id); if (!r.ok) toast(r.err, true); else toast('已取消，退回 ' + num(r.back) + ' 研究點'); render(); break; }
       case 'tech-tab': techTab = ds.id; techSel = null; renderView(); break;
+      case 'pl-set': planDraft()[ds.k] = +ds.v; renderView(); break;
+      case 'pl-undo': plDraft = null; renderView(); break;
+      case 'pl-apply': {
+        const r = G.setPlans(planDraft()); if (!r.ok) { toast(r.err, true); break; }
+        plDraft = null; toast('會員方案已更新' + (r.rep ? '，聲望 ' + (r.rep > 0 ? '+' : '') + Math.round(r.rep * 10) / 10 : '')); render();
+        if (G.s.pending.length) checkPending();
+        break;
+      }
+      case 'pl-reset': { const r = G.grantReset(ds.id); if (!r.ok) toast(r.err, true); else { sfx('fanfare'); toast('已發放額度重置，聲望 +' + Math.round(r.gain * 10) / 10); } render(); break; }
       case 'tech-q-add': techEnqueue(ds.id); break;
       case 'tech-q-del': techDequeue(ds.id); break;
       case 'tech-q-front': techQFront(ds.id); break;
@@ -2743,6 +2788,7 @@
     else if (name === 'trainprog') s.trainProg = el.checked;
     else if (name === 'autorent') s.autoRent = el.checked;
     else if (name === 'tech-auto') { s.techAuto = el.checked; techQueueRun(); }
+    else if (name === 'pl-max') planDraft().mx = el.checked;
     else if (name === 'crawl') s.crawl = el.checked;
     else if (name === 'crawl-aggr') s.crawlAggr = el.checked;
     else if (name === 'userdata') s.userData = el.checked;

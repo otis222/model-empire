@@ -237,6 +237,21 @@
     { id: 'lux', name: '奢華旗艦', m: 2.6, rev: 2.6, desc: '只有頂尖模型賣得動' },
   ];
   D.MARKETING = [0, 10000, 50000, 200000, 1e6, 5e6, 20e6];
+  /* 會員方案（只影響對話 App）。存檔裡沒有 s.plans 時完全不影響數字，所以機器人和舊存檔照舊。
+     額度 v 是倍率：免費版和標準版相對標準額度，旗艦版相對標準版。k 是公式用的係數，見 engine.js 的 planFx() */
+  D.PLANS = {
+    free: { name: '免費版', icon: '🌱', quota: [{ v: 0.5, name: '少' }, { v: 1, name: '標準' }, { v: 1.6, name: '多' }, { v: 2.5, name: '超多' }] },
+    std: { name: '標準版', icon: '⭐', prices: [10, 15, 20, 25, 30, 40, 50], quota: [{ v: 0.6, name: '少' }, { v: 1, name: '標準' }, { v: 1.6, name: '多' }, { v: 2.5, name: '超多' }] },
+    max: { name: '旗艦版', icon: '👑', from: '2024-12', prices: [100, 200, 300], quota: [{ v: 5, name: '5 倍' }, { v: 10, name: '10 倍' }, { v: 20, name: '20 倍' }] },
+    k: {
+      freeUtil: 0.3, stdUtil: 0.35, maxUtil: 0.08,  // 額度對吸引力的影響
+      freeConv: 0.15, stdConv: 0.2, priceConv: 0.3,  // 付費轉換：免費額度越多越少人付費，標準版越划算越多人付費
+      freeLoad: 0.35,                                // 預設狀態下，免費用戶佔對話 App 算力的比例
+      maxTake: 0.025, maxQuota: 0.3, maxGap: 12, maxUse: 0.5, cannibal: 3,  // 旗艦版：願意買的比例、落後前沿多少分就賣不動、實際用掉多少額度、搶走多少標準版用戶
+    },
+    reset: { paid: { name: '付費用戶', load: 1.25, rep: 1.5 }, all: { name: '全部用戶', load: 1.6, rep: 3 }, weeks: 2, gap: 12, tire: 26, sorry: 8 },
+    tierPrice: { free: 10, low: 10, mid: 20, high: 30, lux: 50 },  // 第一次調整方案時，從模型定價換算成標準版月費
+  };
 
   /* ---------- 對手 ---------- */
   /* c0 = 首發綜合分；slope = 每年進步；price = 價格倍率；dist = 各市場通路加成 */

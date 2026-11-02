@@ -925,6 +925,58 @@ window.ME_EVENTS = [
 
   /* ======================= 迷因 meme（改編自真實網路梗，原意見史料庫「迷因詞典」） ======================= */
   {
+    id: 'plan_backlash', cat: 'market', chainOnly: true, title: '限額風波',
+    text: '{company} 的額度縮水了。社群置頂文列出改版前後的對照表，底下幾千則留言都在問同一句：「我付的錢呢？」',
+    weight: 1, once: false, cooldown: 26,
+    choices: [
+      { text: '發一輪額度重置賠罪（對話算力用量 +40% 2週，聲望 +3）', effects: { mod: { key: 'chatLoad', mul: 1.4, weeks: 2 }, rep: 3 },
+        result: '工程負責人發文說「額度都重置了，抱歉」。留言區瞬間從討伐變成「再愛一次」。' },
+      { text: '公開算力成本，說明為什麼要調整（聲望 -1，社群 +4）', effects: { rep: -1, community: 4 },
+        result: '有人算完成本之後反過來幫你說話，也有人回「那關我什麼事」。' },
+      { text: '不回應，等風頭過去（聲望 -3，對話需求 -8% 8週）', effects: { rep: -3, mod: { key: 'demand_chat', mul: 0.92, weeks: 8 } },
+        result: '一週後大家換了話題，但退訂教學已經上了熱門。' }
+    ]
+  },
+  {
+    id: 'plan_abuse', cat: 'market', chainOnly: true, title: '吃到飽被濫用',
+    text: '有人把 {company} 的高額度帳號串成轉售服務，同一個帳號二十四小時不停跑。後台顯示，最兇的帳號一個月吃掉的算力比月費貴幾十倍。',
+    weight: 1, once: false, cooldown: 52,
+    choices: [
+      { text: '加上每週用量上限（對話算力用量 -15% 26週，聲望 -2）', effects: { mod: { key: 'chatLoad', mul: 0.85, weeks: 26 }, rep: -2 },
+        result: '帳單立刻好看很多，公告底下的留言則完全相反。' },
+      { text: '只封轉售帳號（資金 -1週開銷，對話算力用量 -8% 26週，聲望 +1）', effects: { cashRel: -1, mod: { key: 'chatLoad', mul: 0.92, weeks: 26 }, rep: 1 },
+        result: '風控團隊加了幾天班，一般用戶幾乎沒感覺。' },
+      { text: '先不管，就當是口碑（對話算力用量 +15% 26週，社群 +5）', effects: { mod: { key: 'chatLoad', mul: 1.15, weeks: 26 }, community: 5 },
+        result: '「這家額度給得最大方」成了推薦文的標準開頭。財務長開始不回你訊息。' }
+    ]
+  },
+  {
+    id: 'plan_student', cat: 'market', title: '學生方案', once: true,
+    text: '幾所大學的學生會聯名來信：作業、論文和期末專題都離不開 {company}，能不能有學生價？',
+    weight: 1, cooldown: 52,
+    cond: { flag: 'plans_on', minUsers: 100000 },
+    choices: [
+      { text: '推出學生半價（資金 -1週開銷，對話需求 +8% 52週，聲望 +2）', effects: { cashRel: -1, mod: { key: 'demand_chat', mul: 1.08, weeks: 52 }, rep: 2 },
+        result: '期末週的尖峰流量多了一波，四年後他們會成為你最穩定的付費用戶。' },
+      { text: '不做學生價，但開放校園免費額度（對話算力用量 +5% 26週，社群 +3）', effects: { mod: { key: 'chatLoad', mul: 1.05, weeks: 26 }, community: 3 },
+        result: '校園社團開始辦提示詞比賽，冠軍獎品是你們的貼紙。' },
+      { text: '婉拒（聲望 -1）', effects: { rep: -1 },
+        result: '對手隔週就宣布學生免費，還特別感謝你們的回信。' }
+    ]
+  },
+  {
+    id: 'plan_annual', cat: 'market', title: '年繳優惠', once: true,
+    text: '財務長提議推出年繳方案：用戶一次付一年，打八五折。現金馬上進來，但接下來幾個月的營收會變薄。',
+    weight: 1, cooldown: 52,
+    cond: { flag: 'plans_on', minUsers: 100000 },
+    choices: [
+      { text: '推出年繳優惠（資金 +3週開銷，營收 -4% 26週）', effects: { cashRel: 3, mod: { key: 'revenueMul', mul: 0.96, weeks: 26 } },
+        result: '帳上多了一大筆錢，財務長難得笑了。' },
+      { text: '維持月繳（聲望 +1）', effects: { rep: 1 },
+        result: '用戶隨時可以退訂，你也得隨時讓他們覺得值得。' }
+    ]
+  },
+  {
     id: 'meme_server_busy', cat: 'compute', title: '「伺服器繁忙，請稍後再試」',
     text: '{model} 突然爆紅，湧進來的用戶把推理叢集擠爆，畫面只剩一行「伺服器繁忙，請稍後再試」。這句話已經變成迷因，連爸媽都轉傳給你。',
     weight: 1, once: false, cooldown: 52,
@@ -2051,3 +2103,12 @@ window.ME_QUESTS = [
   { id: 'q_raise', title: '完成 A 輪募資', go: 'finance', reward: { morale: 5 },
     desc: 'A 輪的條件是發布過綜合分 40 以上的模型。募資會稀釋你的持股，但能換來擴張需要的資金。' },
 ];
+
+// 發放額度重置時的官方貼文和網友回應（之後的社交媒體視窗也會用到）
+window.ME_RESET_POSTS = {
+  paid: ['工程負責人發文：「付費用戶的額度都重置了，這週儘管用。」', '官方帳號發文：「感謝大家的回報，付費額度已全部重置。」'],
+  all: ['工程負責人發文：「剛把所有人的額度都重置了，玩得開心。」', '官方帳號發文：「全部用戶的額度已重置，今晚伺服器就交給你們了。」'],
+  sorry: ['工程負責人發文：「這次是我們的問題，額度都重置了，抱歉。」', '官方帳號發文：「造成困擾很抱歉，額度已全部重置作為補償。」'],
+  reply: ['熱門留言：「他又發了！今天不睡了！」', '熱門留言：「額度重置比發薪日還讓人期待。」', '熱門留言：「剛好用完，這個人是不是在看我的帳號。」', '熱門留言：「老闆，下次重置前可以先預告嗎，我想請假。」'],
+  tired: ['熱門留言：「又重置？不如直接把額度加大。」', '熱門留言：「重置已經不算福利了，是例行公事。」'],
+};
