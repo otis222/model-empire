@@ -33,12 +33,14 @@
     arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
     chev: '<path d="m6 15 6-6 6 6"/>',
     music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    chirp: '<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
     mute: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M2 2l20 20"/>',
   };
   function svg(id, s, cls) { return `<svg class="ico${cls ? ' ' + cls : ''}" width="${s || 18}" height="${s || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[id] || ''}</svg>`; }
   // 科技、路線與設備的圖示（src/icons.js）
   const IC = window.ME_ICONS;
   const GLOBE = window.ME_GLOBE;
+  const SOCIAL = window.ME_SOCIAL;
   const techTile = (t, big) => `<span class="tk-ic${big ? ' big' : ''}" style="--ln:${IC.lineColor(t.line)}">${IC.tech(t.id, big ? 28 : 20)}</span>`;
   /* ================= 音樂與音效：Web Audio 即時合成，不用音檔 =================
      背景音樂是四和弦循環的氛圍曲：時間暫停時只有鋪底與琶音，時間跑起來才加鼓點，四倍速再加密集的鈸。
@@ -378,7 +380,7 @@
   const RING = { cx: 1200, cy: 537, r: 393 };
   function showGame() {
     cancelAnimationFrame(heroRAF); hudPrev = null; hudWeek = -1; lastTab = null;
-    plDraft = null;
+    plDraft = null; chirp.on = false; chirp.open = {};
     seedRevHist(); rankPrev = null; logSeen = null;
     if (talk.ctl) talk.ctl.abort();
     talk.mid = null; talk.turns = []; talk.sig = '';  // 換存檔或開新局：對話紀錄不跟過去
@@ -389,14 +391,15 @@
       <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
       <figure class="mascot-stage" id="mascot-stage"></figure>
       <header class="hud" id="hud"></header><nav class="nav" id="nav" aria-label="分頁"></nav><main class="main" id="main"></main><section class="chatbox" id="chatbox" aria-label="模型對話"></section><aside class="feed glass" id="feed" aria-label="事件日誌"></aside>
-    </div><div id="modal-root"></div><div class="toasts" id="toasts"></div>`;
+    </div><section class="chirp" id="chirp" role="dialog" aria-label="啾啾" hidden></section><div id="modal-root"></div><div class="toasts" id="toasts"></div>`;
     renderAll();
     if (G.s.ended) showEnding();
     else if (G.s.week === 0 && !G.s.flags.welcomed) { G.s.flags.welcomed = 1; showWelcome(); }
     else checkPending();
   }
-  function renderAll() { renderHud(); renderNav(); renderView(); renderFeed(); }
+  function renderAll() { chirpSync(); renderHud(); renderNav(); renderView(); renderFeed(); }
   function render() {
+    chirpSync();
     renderHud(); renderNav(); renderFeed();
     const act = document.activeElement; const main = document.getElementById('main');
     if (Date.now() < holdUntil) return;
@@ -421,6 +424,7 @@
     return `${c.desc ? `<p><b>${esc(c.name)}</b>${c.en ? ' · ' + esc(c.en) : ''}：${esc(c.desc)}</p>` : ''}${perks.map((p) => `<span class="pill ${p.good ? 'good' : 'bad'}">${esc(p.t)}</span>`).join('')}`;
   }
   function renderHud() {
+    const chirpNew = chirp.on ? 0 : SOCIAL.unread(G);
     const el = document.getElementById('hud'); if (!el || !G) return;
     const s = G.s; const lw = s.lastWeek || {}; const net = (lw.rev || 0) - (lw.exp || 0);
     const best = G.bestModel(); const bc = best ? G.composite(best.stats) : 0; const rk = G.bestRank();
@@ -440,6 +444,7 @@
         <div class="hud-time">
           <div class="date"><b>${ymDot(s.week)}</b><span>${G.endWeek() > ME.TOTAL_WEEKS ? '<i class="hud-extra">延長賽</i>' : ''}WEEK ${s.week} · ${esc(ME.dateLabel(s.week).replace(/^\d+年\d+月\s*/, ''))}</span>${wkBar()}</div>
           <div class="speed glass" role="group" aria-label="時間速度">${[0, 1, 2, 3].map((i) => `<button class="${speed === i ? 'on' : ''}" data-act="speed" data-v="${i}" aria-pressed="${speed === i}" title="${['暫停（空白鍵）', '一般速度（1）', '兩倍速（2）', '四倍速（3）'][i]}">${i ? ['', '1×', '2×', '4×'][i] : PAUSE}</button>`).join('')}</div>
+          <button class="icon-btn glass" data-act="chirp" aria-pressed="${chirp.on}" aria-label="啾啾社群${chirpNew ? '，' + chirpNew + ' 則新貼文' : ''}" title="啾啾社群">${svg('chirp')}${chirpNew ? `<span class="cnt num" aria-hidden="true">${chirpNew > 99 ? '99+' : chirpNew}</span>` : ''}</button>
           <button class="icon-btn glass" data-act="open-log" aria-label="情報與事件日誌">${svg('bell')}${fresh ? '<span class="dot"></span>' : ''}</button>
           <button class="icon-btn glass ${AU.on.music ? '' : 'off'}" data-act="music" aria-pressed="${AU.on.music}" aria-label="背景音樂">${svg(AU.on.music ? 'music' : 'mute')}</button>
           <button class="icon-btn glass" data-act="menu" aria-label="選單">${svg('menu')}</button>
@@ -1993,6 +1998,56 @@
   };
 
   /* ---------- 市場 ---------- */
+  /* ---------- 社交媒體「啾啾」（src/social.js）：不擋時間的浮動視窗，位置會記住 ---------- */
+  const chirp = { on: false, tab: 'all', open: {}, drag: null };
+  function chirpSync() {
+    if (!G) return;
+    const added = SOCIAL.sync(G, D);
+    if (!chirp.on) return;
+    SOCIAL.state(G).seen = SOCIAL.state(G).n;
+    if (added) renderChirp();
+  }
+  function renderChirp() {
+    const el = document.getElementById('chirp'); if (!el || !chirp.on || !G) return;
+    const sc = el.querySelector('.ch-scroll'); const y = sc ? sc.scrollTop : 0;
+    const st = G.resetState();
+    el.innerHTML = SOCIAL.panel(G, D, { esc, num, tab: chirp.tab, open: chirp.open, reset: { wait: st.wait, noUser: G.playerShare('chat') <= 0 } });
+    const sc2 = el.querySelector('.ch-scroll'); if (sc2) sc2.scrollTop = y;
+  }
+  function chirpToggle(v) {
+    chirp.on = v == null ? !chirp.on : v;
+    const el = document.getElementById('chirp'); if (!el) return;
+    el.hidden = !chirp.on;
+    if (chirp.on) {
+      SOCIAL.state(G).seen = SOCIAL.state(G).n; renderChirp(); chirpPlace();
+      const x = el.querySelector('.x'); if (x) x.focus({ preventScroll: true });
+    }
+    renderHud();
+    if (!chirp.on) { const b = document.querySelector('[data-act="chirp"]'); if (b) b.focus({ preventScroll: true }); }  // 重畫 HUD 之後按鈕是新的，焦點要在這之後才給
+  }
+  // 桌面版可以拖曳，位置存在介面偏好；手機版固定成底部面板，由樣式決定
+  function chirpPlace() {
+    const el = document.getElementById('chirp'); if (!el) return;
+    if (window.innerWidth <= 760) { el.style.left = ''; el.style.top = ''; el.style.right = ''; el.style.bottom = ''; return; }
+    const pos = uiPref('chirpPos', null); if (!pos) { el.style.left = ''; el.style.top = ''; el.style.right = ''; el.style.bottom = ''; return; }
+    const w = el.offsetWidth; const h = el.offsetHeight;
+    el.style.left = Math.max(0, Math.min(window.innerWidth - w, pos.x)) + 'px'; el.style.top = Math.max(0, Math.min(window.innerHeight - h, pos.y)) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+  }
+  document.addEventListener('pointerdown', (e) => {
+    const hd = e.target.closest && e.target.closest('.ch-hd'); if (!hd || e.target.closest('button') || window.innerWidth <= 760 || e.button) return;
+    const el = document.getElementById('chirp'); const r = el.getBoundingClientRect();
+    chirp.drag = { dx: e.clientX - r.left, dy: e.clientY - r.top }; e.preventDefault();
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!chirp.drag) return; const el = document.getElementById('chirp'); if (!el) return;
+    el.style.left = Math.max(0, Math.min(window.innerWidth - el.offsetWidth, e.clientX - chirp.drag.dx)) + 'px'; el.style.top = Math.max(0, Math.min(window.innerHeight - el.offsetHeight, e.clientY - chirp.drag.dy)) + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+  });
+  document.addEventListener('pointerup', () => {
+    if (!chirp.drag) return; chirp.drag = null; const el = document.getElementById('chirp'); if (!el) return;
+    const r = el.getBoundingClientRect(); setUiPref('chirpPos', { x: Math.round(r.left), y: Math.round(r.top) });
+  });
+  window.addEventListener('resize', () => { if (chirp.on) chirpPlace(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && chirp.on && e.target.closest && e.target.closest('#chirp')) chirpToggle(false); });
   /* ---------- 全球佔領圖（src/globe.js）：畫面的 canvas 只建一次，每次重畫頁面時搬回新的插槽 ---------- */
   let globe = null; let gbSel = null; let gbM = null;
   function gbData() {
@@ -2565,6 +2620,7 @@
         <div><b>能力</b>：資料配比決定能力偏向（程式碼→程式、書籍論文→知識與推理、網頁→語言、圖文→多模態）；後訓練分配給有用性、安全、推理、Agent。綜合分權重會隨時代改變：2024 秋推理變重要，2025 起 Agent 變重要。</div>
         <div><b>市場</b>：7 個市場各看重不同能力。市佔取決於能力（離前沿太遠會被嚴重扣分）、價格、聲望、行銷、通路與賣點。推理服務要佔用 GPU，不夠就會掉線、掉聲望。</div>
         <div><b>會員方案</b>：市場頁可以調整對話 App 的免費版、標準版和旗艦版。額度越大越吃算力，砍額度會被罵；也能發放額度重置換聲望。不調整就照模型定價賣。</div>
+        <div><b>啾啾</b>：右上角的小鳥圖示是社交媒體。模型發布、對手出招、事件和額度重置都會變成貼文，視窗開著時間也會繼續走。</div>
         <div><b>賣點</b>：兩項能力同時達到前沿的特定比例就獲得賣點（銅/銀/金），在相關市場有額外吸引力。</div>
         <div><b>對手</b>：天穹（閉源龍頭）、巨石（巨頭全家桶）、燈塔（安全派）、群星（開源派）、蜂巢（國民 App）、疾風（2024 崛起的效率黑馬）。你開源會讓開源派學得更快。</div>
         <div><b>風險</b>：安全分低 → 事故 → 監管壓力；監管 ≥ 40 前沿模型需安全 ≥ 60 才能發布，≥ 70 會被罰款，≥ 95 全線停業 4 週。激進爬取與使用者資料會累積法律風險。</div>
@@ -2725,6 +2781,10 @@
       }
       case 'research-cancel': { const r = G.cancelResearch(ds.id); if (!r.ok) toast(r.err, true); else toast('已取消，退回 ' + num(r.back) + ' 研究點'); render(); break; }
       case 'tech-tab': techTab = ds.id; techSel = null; renderView(); break;
+      case 'chirp': chirpToggle(); break;
+      case 'chirp-tab': chirp.tab = ds.id; renderChirp(); { const sc = document.querySelector('#chirp .ch-scroll'); if (sc) sc.scrollTop = 0; } break;
+      case 'chirp-thread': chirp.open[ds.id] = !chirp.open[ds.id]; renderChirp(); break;
+      case 'chirp-like': { const p = SOCIAL.state(G).posts.find((x) => x.i === +ds.id); if (p) { p.lk = p.lk ? 0 : 1; renderChirp(); } break; }
       case 'pl-set': planDraft()[ds.k] = +ds.v; renderView(); break;
       case 'pl-undo': plDraft = null; renderView(); break;
       case 'pl-apply': {
@@ -2733,7 +2793,7 @@
         if (G.s.pending.length) checkPending();
         break;
       }
-      case 'pl-reset': { const r = G.grantReset(ds.id); if (!r.ok) toast(r.err, true); else { sfx('fanfare'); toast('已發放額度重置，聲望 +' + Math.round(r.gain * 10) / 10); } render(); break; }
+      case 'pl-reset': { const r = G.grantReset(ds.id); if (!r.ok) toast(r.err, true); else { sfx('fanfare'); toast('已發放額度重置，聲望 +' + Math.round(r.gain * 10) / 10); } render(); renderChirp(); break; }
       case 'tech-q-add': techEnqueue(ds.id); break;
       case 'tech-q-del': techDequeue(ds.id); break;
       case 'tech-q-front': techQFront(ds.id); break;
