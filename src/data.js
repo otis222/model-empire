@@ -231,10 +231,10 @@
   D.SEG_ORDER = ['chat', 'api', 'ent', 'coding', 'creative', 'agent', 'robot'];
   D.PRICE_TIERS = [
     { id: 'free', name: '免費（引流）', m: 0.15, rev: 0.15, desc: '幾乎不賺錢，但吸引力極高；對話 App 靠廣告有少量收入' },
-    { id: 'low', name: '低價', m: 0.5, rev: 0.5, desc: '以價換量' },
+    { id: 'low', name: '低價', m: 0.5, rev: 0.7, desc: '以價換量，用戶多但毛利薄' },
     { id: 'mid', name: '市場價', m: 1.0, rev: 1.0, desc: '與市場平均持平' },
-    { id: 'high', name: '高價', m: 1.6, rev: 1.6, desc: '高毛利，需要能力撐得起' },
-    { id: 'lux', name: '奢華旗艦', m: 2.6, rev: 2.6, desc: '只有頂尖模型賣得動' },
+    { id: 'high', name: '高價', m: 1.6, rev: 1.25, desc: '實收約市場價的 1.25 倍。模型夠強或算力不夠時才划算，落後前沿會賣不動' },
+    { id: 'lux', name: '奢華旗艦', m: 2.6, rev: 1.6, desc: '實收約市場價的 1.6 倍。只有頂尖模型賣得動，適合領先很多或算力嚴重不足的時候' },
   ];
   D.MARKETING = [0, 10000, 50000, 200000, 1e6, 5e6, 20e6];
   /* 會員方案（只影響對話 App）。存檔裡沒有 s.plans 時完全不影響數字，所以機器人和舊存檔照舊。
@@ -245,9 +245,9 @@
     max: { name: '旗艦版', icon: '👑', from: '2024-12', prices: [100, 200, 300], quota: [{ v: 5, name: '5 倍' }, { v: 10, name: '10 倍' }, { v: 20, name: '20 倍' }] },
     k: {
       freeUtil: 0.3, stdUtil: 0.35, maxUtil: 0.08,  // 額度對吸引力的影響
-      freeConv: 0.15, stdConv: 0.2, priceConv: 0.3,  // 付費轉換：免費額度越多越少人付費，標準版越划算越多人付費
+      freeConv: 0.15, stdConv: 0.2, priceConv: 0.5,  // 付費轉換：免費額度越多越少人付費，標準版越划算越多人付費。priceConv 0.5 讓月費的實收和模型定價（PRICE_TIERS 的 rev）一致
       freeLoad: 0.35,                                // 預設狀態下，免費用戶佔對話 App 算力的比例
-      maxTake: 0.025, maxQuota: 0.3, maxGap: 12, maxUse: 0.5, cannibal: 3,  // 旗艦版：願意買的比例、落後前沿多少分就賣不動、實際用掉多少額度、搶走多少標準版用戶
+      maxTake: 0.025, maxQuota: 0.3, maxPrice: 1.6, maxGap: 12, maxUse: 0.5, cannibal: 2,  // 旗艦版：願意買的比例、額度和月費對購買意願的影響、落後前沿多少分就賣不動、實際用掉多少額度、搶走多少標準版用戶
     },
     reset: { paid: { name: '付費用戶', load: 1.25, rep: 1.5 }, all: { name: '全部用戶', load: 1.6, rep: 3 }, weeks: 2, gap: 12, tire: 26, sorry: 8 },
     tierPrice: { free: 10, low: 10, mid: 20, high: 30, lux: 50 },  // 第一次調整方案時，從模型定價換算成標準版月費
@@ -485,6 +485,9 @@
     REF_ACT: 70,
     SHARE_SMOOTH: 0.18,
     UTIL_A: 0.12,
+    PRICE_UP: 0.8,        // 賣得比市場價貴時，價格敏感度多多少：大多數市場的 beta 小於 1，不加這項的話永遠是最高價最賺
+    PRICE_GAP: 0.25,      // 落後前沿每 1 分，價格敏感度再多多少：只有頂尖模型賣得動高價
+    PRICE_GRACE: 1,       // 落後這麼多分以內不算落後
     OUTSIDE_GAP: 10,
     REP_UTIL: 0.022,
     RP_PER_RES: 12, RP_EXP: 0.75, // 研究點 = RP_PER_RES × 研究員人數^RP_EXP：人越多邊際產出越低

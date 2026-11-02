@@ -16,6 +16,11 @@ const scenario = process.argv[4] || 'garage';
 const city = process.argv[5] && process.argv[5].indexOf('--') !== 0 ? process.argv[5] : ''; // 總部城市（不給就不套城市效果）
 const quiet = process.argv.includes('--quiet');
 const pacing = process.argv.includes('--pacing');
+// 定價和方案打法，用環境變數開，tools/pacing.js 也吃得到。校準難度時這些都要跑，只看 4 種策略會漏掉最高價打法：
+//   TIERBOT=low|mid|high|lux  所有模型一律這個定價
+//   SMART=1                   每季替每個模型挑短期淨收入最高的定價
+//   PLANBOT=greedy            每半年試算一次會員方案，淨收入高 8% 以上才換
+//   BOTNET=0.8                招人、買卡時看淨燒錢（支出 - 0.8 × 營收），打法比較積極
 // 統計日誌類型（日誌只留 160 則，結束時再數會不準）
 const logKinds = {};
 const origLog = ME.Game.prototype.log;
@@ -132,7 +137,7 @@ function botWeek() {
   }
   // 募資
   if (g.roundReady().ok && (s.cash < g.weeklyExpense() * 80 || s.roundIdx < 2)) g.raiseFunds();
-  const burn = Math.max(5e4, g.weeklyExpense());
+  const burn = Math.max(5e4, process.env.BOTNET ? g.weeklyExpense() - +process.env.BOTNET * g.avgRevenue() : g.weeklyExpense());
   // 招人
   const cap = g.officeCap(); const tot = g.totalStaff();
   if (s.cash > burn * 40 && tot < cap) {
@@ -218,9 +223,46 @@ function track() {
   if (s.week % 52 === 0) M.yr[2023 + s.week / 52] = { cash: Math.round(s.cash / 1e6), rev: Math.round(rev / 1e4) / 100, exp: Math.round(exp / 1e4) / 100, rp: Math.round(s.rp), rpw: Math.round(lw.rp || 0), tech: techN, rank: best ? g.bestRank() : 0, models: s.models.length, best: best ? Math.round(g.composite(best.stats)) : 0, front: Math.round(g.frontierComp()), staff: g.totalStaff(), share: Math.round(g.playerShare('chat') * 100), gpu: Math.round(g.ownedEq()) };
   M.models = s.models.length; M.ended = s.ended; M.week = s.week; M.rpLeft = Math.round(s.rp); M.techN = techN; M.techPct = Math.round(100 * techN / D.TECHS.length); M.questAll = s.quest ? s.quest.all : null; M.best = best ? Math.round(g.composite(best.stats)) : 0;
 }
+// 市佔穩定之後的週淨收入，其他條件不變
+function stableNet() {
+  const rp = g.rentPrice(); let rev = 0; let need = 0; g._front = g.frontierComp(); const plan = g.planFx(); const load = g.chatLoad();
+  for (const k of D.SEG_ORDER) {
+    if (!g.segActive(k)) continue; const ps = g.products(k); if (!ps.length) continue;
+    const T = g.segTargets(k, ps); const V = g.segValue(k);
+    ps.forEach((p, i) => { if (p.player == null) return; const m = s.models.find((x) => x.id === p.player); const sh = T.targets[i]; rev += sh * V * g.revRate(m, k, plan); need += sh * V * m.costRatio / rp * (k === 'chat' ? load : 1); });
+  }
+  const own = Math.min(g.ownedEq(), need); const rent = s.autoRent ? Math.max(0, Math.min(g.inferRentCap(), need - own)) : 0; const served = need > 0 ? Math.min(1, (own + rent) / need) : 1;
+  return rev * served - rent * rp;
+}
+function smartPrice() {
+  if (s.week % 13 || smartPrice.w === s.week) return; smartPrice.w = s.week;
+  for (const m of s.models.filter((x) => x.rel && !x.rel.retired).reverse()) {
+    let best = -Infinity; let top = m.rel.price;
+    for (const id of ['low', 'mid', 'high', 'lux']) { g.setPrice(m.id, id); const v = stableNet(); if (v > best) { best = v; top = id; } }
+    g.setPrice(m.id, top);
+  }
+}
+function planBot() {
+  if (s.week % 26 || planBot.w === s.week || !g.segActive('chat') || g.playerShare('chat') <= 0) return; planBot.w = s.week;
+  const P = D.PLANS; const vals = (l) => l.map((x) => (x.v == null ? x : x.v));
+  const score = (c) => { const r = g.planCalc(c); return r.rev - r.rentCost - (r.served < 0.97 ? r.rev * (0.97 - r.served) * 2 : 0); };
+  const c = Object.assign({}, s.plans || g.planDefaults()); const base = score(s.plans || null); let best = score(c);
+  if (base <= 0) return;
+  for (let round = 0; round < 2; round++) {
+    if (g.ym >= P.max.from) { const was = c.mx; c.mx = !was; const v = score(c); if (v > best) best = v; else c.mx = was; }
+    for (const [k, l] of [['fq', vals(P.free.quota)], ['sp', vals(P.std.prices)], ['sq', vals(P.std.quota)], ['mp', vals(P.max.prices)], ['mq', vals(P.max.quota)]]) {
+      if ((k === 'mp' || k === 'mq') && !c.mx) continue;
+      let top = c[k]; for (const v of l) { c[k] = v; const x = score(c); if (x > best) { best = x; top = v; } } c[k] = top;
+    }
+  }
+  if (best >= base * 1.08 && !(s.plans && ['fq', 'sp', 'sq', 'mx', 'mp', 'mq'].every((k) => s.plans[k] === c[k]))) g.setPlans(c);
+}
 let lastPrint = -99;
 while (!s.ended) {
   botWeek();
+  if (process.env.TIERBOT) for (const x of s.models) if (x.rel && !x.rel.retired) g.setPrice(x.id, process.env.TIERBOT);
+  if (!s.ended && process.env.SMART) smartPrice();
+  if (!s.ended && process.env.PLANBOT) planBot();
   g.tick();
   track();
   if (s.pending.length && s.pending.length > 5) { console.log('pending stuck', s.pending); break; }

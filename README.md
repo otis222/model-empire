@@ -62,6 +62,7 @@ node tools/validate_content.js   # 驗證內容
 node tools/zh_check.js           # 檢查簡體轉換有沒有殘留繁體
 node tools/sim.js 1 balanced     # 跑一局機器人模擬
 node tools/pacing.js 12          # 統計破產率、結局分布和評等
+TIERBOT=lux node tools/pacing.js 12  # 所有模型一律定奢華旗艦；校準難度時也要看（另有 TIERBOT=high、SMART=1、PLANBOT=greedy）
 ```
 
 核心公式：

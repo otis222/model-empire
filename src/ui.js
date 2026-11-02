@@ -1926,6 +1926,7 @@
     const worth = b && b.weeks && b.weeks <= 104;  // 兩年內回本才算划算
     const plan = b ? `<div class="gap-plan">${IC.gpu(b.x.id, 50)}<div class="tx"><b>買 ${num(b.n)} 張 ${esc(b.x.name)}</b><span class="small">花 ${money(b.cost)}，服務率升到約 ${pct(b.served)}${b.weeks ? `，扣掉營運成本和電費每週多賺約 ${money(b.net)}，約 ${num(b.weeks)} 週回本` : '，但以目前的定價回不了本'}${worth ? '' : '。也可以調高定價來降低需求'}</span></div><button class="btn${worth ? ' primary' : ''}" data-act="gap-buy" data-id="${b.x.id}" data-n="${b.n}">一鍵採購</button></div>`
       : `<p class="small gap-none">${!g.top ? '現在買不到可用的 GPU。' : g.free < 1 ? '機房已滿，要先擴建才能買卡。' : '現金不夠買卡，可以先募資。'}</p>`;
+    if (s.models.some((m) => m.rel && !m.rel.retired && m.rel.price !== 'lux')) lines.push('<span>也可以調高模型定價：用戶會變少，但同樣的算力能收到更多錢。模型落後前沿時效果會打折。</span><button class="btn sm" data-act="tab" data-id="models">調整定價</button>');
     if (G.playerShare('chat') > 0) lines.push('<span>也可以收緊會員方案的額度，把對話 App 的算力用量降下來。</span><button class="btn sm" data-act="tab" data-id="market">調整方案</button>');
     return `<section class="gap" aria-label="推理算力缺口">
       <div class="gap-hd"><span class="ic" aria-hidden="true">🔥</span><div><b>推理算力不夠，每週少了約 <em class="num">${money(g.lost)}</em> 營收</b><span class="small muted">服務率 ${pct(g.servedNow)}。沒服務到的用戶還會讓聲望下滑。</span></div></div>

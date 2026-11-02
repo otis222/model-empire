@@ -185,6 +185,8 @@
       if (!Array.isArray(this.s.chron)) this.initChron(); // 舊存檔：從成就紀錄補回關鍵時刻
       if (!Array.isArray(this.s.research)) this.s.research = [];
       if (this.s.race === undefined) this.s.race = null;
+      // 舊存檔：定價公式改過之後，賣高價的模型營收會掉，提醒玩家看一下
+      if (!this.s.flags.price2) { this.s.flags.price2 = 1; if (this.s.models.some((m) => m.rel && !m.rel.retired && (m.rel.price === 'high' || m.rel.price === 'lux'))) this.log('💲 定價規則調整了：高價的實收變少，模型落後前沿時也更難賣。賣高價的模型可以重新檢查一次定價。', 'info'); }
       // 舊存檔已經結束的局：補上總分分項
       const e0 = this.s.ended;
       if (e0 && !e0.parts) {
@@ -657,7 +659,7 @@
       c = c || this.s.plans; if (!c) return null;
       const K = D.PLANS.k; const best = this.bestModel();
       const strong = best ? clamp(1 - (this.frontierComp() - this.composite(best.stats)) / K.maxGap, 0.1, 1.2) : 0.1;  // 模型越強，旗艦版越賣得動
-      const take = c.mx ? K.maxTake * strong * Math.pow(c.mq / 10, K.maxQuota) * (200 / c.mp) : 0;
+      const take = c.mx ? K.maxTake * strong * Math.pow(c.mq / 10, K.maxQuota) * Math.pow(200 / c.mp, K.maxPrice) : 0;
       const conv = Math.pow(c.fq, -K.freeConv) * Math.pow(c.sq, K.stdConv) * Math.pow(20 / c.sp, K.priceConv) * (1 - take * K.cannibal);
       return {
         price: c.sp / 20, conv, take, strong,
@@ -733,12 +735,12 @@
       return {
         wait: last == null ? 0 : Math.max(0, last + R.gap - s.week),
         tired: last != null && s.week - last < R.tire,
-        sorry: (s.planCutW != null && s.week - s.planCutW <= R.sorry) || ((s.lastWeek || {}).served || 1) < 0.8,
+        sorry: (s.planCutW != null && s.week - s.planCutW <= R.sorry) || (s.lastWeek && s.lastWeek.served != null ? s.lastWeek.served : 1) < 0.8,
       };
     }
     resetGain(scope) { const R = D.PLANS.reset; const st = this.resetState(); return R[scope].rep * (st.sorry ? 2 : 1) * (st.tired ? 0.3 : 1); }
     grantReset(scope) {
-      const s = this.s; const R = D.PLANS.reset; const o = R[scope]; if (!o) return { ok: false, err: '沒有這個選項' };
+      const s = this.s; const R = D.PLANS.reset; const o = scope === 'paid' || scope === 'all' ? R[scope] : null; if (!o) return { ok: false, err: '沒有這個選項' };
       if (this.playerShare('chat') <= 0) return { ok: false, err: '對話 App 還沒有用戶' };
       const st = this.resetState(); if (st.wait) return { ok: false, err: '才剛發過，再等 ' + st.wait + ' 週' };
       const gain = this.resetGain(scope); s.rep = clamp(s.rep + gain, 0, 100);
@@ -1286,6 +1288,12 @@
       }
       return out;
     }
+    // 定價對吸引力的影響。玩家賣得比市場價貴時客戶比較挑，模型落後前沿越多越賣不動（對手的定價已經反映實力，不另外算）
+    priceCost(g, p, gap) {
+      const lp = Math.log(Math.max(0.05, p.price));
+      if (p.player == null || lp <= 0) return g.beta * lp;
+      return (g.beta + B.PRICE_UP + B.PRICE_GAP * Math.max(0, gap - B.PRICE_GRACE)) * lp;
+    }
     // 一個市場的穩定市佔：各產品的吸引力換算成比例，還有一部分客戶誰都不買
     segTargets(k, ps) {
       const g = D.SEGMENTS[k];
@@ -1293,7 +1301,7 @@
       const uA = B.UTIL_A * (1 + B.UTIL_RAMP * Math.max(0, this.yrs - 1));
       const us = ps.map((p) => {
         const gap = maxFit - p.fit;
-        return uA * p.fit - 0.05 * Math.pow(Math.max(0, gap - 6), 1.6) + p.util - g.beta * Math.log(Math.max(0.05, p.price));
+        return uA * p.fit - 0.05 * Math.pow(Math.max(0, gap - 6), 1.6) + p.util - this.priceCost(g, p, gap);
       });
       const u0 = uA * (maxFit - B.OUTSIDE_GAP);
       const mx = Math.max(u0, ...us);
@@ -1407,7 +1415,7 @@
       for (const k of ['api', 'chat']) {
         if (!this.segActive(k)) continue;
         const ps = this.playerShare(k); if (ps < 0.25) continue;
-        const cheap = s.models.some((m) => m.rel && !m.rel.retired && (m.rel.price === 'low' || m.rel.price === 'free') && (s.market[k].shares['p' + m.id] || 0) > 0.1);
+        const cheap = k === 'chat' && s.plans ? s.plans.sp <= D.PLANS.tierPrice.low : s.models.some((m) => m.rel && !m.rel.retired && (m.rel.price === 'low' || m.rel.price === 'free') && (s.market[k].shares['p' + m.id] || 0) > 0.1);
         if (!cheap || this.rand() > 0.35) continue;
         const pool = D.RIVALS.filter((R) => !R.open && this.ym >= R.start);
         const R = this.pick(pool); const rv = s.rivals[R.id];
@@ -2117,7 +2125,7 @@
       if (this.has('t_oversight') && best && best.stats.safety >= 85 && s.rep >= 50 && rk <= 8) return 'steward';
       if (s.flags.race_state2) return 'state';
       const live = s.models.filter((m) => m.rel && !m.rel.retired);
-      const cheap = live.length && live.every((m) => m.rel.price === 'low' || m.rel.price === 'free');
+      const cheap = live.length && live.every((m) => m.rel.price === 'low' || m.rel.price === 'free') && (!s.plans || s.plans.sp <= D.PLANS.tierPrice.low);
       if (cheap && (this.playerShare('chat') >= 0.1 || this.playerShare('api') >= 0.1)) return 'everyman';
       if (s.flags.race_state) return 'state';
       // 至少在某個市場拿下前兩名
