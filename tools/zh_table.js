@@ -6,7 +6,7 @@ const path = require('path');
 const [dir, commit] = process.argv.slice(2);
 if (!dir || !commit) { console.error('用法：node tools/zh_table.js <字典資料夾> <OpenCC commit>'); process.exit(1); }
 const SRC = path.join(__dirname, '..', 'src');
-const GAME = ['data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'globe.js', 'ui.js'].map((f) => fs.readFileSync(path.join(SRC, f), 'utf8')).join('\n');
+const GAME = fs.readdirSync(SRC).filter((f) => f.endsWith('.js') && !f.startsWith('zh')).map((f) => fs.readFileSync(path.join(SRC, f), 'utf8')).join('\n');
 
 const keep = new Set(GAME.match(/[㐀-鿿豈-﫿]/g));
 const big5 = new TextDecoder('big5');

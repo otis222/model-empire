@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const SRC = path.join(__dirname, '..', 'src');
-const FILES = ['data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'globe.js', 'ui.js'];
+const FILES = fs.readdirSync(SRC).filter((f) => f.endsWith('.js') && !f.startsWith('zh'));  // 新增的原始檔會自動納入檢查
 const sandbox = {}; sandbox.window = sandbox;
 vm.createContext(sandbox);
 for (const f of ['zh_table.js', 'zh.js']) vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), sandbox, { filename: f });
