@@ -1,7 +1,7 @@
 /* 《模型帝國》簡體中文：內容原始檔和存檔都維持繁體，文字顯示時才轉換。
    - 畫面文字：MutationObserver 在畫面更新前改寫文字節點和幾個屬性，不會先閃繁體
    - 畫面以外的文字：地球標籤（globe.js）和分享卡的圖片、分享文字（ui.js）要自己呼叫 t()
-   - 不轉換 textarea（存檔代碼）和輸入框裡玩家打的字；data-zh="raw" 底下也不轉換（語言切換鈕）
+   - 不轉換 textarea 的內容（存檔代碼）和輸入框裡玩家打的字；data-zh="raw" 底下也不轉換（語言切換鈕）
    - 繁體模式不建表也不監看，沒有額外負擔
    字表在 zh_table.js（由 tools/zh_table.js 從 OpenCC 產生），大陸用語寫在下面的 TERMS。檢查殘留用 tools/zh_check.js */
 (function (root) {
@@ -33,7 +33,7 @@
     瞭解=了解 明瞭=明了 憑藉=凭借 藉口=借口 彷彿=仿佛 傢俱=家具 內建=内置 檢視=查看 聯絡=联系 遮蔽=屏蔽 可互動=可交互 互動式=交互式 優先順序=优先级 寬頻=宽带 連續批次=连续批处理 訊號=信号 裝置=设备 元件=组件 印表機=打印机 檔名=文件名 頁尾=页脚 強制登出=强制退出 暱=昵
     揭弊=揭黑 吹哨者=吹哨人 硬拗=强辩 房仲=房产中介 開出紅盤=开门红 上線時程=上线时间表 聲量=热度 頻道主=博主 調漲=上调 布條=横幅 轉貼=转发 談話節目=访谈节目 語助詞=语气词
     史考特=斯科特 聖地牙哥=圣地亚哥 尼可拉斯=尼古拉斯
-    紀錄=记录 破紀錄=破纪录 世界紀錄=世界纪录 公尺紀錄=米纪录 損失紀錄=损失纪录 外洩=泄露
+    紀錄=记录 破紀錄=破纪录 世界紀錄=世界纪录 公尺紀錄=米纪录 損失紀錄=损失纪录 外洩=泄露 自訂=自定义 儲值=充值 同儕審查=同行评审 中階=中档 職缺=岗位
     報導=报道 認列=计提 連署=联署 作夢=做梦 開放取用=开放获取 偵測=检测 保固=保修 行事曆=日程表 整合商=集成商 策略投資=战略投资 了一支專抓=了一个专抓
     提告=起诉 撤告=撤诉 求償=索赔 法拍=司法拍卖 即將上路=即将实施 許可制上路=许可制实施 規定上路=规定实施 辦法上路=办法实施 義務上路=义务生效
     發表=发布 發表會=发布会 發表長文=发表长文 發表聲明=发表声明 發表論文=发表论文 論文發表=论文发表 釋出=发布 透過=通过 藉由=通过 推論=推理 正規賽=常规赛 延長賽=加时赛 評等=评级 標竿=标杆 出包=翻车 支出包=支出包
@@ -44,7 +44,7 @@
   // 只在簡體模式才向 Google Fonts 要簡體字型；連不上時用系統字型（見 style.css 的 html:lang(zh-Hans)）
   const FONT_SC = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@900&display=swap';
   const ATTRS = ['title', 'placeholder', 'aria-label', 'alt', 'data-t', 'data-no'];
-  const SKIP = 'script, style, textarea, [data-zh="raw"]';
+  const SKIP = 'script, style, [data-zh="raw"]';  // textarea 只略過內容（存檔代碼），placeholder 還是要轉
   const doc = root.document;
   const TITLE = doc ? doc.title : '';
   // 切回繁體時要還原，所以記住每個節點的原文
@@ -74,9 +74,10 @@
       m[a] = v; el.setAttribute(a, o);
     }
   }
-  function walker(n) { return doc.createTreeWalker(n, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: (x) => (x.nodeType === 1 && x.matches(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) }); }
+  const inTextarea = (n) => n.parentElement && n.parentElement.tagName === 'TEXTAREA';
+  function walker(n) { return doc.createTreeWalker(n, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: (x) => ((x.nodeType === 1 ? x.matches(SKIP) : inTextarea(x)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) }); }
   function fixTree(n) {
-    if (n.nodeType === 3) { if (!n.parentElement || !n.parentElement.closest(SKIP)) fixText(n); return; }
+    if (n.nodeType === 3) { if (!inTextarea(n) && !(n.parentElement && n.parentElement.closest(SKIP))) fixText(n); return; }
     if (n.nodeType !== 1 || n.closest(SKIP)) return;
     fixAttrs(n);
     const w = walker(n);
