@@ -2351,7 +2351,8 @@
   // canvas 不會等字體：要先載入用得到的字（Noto 依字元分檔），網路不通就用系統字
   function cardFonts(d) {
     if (!document.fonts || !document.fonts.load) return Promise.resolve();
-    const jobs = [['900 150px "Noto Serif TC"', d.title + d.grade], ['900 60px "Noto Sans TC"', d.company + d.val + d.mascot], ['700 32px "Noto Sans TC"', '評級公司估值結束日期結局模型帝國'], ['500 22px "Noto Sans TC"', d.credit], ['italic 800 88px "Barlow Semi Condensed"', 'ENDING$.,0123456789'], ['800 30px "Archivo"', 'MODEL EMPIRE']];
+    const sc = ZH.lang() === 'sc'; const serif = sc ? '"Noto Serif SC"' : '"Noto Serif TC"'; const sans = sc ? '"Noto Sans SC"' : '"Noto Sans TC"';
+    const jobs = [['900 150px ' + serif, d.title + d.grade], ['900 60px ' + sans, d.company + d.val + d.mascot], ['700 32px ' + sans, ZH.t('評級公司估值結束日期結局模型帝國')], ['500 22px ' + sans, d.credit], ['italic 800 88px "Barlow Semi Condensed"', 'ENDING$.,0123456789'], ['800 30px "Archivo"', 'MODEL EMPIRE']];
     return Promise.race([Promise.all(jobs.map((j) => document.fonts.load(j[0], j[1]).catch(() => null))), new Promise((r) => setTimeout(r, 3000))]);
   }
   function cardDraw(d, img) {
@@ -2371,7 +2372,7 @@
       return x;
     };
     const rrect = (x, y, w, h, r) => { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); };
-    const label = (t, y) => { c.font = `700 32px ${SANS}`; c.fillStyle = '#b4bfd3'; c.fillText(t, L, y); };
+    const label = (t, y) => { c.font = `700 32px ${SANS}`; c.fillStyle = '#b4bfd3'; c.fillText(ZH.t(t), L, y); };
     // 背景：結局的代表色打光，加上細格線
     const bg = c.createRadialGradient(CX, 620, 40, CX, 620, 1050); bg.addColorStop(0, d.g); bg.addColorStop(1, '#0d1424'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
     c.strokeStyle = 'rgba(255, 255, 255, .035)'; c.lineWidth = 2; c.beginPath();
@@ -2392,7 +2393,7 @@
     // 上方：品牌條和結局名
     c.fillStyle = '#16181d'; c.beginPath(); c.moveTo(0, 54); c.lineTo(404, 54); c.lineTo(380, 122); c.lineTo(0, 122); c.closePath(); c.fill();
     c.fillStyle = '#c6ff1a'; c.fillRect(L, 82, 12, 12); c.fillStyle = '#fff'; c.font = `800 30px Archivo, ${SANS}`; c.fillText('MODEL EMPIRE', L + 28, 99);
-    const capEnd = runs('ENDING', L, 214, 40, d.a); c.font = `700 34px ${SANS}`; c.fillText('結局', capEnd + 18, 213);
+    const capEnd = runs('ENDING', L, 214, 40, d.a); c.font = `700 34px ${SANS}`; c.fillText(ZH.t('結局'), capEnd + 18, 213);
     const title = fit(d.title, (z) => `900 ${z}px ${SERIF}`, 150, 72, W - L * 2);
     c.fillStyle = '#fff'; c.shadowColor = d.a; c.shadowBlur = 44; c.fillText(title, L, 362); c.shadowColor = 'transparent'; c.shadowBlur = 0;
     // 左欄：評級、公司、估值、日期
@@ -2415,7 +2416,7 @@
     label('結束日期', 1106); runs(d.date, L, 1186, 76, '#fff');
     // 頁尾：遊戲名和立繪署名（二創圖片要署名）
     c.fillStyle = '#0a0f1b'; c.fillRect(0, H - 76, W, 76);
-    c.font = `700 28px ${SANS}`; c.fillStyle = '#fff'; c.fillText('模型帝國', L, H - 27); const nameW = c.measureText('模型帝國').width;
+    const game = ZH.t('模型帝國'); c.font = `700 28px ${SANS}`; c.fillStyle = '#fff'; c.fillText(game, L, H - 27); const nameW = c.measureText(game).width;
     if (d.credit) { const cr = fit(d.credit, (z) => `500 ${z}px ${SANS}`, 24, 16, W - L * 2 - nameW - 32); c.textAlign = 'right'; c.fillStyle = '#c9d3e3'; c.fillText(cr, W - L, H - 28); c.textAlign = 'left'; }
     return cv;
   }
@@ -2430,9 +2431,10 @@
   function showShareCard(back) {
     const s = G.s; const e = s.ended; const E = G.endingView(); if (!E) return;
     const T = FN_TONE[e.type] || FN_DEFAULT; const m = mascot(); const val = money(s.valuation); const date = fnYM(e.w);
-    const d = { company: s.company, title: E.title, grade: e.grade, val, date, a: T.a, g: T.g, dark: !!T.dark, img: m.img, icon: m.icon, mascot: m.name, credit: m.credit || '' };
+    // 圖片畫在 canvas 上、分享文字也不經過畫面，都要自己轉成簡體
+    const d = { company: ZH.t(s.company), title: ZH.t(E.title), grade: e.grade, val: ZH.t(val), date, a: T.a, g: T.g, dark: !!T.dark, img: m.img, icon: m.icon, mascot: ZH.t(m.name), credit: ZH.t(m.credit || '') };
     cardDrop(); const job = ++CARD.job;
-    CARD.name = 'model-empire-' + e.type + '-' + e.grade + '.png'; CARD.text = '我在《模型帝國》走到了「' + E.title + '」，評級 ' + e.grade + '。';
+    CARD.name = 'model-empire-' + e.type + '-' + e.grade + '.png'; CARD.text = ZH.t('我在《模型帝國》走到了「' + E.title + '」，評級 ' + e.grade + '。');
     openModal({ title: '🖼️ 分享卡', cls: 'sc', body: '<figure class="sc-fig" id="sc-fig"><p class="sc-note">正在畫圖片…</p></figure>',
       foot: '<button class="btn" data-act="close-modal">關閉</button><button class="btn primary" id="sc-save" data-act="sc-save" disabled>下載圖片</button>',
       onClose: () => { CARD.job++; cardDrop(); if (back && back.isConnected) back.focus({ preventScroll: true }); } });
@@ -2461,7 +2463,7 @@
   }
   function cardShare() {
     if (!cardCanShare()) { cardSave(); return; }
-    navigator.share({ files: [CARD.file], title: '模型帝國', text: CARD.text }).catch((err) => { if (!err || err.name !== 'AbortError') toast('沒辦法開啟分享，可以改用下載', true); });
+    navigator.share({ files: [CARD.file], title: ZH.t('模型帝國'), text: CARD.text }).catch((err) => { if (!err || err.name !== 'AbortError') toast('沒辦法開啟分享，可以改用下載', true); });
   }
 
   /* ---------- 選單 ---------- */
