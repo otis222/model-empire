@@ -461,7 +461,7 @@
     if (s.models.some((m) => !m.rel)) a.models = 1;
     if (techStartable().length) a.tech = 1;
     if (s.starPool.length) a.team = 1;
-    if (s.lastWeek && s.lastWeek.served < 0.95) a.compute = 1;
+    if (inferGap()) a.compute = 1;
     if (G.roundReady().ok) a.finance = 1;
     if ((s.rfps || []).length) a.market = 1;
     return a;
@@ -567,6 +567,7 @@
     const top0 = G.s.log[0]; const y0 = ME.weekDate(G.s.week).getUTCFullYear();
     const fx0 = fxBefore();
     G.tick(); tickAt = performance.now();
+    techQueueRun();
     fxAfter(fx0);
     for (const e of G.s.log) { if (e === top0) break; if (e.k === 'ach') { sfx('fanfare'); break; } }
     if (G.s.week % 4 === 0) autosave();
@@ -709,7 +710,8 @@
     const training = s.jobs.some((j) => j.kind === 'train');
     if (s.models.some((m) => !m.rel)) add('🎓', '有訓練完成的模型還沒發布', 'models', true);
     if (!s.models.length && !training) add('🧪', '還沒有任何模型：去立項你的第一個模型', 'wizard', true);
-    if (lw.served < 0.95 && lw.inferNeed > 1) add('🔥', '推理算力不足：只服務了 ' + pct(lw.served) + ' 的用戶，買卡或開啟自動租用', 'compute', true);
+    const gap = inferGap();
+    if (gap) add('🔥', '推理算力不足：服務率 ' + pct(gap.servedNow) + '，每週少了約 ' + money(gap.lost) + ' 營收' + (s.autoRent ? '，去算力頁補足' : '，可以先開啟自動租用'), 'compute', true);
     const burn = Math.max(1, (lw.exp || 0) - (lw.rev || 0));
     if ((lw.exp || 0) > (lw.rev || 0) && s.cash / burn < 16) add('⏳', '現金只夠燒約 ' + Math.max(0, Math.floor(s.cash / burn)) + ' 週，考慮募資或降低開支', 'finance', true);
     if (G.roundReady().ok) add('💰', '可以進行「' + G.nextRound().name + '」募資', 'finance');
@@ -1169,6 +1171,7 @@
     tech: [
       ['.vh-say', '研究點每週由研究員產生，閒置的卡也會幫忙。開始研究時就會扣點。'],
       ['.tk-slots', '研究線：研究要花時間，同時只能做幾項。招更多研究員可以多開一條。'],
+      ['.tk-queue', '研究排程：把想做的科技排起來，研究線一空就會自動開始，不用一直回來看。'],
       ['.tk-cats', '科技分成幾條路線，各有自己的風格。「可研究」列出現在就能開始的項目。'],
       ['.tk-node.st-can, .tk-node.st-wait', '點一項科技看細節和論文出處。標「前沿」的世界還沒公開，比較貴也比較久，但搶先做出來會加聲望。標「二選一」的只能挑一條路。'],
     ],
@@ -1178,6 +1181,7 @@
       ['.office-pair', '辦公室：人數滿了要升級。越大的辦公室，能同時訓練越多模型。'],
     ],
     compute: [
+      ['.gap', '推理缺口：算力不夠時，這裡會算出少賺多少、買什麼最划算，也可以一鍵採購。'],
       ['.showcase', '設備展台：你有幾張卡，換算成多少張 H100 的算力。'],
       ['#main .grid.g4 .stat-tile:nth-child(2)', '機房槽位：機房最多能放幾張卡，滿了就要興建更大的機房。'],
       [card('.alloc'), '本週分配：算力分給推理（服務用戶、賺錢）和訓練（做新模型）。推理不夠時可以自動租雲端。'],
@@ -1704,6 +1708,55 @@
     return G.s.rp >= G.techCost(t.id) ? 'can' : 'wait';
   }
   function techReady() { return D.TECHS.filter((t) => /^(can|wait)$/.test(techState(t))).sort((a, b) => G.techCost(a.id) - G.techCost(b.id)); }
+  /* 研究排程：研究線一空就依序開始。清單存在存檔的 s.techQueue，由介面這層推進，引擎不用知道 */
+  function techQ() { return G.s.techQueue || (G.s.techQueue = []); }
+  // 自己和所有前置都沒被多選一擋掉，才走得到
+  function techReachable(id) { const t = ME.TECH[id]; return !!t && (G.has(id) || (!G.exclTaken(id) && (t.req || []).every(techReachable))); }
+  // 要做完這項得先做哪些：還沒完成的前置排前面，最後才是自己
+  function techChain(id) {
+    const out = []; const seen = {};
+    const visit = (x) => { if (seen[x] || G.has(x) || G.researching(x)) return; seen[x] = 1; (ME.TECH[x].req || []).forEach(visit); out.push(x); };
+    visit(id); return out;
+  }
+  function techQueueRun() {
+    const s = G.s; if (s.ended || (!s.techQueue && !s.techAuto)) return;
+    const q = techQ().filter((id) => !G.has(id) && !G.researching(id) && techReachable(id)); s.techQueue = q;
+    while (techFree() > 0) {
+      const id = q.find((x) => G.techAvailable(x) && s.rp >= G.techCost(x)); if (!id || !G.research(id).ok) break;
+      q.splice(q.indexOf(id), 1);
+    }
+    // 自動補位只挑最便宜的，不會替玩家做多選一的決定
+    while (s.techAuto && !q.length && techFree() > 0) {
+      const t = techStartable().filter((x) => !x.excl).sort((a, b) => G.techCost(a.id) - G.techCost(b.id))[0];
+      if (!t || !G.research(t.id).ok) break;
+    }
+  }
+  function techEnqueue(id) {
+    const q = techQ(); const add = techChain(id).filter((x) => q.indexOf(x) < 0); const picks = add.map((x) => ME.TECH[x]).filter((t) => t.excl);
+    const clash = picks.find((t) => q.some((y) => ME.TECH[y].excl === t.excl));
+    if (clash) { toast('排程裡已經有同一組多選一的科技，先移出才能換「' + clash.name + '」', true); return; }
+    const go = () => { add.forEach((x) => q.push(x)); techQueueRun(); toast(add.length > 1 ? '已排程 ' + add.length + ' 項（含前置）' : (G.researching(id) ? '開始研究：' : '已加入排程：') + ME.TECH[id].name); render(); };
+    if (picks.length) confirmBox('選擇路線', picks.map((t) => `研究「${esc(t.name)}」之後，就不能研究「${esc(D.TECHS.filter((x) => x.excl === t.excl && x.id !== t.id).map((x) => x.name).join('」「'))}」。`).join('<br>') + '確定排程嗎？', '加入排程', go);
+    else go();
+  }
+  // 前置被移出的話，後面的也做不了，要一起移出
+  function techDequeue(id) {
+    const q = techQ(); const left = q.filter((x) => x !== id && techChain(x).indexOf(id) < 0); const n = q.length - left.length;
+    G.s.techQueue = left; toast(n > 1 ? '已移出 ' + n + ' 項（含需要它的科技）' : '已移出排程'); render();
+  }
+  function techQFront(id) {
+    const q = techQ(); const first = techChain(id).filter((x) => q.indexOf(x) >= 0);
+    G.s.techQueue = first.concat(q.filter((x) => first.indexOf(x) < 0)); techQueueRun(); render();
+  }
+  function techQueueBar() {
+    const s = G.s; const q = techQ(); const total = q.reduce((a, x) => a + G.techCost(x), 0);
+    const chips = q.map((id, i) => {
+      const t = ME.TECH[id]; const wait = !G.techAvailable(id) ? '等前置' : s.rp < G.techCost(id) ? '等研究點' : '等研究線';
+      return `<li><button class="tk-q${techSel === id ? ' sel' : ''}" data-act="tech-sel" data-id="${id}" aria-expanded="${techSel === id}"><span class="no" aria-label="第 ${i + 1} 項">${i + 1}</span><span class="tk-ic" style="--ln:${IC.lineColor(t.line)}">${IC.tech(id, 14)}</span><b>${esc(t.name)}</b><small>${wait}</small></button></li>`;
+    }).join('');
+    return `<div class="tk-queue"><div class="hd"><b>研究排程</b>${q.length ? `<span class="small muted">${q.length} 項 · 共 ${num(total)} 點</span>` : ''}<span class="spacer"></span>${q.length ? '<button class="btn sm ghost" data-act="tech-q-clear">清空</button>' : ''}<label class="toggle small"><input type="checkbox" data-act="tech-auto" ${s.techAuto ? 'checked' : ''}> 排程空了自動挑最便宜的</label></div>
+      ${q.length ? `<ol>${chips}</ol>` : '<p class="small muted">點一項科技，選「加入排程」。研究線一空就會自動開始，還沒做的前置也會一起排進來。</p>'}</div>`;
+  }
   function techDepth(t) { return (t.req || []).reduce((d, r) => Math.max(d, ME.TECH[r] ? techDepth(ME.TECH[r]) + 1 : 0), 0); }
   function techGroupId(t) { return D.TECH_LINES ? t.line : t.cat; }
   // 頁籤：有路線資料就照路線分，沒有就照分類
@@ -1726,10 +1779,10 @@
     for (let i = 0; i < n; i++) {
       const j = jobs[i]; const t = j && ME.TECH[j.id];
       html += t ? `<button class="tk-slot" data-act="tech-sel" data-id="${t.id}"><span class="ic">${IC.tech(t.id, 24)}</span><span>研究線 ${i + 1} · 還要 ${j.left} 週</span><b>${esc(t.name)}</b><i aria-hidden="true"><em style="width:${techPct(j)}%"></em></i></button>`
-        : `<div class="tk-slot idle"><span>研究線 ${i + 1}</span><b>空閒中，挑一項科技開始</b></div>`;
+        : `<div class="tk-slot idle"><span>研究線 ${i + 1}</span><b>${techQ().length ? '排程的下一項還不能開始' : '空閒中，挑一項科技開始'}</b></div>`;
     }
     const heads = G.roleHeads('res'); const nx = (D.BAL.RES_SLOTS || []).find((x) => heads < x);
-    return `<div class="tk-slots">${html}</div>${nx ? `<p class="tk-hint">研究員 ${num(heads)} 人，再招 ${num(nx - heads)} 人可以多開一條研究線。</p>` : ''}`;
+    return `<div class="tk-slots">${html}</div>${nx ? `<p class="tk-hint">研究員 ${num(heads)} 人，再招 ${num(nx - heads)} 人可以多開一條研究線。</p>` : ''}${techQueueBar()}`;
   }
   function techPct(j) { return Math.round(Math.max(0, Math.min(1, 1 - j.left / Math.max(1, j.total))) * 100); }
   // 一條路線：依前置關係分階，階數在路線內重新編號
@@ -1746,19 +1799,25 @@
   function techNode(t) {
     const st = techState(t); const job = st === 'doing' ? techJobs().find((j) => j.id === t.id) : null; const rec = G.s.techs[t.id]; const wk = techWeeks(t);
     const meta = st === 'owned' ? '已掌握' + (rec && rec.pioneer ? ' · 首創' : '') : st === 'doing' ? '研究中 · 還要 ' + job.left + ' 週' : st === 'blocked' ? '已選其他路線' : st === 'locked' ? '需要前置科技' : num(G.techCost(t.id)) + ' 點' + (wk ? ' · ' + wk + ' 週' : '');
+    const qi = techQ().indexOf(t.id);
     return `<button class="tk-node st-${st}${techSel === t.id ? ' sel' : ''}" data-act="tech-sel" data-id="${t.id}" aria-expanded="${techSel === t.id}">
-      ${techTile(t)}<span class="nm">${t.key ? '<span class="ky" title="關鍵科技">★</span>' : ''}${esc(t.name)}</span><span class="mt">${esc(meta)}</span>${t.spec ? '<span class="fr sp">推測</span>' : st !== 'owned' && !G.isPublic(t.id) ? '<span class="fr">前沿</span>' : ''}${t.excl && st !== 'owned' && st !== 'blocked' ? `<span class="ex">${techExclName(t)}</span>` : ''}${job ? `<i aria-hidden="true"><em style="width:${techPct(job)}%"></em></i>` : ''}</button>`;
+      ${qi >= 0 ? `<span class="qn" title="排程第 ${qi + 1} 項">${qi + 1}</span>` : ''}${techTile(t)}<span class="nm">${t.key ? '<span class="ky" title="關鍵科技">★</span>' : ''}${esc(t.name)}</span><span class="mt">${esc(meta)}</span>${t.spec ? '<span class="fr sp">推測</span>' : st !== 'owned' && !G.isPublic(t.id) ? '<span class="fr">前沿</span>' : ''}${t.excl && st !== 'owned' && st !== 'blocked' ? `<span class="ex">${techExclName(t)}</span>` : ''}${job ? `<i aria-hidden="true"><em style="width:${techPct(job)}%"></em></i>` : ''}</button>`;
   }
   function techDetail(t) {
     const st = techState(t); const cost = G.techCost(t.id); const rec = G.s.techs[t.id]; const wk = techWeeks(t);
     const reqs = (t.req || []).filter((r) => !G.has(r)); const others = t.excl ? D.TECHS.filter((x) => x.excl === t.excl && x.id !== t.id) : [];
     const full = techFree() <= 0;
+    const qi = techQ().indexOf(t.id); const canStart = st === 'can' && !full;
+    const qBtns = qi >= 0 ? `${qi > 0 ? `<button class="btn sm" data-act="tech-q-front" data-id="${t.id}">排到最前面</button>` : ''}<button class="btn sm" data-act="tech-q-del" data-id="${t.id}">移出排程</button>`
+      : `<button class="btn sm${canStart ? '' : ' primary'}" data-act="tech-q-add" data-id="${t.id}">加入排程</button>`;
     let foot = '';
     if (st === 'owned') foot = `<span class="muted">${rec && rec.w ? fnYM(rec.w) + ' 完成' : '開局就有'}${rec && rec.pioneer ? '，全球首創' : ''}</span>`;
     else if (st === 'doing') foot = '<span class="muted">取消會退還還沒做完的研究點</span><span class="spacer"></span><button class="btn sm" data-act="research-cancel" data-id="' + t.id + '">取消研究</button>';
     else if (st === 'blocked') foot = `<span class="muted">${esc(G.techBlocked(t.id))}</span>`;
-    else if (st === 'locked') foot = `<span class="muted">需要：</span>${reqs.map((r) => `<button class="link" data-act="tech-sel" data-id="${r}">${esc(ME.TECH[r].name)}</button>`).join('、')}`;
-    else foot = `<span class="num">${num(cost)} 研究點${wk ? ' · ' + wk + ' 週' : ''}</span><span class="spacer"></span>${full ? '<span class="muted">研究線已滿</span>' : ''}<button class="btn sm ${st === 'can' && !full ? 'primary' : ''}" data-act="research" data-id="${t.id}" ${st === 'can' && !full ? '' : 'disabled'}>${st === 'can' ? '開始研究' : '研究點不足'}</button>`;
+    else if (st === 'locked') {
+      const chain = techChain(t.id); const chainCost = chain.reduce((a, x) => a + G.techCost(x), 0);
+      foot = `<span class="muted">需要：</span>${reqs.map((r) => `<button class="link" data-act="tech-sel" data-id="${r}">${esc(ME.TECH[r].name)}</button>`).join('、')}<span class="spacer"></span>${qi >= 0 ? qBtns : techReachable(t.id) ? `<button class="btn sm primary" data-act="tech-q-add" data-id="${t.id}">排程到這項（${chain.length} 項 · ${num(chainCost)} 點）</button>` : ''}`;
+    } else foot = `<span class="num">${num(cost)} 研究點${wk ? ' · ' + wk + ' 週' : ''}</span><span class="spacer"></span>${full ? '<span class="muted">研究線已滿</span>' : ''}${qBtns}<button class="btn sm ${canStart ? 'primary' : ''}" data-act="research" data-id="${t.id}" ${canStart ? '' : 'disabled'}>${st === 'can' ? '開始研究' : '研究點不足'}</button>`;
     const group = t.excl && D.TECH_EXCL ? D.TECH_EXCL[t.excl] : '';
     return `<div class="tk-detail"><div class="tt">${techTile(t, true)}<b>${esc(t.name)}</b>${t.key ? '<span class="pill warn">★ 關鍵科技</span>' : ''}${t.spec ? '<span class="pill">推測的未來技術</span>' : G.isPublic(t.id) ? '<span class="pill">已公開</span>' : `<span class="pill warn">前沿 · ${esc(t.pub.slice(0, 7))} 公開</span>`}</div>
       <p>${esc(t.desc)}</p>${paperLine(t.id)}
@@ -1814,6 +1873,56 @@
   }
 
   /* ---------- 算力 ---------- */
+  /* 推理缺口：少賺多少、買什麼補得最多。營收和服務率成正比，所以全部服務得到時的營收 ≈ 上週營收 ÷ 上週服務率。
+     自有和租用用現在的狀態重算，剛買的卡、剛開的自動租用馬上算進來，才不會讓人重複買 */
+  function inferGap() {
+    const s = G.s; const lw = s.lastWeek || {}; const need = lw.inferNeed || 0; if (need <= 1) return null;
+    const served = lw.served == null ? 1 : lw.served; const owned = G.ownedEq(); const B = D.BAL;
+    const own = Math.min(s.trainFirst ? Math.max(0, owned - G.reservedEq()) : owned, need);
+    const rentRoom = Math.min(G.inferRentCap(), need - own); const rent = s.autoRent ? rentRoom : 0;
+    const have = own + rent; const servedNow = Math.min(1, have / need); if (servedNow >= 0.95) return null;
+    const short = need - have; const full = served > 0.02 ? (lw.rev || 0) / served : 0; const lost = full * (1 - servedNow);
+    const keep = 1 - G.opsRate();  // 多賺的營收要先扣營運成本
+    const free = Math.max(0, G.dcSlots() - G.cardCount()); const budget = s.cash * 0.8;  // 留兩成現金週轉
+    const avail = D.GPUS.filter((x) => G.gpuAvail(x.id));
+    let buy = null;
+    for (const x of avail) {
+      const price = G.gpuPrice(x.id); const n = Math.min(free, Math.ceil(short / x.pf), Math.floor(budget / price)); if (n < 1) continue;
+      const eq = Math.min(short, n * x.pf); const cost = n * price;
+      if (!buy || eq > buy.eq + 1e-6 || (Math.abs(eq - buy.eq) <= 1e-6 && cost < buy.cost)) buy = { x, n, eq, cost };
+    }
+    if (buy) {
+      buy.served = Math.min(1, (have + buy.eq) / need);
+      const power = buy.n * Math.pow(buy.x.pf, B.POWER_EXP) * B.OPEX_PER_CARD * (1 + B.POWER_INFL * G.yrs) * G.techProd('power');
+      buy.net = full * (buy.served - servedNow) * keep - power;
+      buy.weeks = buy.net > 0 ? Math.ceil(buy.cost / buy.net) : 0;
+    }
+    const top = avail.slice().sort((a, b) => b.pf - a.pf)[0]; const fullN = top ? Math.ceil(short / top.pf) : 0;
+    return { need, own, rent, rentRoom, short, servedNow, lost, buy, top, fullN, fullCost: top ? fullN * G.gpuPrice(top.id) : 0, free };
+  }
+  function gapCard() {
+    const g = inferGap(); if (!g) return '';
+    const s = G.s; const b = g.buy; const nx = D.DATACENTERS[s.dc + 1]; const lines = [];
+    const w = (v) => (v / g.need * 100).toFixed(2) + '%';
+    if (!s.autoRent && g.rentRoom > 0) lines.push(`<span>開啟自動租用可以馬上多 <b class="num">${num(g.rentRoom)}</b> 算力，每週約 ${money(g.rentRoom * G.rentPrice())}。</span><button class="btn sm" data-act="gap-rent">開啟</button>`);
+    else if (s.autoRent && g.rent >= G.inferRentCap() - 1) lines.push(`<span>自動租用已經到上限（${num(G.inferRentCap())}），剩下的要靠自己買卡。</span>`);
+    if (g.top && g.fullN > (b ? b.n : 0)) lines.push(`<span>全部補滿要 <b class="num">${num(g.fullN)}</b> 張 ${esc(g.top.name)}，約 ${money(g.fullCost)}。</span>`);
+    if (g.fullN > g.free) {
+      if (s.dcBuild) lines.push(`<span>機房還差 ${num(g.fullN - g.free)} 槽；「${esc(D.DATACENTERS[s.dcBuild.lv].name)}」第 ${s.dcBuild.done} 週完工。</span>`);
+      else if (nx) lines.push(`<span>機房還差 ${num(g.fullN - g.free)} 槽，下一級「${esc(nx.name)}」要 ${money(nx.cost)}、${nx.weeks} 週。</span><button class="btn sm" data-act="dc" ${s.cash >= nx.cost && (!nx.from || G.ym >= nx.from) ? '' : 'disabled'}>興建</button>`);
+      else lines.push('<span>機房已是最高等級：賣掉舊卡、換上效能更高的卡，才能再增加算力。</span>');
+    }
+    const worth = b && b.weeks && b.weeks <= 104;  // 兩年內回本才算划算
+    const plan = b ? `<div class="gap-plan">${IC.gpu(b.x.id, 50)}<div class="tx"><b>買 ${num(b.n)} 張 ${esc(b.x.name)}</b><span class="small">花 ${money(b.cost)}，服務率升到約 ${pct(b.served)}${b.weeks ? `，扣掉營運成本和電費每週多賺約 ${money(b.net)}，約 ${num(b.weeks)} 週回本` : '，但以目前的定價回不了本'}${worth ? '' : '。也可以調高定價來降低需求'}</span></div><button class="btn${worth ? ' primary' : ''}" data-act="gap-buy" data-id="${b.x.id}" data-n="${b.n}">一鍵採購</button></div>`
+      : `<p class="small gap-none">${!g.top ? '現在買不到可用的 GPU。' : g.free < 1 ? '機房已滿，要先擴建才能買卡。' : '現金不夠買卡，可以先募資。'}</p>`;
+    return `<section class="gap" aria-label="推理算力缺口">
+      <div class="gap-hd"><span class="ic" aria-hidden="true">🔥</span><div><b>推理算力不夠，每週少了約 <em class="num">${money(g.lost)}</em> 營收</b><span class="small muted">服務率 ${pct(g.servedNow)}。沒服務到的用戶還會讓聲望下滑。</span></div></div>
+      <div class="alloc" role="img" aria-label="需求 ${num(g.need)}：自有 ${num(g.own)}、租用 ${num(g.rent)}、缺 ${num(g.short)}"><span style="width:${w(g.own)};background:var(--accent)"></span><span style="width:${w(g.rent)};background:color-mix(in srgb, var(--accent) 45%, transparent)"></span><span class="short" style="width:${w(g.short)}"></span></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>自有 ${num(g.own)}</span><span><i style="background:color-mix(in srgb, var(--accent) 45%, transparent)"></i>租用 ${num(g.rent)}</span><span><i class="short"></i>缺 ${num(g.short)}（H100 等效）</span></div>
+      ${plan}
+      ${lines.length ? `<div class="gap-more">${lines.map((l) => `<div>${l}</div>`).join('')}</div>` : ''}
+    </section>`;
+  }
   VIEWS.compute = function () {
     const s = G.s; const lw = s.lastWeek || {}; const owned = G.ownedEq();
     const inferOwn = lw.ownInfer || 0; const train = Math.max(0, owned - inferOwn - (lw.idle || 0));
@@ -1825,13 +1934,14 @@
     const mix = gpuMix(); const soon = D.GPUS.filter((g) => g.hi && !g.special && g.from > G.ym).slice(0, 2);
     return `
     <div class="view-head"><h2>算力</h2><p>算力同時用來「訓練」與「推理服務」。預設推理優先：用戶在用的卡先保留，剩下才給訓練，閒置的卡會加速研究。</p></div>
+    ${gapCard()}
     <section class="showcase" aria-label="設備展台"><img src="assets/bg_studio.webp" alt="設備展台：GB200 NVL72 整櫃、DGX H100、B300 與 H100 封裝" loading="lazy">
       <div class="sc-info"><span class="cap">DEVICE SHOWCASE · 設備展台</span><b>${num(G.cardCount())} 張卡 · ≈ ${num(owned)} H100</b>
         <div class="plaques">${mix.length ? mix.map((g) => `<span class="plaque">${IC.gpu(g.type, 30)}<b>${esc(ME.GPU[g.type].name)}</b>×${num(g.n)}</span>`).join('') : '<span class="plaque">還沒有自有 GPU</span>'}</div>
         ${soon.length ? `<span class="soon">即將上市：${soon.map((g) => `${IC.gpu(g.id, 24)}<b>${esc(g.name)}</b> ${g.from.replace('-', '.')}`).join('　')}</span>` : ''}</div></section>
     <div class="grid g4">
       <div class="stat-tile"><span class="l">🖥️ 自有算力</span><span class="v">${num(owned)}</span><span class="s">H100 等效 · ${num(G.cardCount())} 張卡</span></div>
-      <div class="stat-tile"><span class="l">🗄️ 機房槽位</span><span class="v">${num(G.cardCount())} / ${num(G.dcSlots())}</span><span class="s">${dc.icon} ${dc.name}</span></div>
+      <div class="stat-tile"><span class="l">🗄️ 機房槽位</span><span class="v">${num(G.cardCount())}<small> / ${num(G.dcSlots())}</small></span><span class="s">${dc.icon} ${dc.name}</span></div>
       <div class="stat-tile"><span class="l">☁️ 本週租用</span><span class="v">${num(lw.rentEq || 0)}</span><span class="s">上限 ${num(G.rentCap())} · $${Math.round(G.rentPrice())}/卡/週</span></div>
       <div class="stat-tile"><span class="l">📡 推理服務率</span><span class="v ${lw.served < 0.95 ? 'bad' : 'good'}">${pct(lw.served == null ? 1 : lw.served)}</span><span class="s">需求 ${num(lw.inferNeed || 0)} 卡</span></div>
     </div>
@@ -2579,6 +2689,10 @@
       }
       case 'research-cancel': { const r = G.cancelResearch(ds.id); if (!r.ok) toast(r.err, true); else toast('已取消，退回 ' + num(r.back) + ' 研究點'); render(); break; }
       case 'tech-tab': techTab = ds.id; techSel = null; renderView(); break;
+      case 'tech-q-add': techEnqueue(ds.id); break;
+      case 'tech-q-del': techDequeue(ds.id); break;
+      case 'tech-q-front': techQFront(ds.id); break;
+      case 'tech-q-clear': G.s.techQueue = []; render(); break;
       case 'gb-region': gbPick(ds.id); break;
       case 'gb-spin': { const v = !uiPref('gbSpin', true); setUiPref('gbSpin', v); if (globe) globe.setSpin(v); renderView(); break; }
       case 'tech-sel': {
@@ -2602,6 +2716,12 @@
       case 'office': { const r = G.upgradeOffice(); if (!r.ok) toast(r.err, true); render(); break; }
       case 'hire-star': { const r = G.hireStar(ds.id); if (!r.ok) toast(r.err, true); render(); break; }
       // 算力
+      case 'gap-rent': G.s.autoRent = true; render(); break;
+      case 'gap-buy': {
+        const n = +ds.n; const x = ME.GPU[ds.id]; const cost = G.gpuPrice(ds.id) * n;
+        confirmBox('採購 GPU', `花 ${money(cost)} 買 ${num(n)} 張 ${esc(x.name)}？買完現金會剩 ${money(G.s.cash - cost)}。`, '確定採購', () => { const r = G.buyGpu(ds.id, n); if (!r.ok) toast(r.err, true); else toast('採購 ' + num(n) + ' 張 ' + x.name); render(); });
+        break;
+      }
       case 'buy-gpu': { const r = G.buyGpu(ds.id, +ds.n); if (!r.ok) toast(r.err, true); else toast('採購 ' + ds.n + ' 張 ' + ME.GPU[ds.id].name); render(); break; }
       case 'sell-gpu': confirmBox('出售 GPU？', '以目前價格的一半賣出 ' + ds.n + ' 張 ' + ME.GPU[ds.id].name + '。', '出售', () => G.sellGpu(ds.id, +ds.n), true); break;
       case 'dc': { const r = G.upgradeDC(); if (!r.ok) toast(r.err, true); render(); break; }
@@ -2622,6 +2742,7 @@
     if (name === 'crunch') s.crunch = el.checked;
     else if (name === 'trainprog') s.trainProg = el.checked;
     else if (name === 'autorent') s.autoRent = el.checked;
+    else if (name === 'tech-auto') { s.techAuto = el.checked; techQueueRun(); }
     else if (name === 'crawl') s.crawl = el.checked;
     else if (name === 'crawl-aggr') s.crawlAggr = el.checked;
     else if (name === 'userdata') s.userData = el.checked;
