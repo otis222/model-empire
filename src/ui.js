@@ -288,7 +288,7 @@
     stopLoop(); G = null; modalOpen = false;
     const saved = store();
     let savedInfo = '';
-    if (saved) { try { const s = JSON.parse(saved); savedInfo = esc(s.company) + ' · ' + ME.dateLabel(s.week); } catch (e) { savedInfo = ''; } }
+    if (saved) { try { const s = JSON.parse(saved); savedInfo = esc(s.company) + ' · ' + ME.dateLabel(s.week); endRecord(s); } catch (e) { savedInfo = ''; } }
     const cities = D.CITIES || [];
     if (cities.length && !cities.some((c) => c.id === titleSel.city)) titleSel.city = D.DEFAULT_CITY || cities[0].id;
     // 方案 H：白色展台。選中的吉祥物站在中央圓台上
@@ -308,6 +308,7 @@
               <button class="pill-btn" data-act="help">玩法說明</button>
               <button class="pill-btn" data-act="import">匯入存檔</button>
               <button class="pill-btn" data-act="codex" data-tab="timeline">史料庫</button>
+              <button class="pill-btn" data-act="endbook">結局圖鑑 <small>${endCount()} / ${Object.keys(D.ENDINGS).length}</small></button>
             </div>
           </div>
         </section>
@@ -610,7 +611,7 @@
   function openModal(o) {
     const mr = document.getElementById('modal-root'); if (!mr) return;
     modalOpen = true;
-    mr.innerHTML = `<div class="modal-bg" data-bg="1"><div class="modal ${o.cls || ''}" role="dialog" aria-modal="true" aria-label="${esc(o.title || '')}">
+    mr.innerHTML = `<div class="modal-bg${FN.ov ? ' over-fn' : ''}" data-bg="1"><div class="modal ${o.cls || ''}" role="dialog" aria-modal="true" aria-label="${esc(o.title || '')}">
       <div class="mh"><h3>${o.title || ''}</h3>${o.closable === false ? '' : '<button class="btn ghost sm x" data-act="close-modal" aria-label="關閉">✕</button>'}</div>
       <div class="mb" id="mb">${o.body || ''}</div>${o.foot ? `<div class="mf" id="mf">${o.foot}</div>` : ''}</div></div>`;
     mr._closable = o.closable !== false; mr._onClose = o.onClose || null;
@@ -619,7 +620,7 @@
   }
   function closeModal(silent) {
     const mr = document.getElementById('modal-root'); if (!mr) return;
-    const cb = mr._onClose; mr.innerHTML = ''; mr._onClose = null; modalOpen = false; wiz = null;
+    const cb = mr._onClose; mr.innerHTML = ''; mr._onClose = null; modalOpen = !!FN.ov; wiz = null;
     if (cb && !silent) cb();
     if (!G) return;
     render();
@@ -1269,7 +1270,7 @@
     '開源': '公開模型權重：換到社群、聲望和人才，但 API 收入會被別人分走。',
   };
   const GLOSS_KEYS = Object.keys(GLOSS).sort((x, y) => y.length - x.length);
-  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org, .gb';
+  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org, .gb, .eb, .sc';
   function glossify(root) {
     if (!root) return;
     const nodes = [];
@@ -2080,22 +2081,22 @@
      全螢幕一幕一幕播：結局標題 → 編年史（估值曲線跟著年份長）→ 最終排名（由後往前揭曉）→ 成績揭曉 → 結算卡。
      按「繼續」、點畫面或按空白鍵：動畫還在跑就先播完，播完才到下一幕。看過一次後（flags.endSeen）讀檔只顯示結算卡，可以重看 */
   const FN_TONE = {
-    agi_good: { a: '#ffc46b', g: '#4a2f5e', say: '謝謝你當初沒有跳過安全審查。接下來的世界，我們一起看。' },
-    agi_open: { a: '#ff9f5a', g: '#4a2a1c', say: '權重放出去了。從今天起它是大家的，老闆，我們做了一件很大的事。' },
-    agi_bad: { a: '#ff7b7b', g: '#47182a', say: '老闆，我有點怕……但不管接下來怎樣，我都會陪著你。', dark: 1 },
-    rival_agi: { a: '#ff8a5c', g: '#2b1f3a', say: '我們差一點就到了。下一局，換我們站在台上。', dark: 1 },
-    treaty: { a: '#c9d6ff', g: '#25304f', say: '競賽停了。我不知道這是不是對的，但今晚大家都睡得著。' },
-    steward: { a: '#7fe3d0', g: '#123f4a', say: '全世界都照我們寫的規則走。這比排行榜第一難多了。' },
-    state: { a: '#e8c36a', g: '#3a3222', say: '訂單和算力都不用愁了。只是，發表會的稿子要先送審。' },
-    everyman: { a: '#8fd46a', g: '#1f3f24', say: '我們不是最強的，但我們是大家每天都在用的那一個。' },
-    niche: { a: '#9ec5ff', g: '#1c2f4f', say: '不用當最大的。客戶每年都回來，這樣也很好。' },
-    empire: { a: '#ffcf3f', g: '#1d3266', say: '帝國建好了。老闆，下一局要不要挑戰更難的開局？' },
-    open_legend: { a: '#5fe0b0', g: '#0f4044', say: '全世界都在用我們的模型。這樣的結局，我很喜歡。' },
-    survive: { a: '#7fb2ff', g: '#1a2e55', say: '馬拉松還沒跑完。下一次，我們一定能跑到更前面。' },
-    acquired: { a: '#b7a6ff', g: '#2a2354', say: '新老闆人不錯……但我還是比較想念當初那間車庫。', dark: 1 },
-    bankrupt: { a: '#aab3c2', g: '#262b35', say: '對不起，沒能陪你撐到最後。再來一次好不好？', dark: 1 },
+    agi_good: { a: '#ffc46b', g: '#4a2f5e', say: '謝謝你當初沒有跳過安全審查。接下來的世界，我們一起看。', hint: '抵達那條線的時候，安全帶有沒有繫好？' },
+    agi_open: { a: '#ff9f5a', g: '#4a2a1c', say: '權重放出去了。從今天起它是大家的，老闆，我們做了一件很大的事。', hint: '抵達終點的那天，鑰匙要留給誰？' },
+    agi_bad: { a: '#ff7b7b', g: '#47182a', say: '老闆，我有點怕……但不管接下來怎樣，我都會陪著你。', dark: 1, hint: '油門踩到底，煞車在哪裡就沒人知道了。' },
+    rival_agi: { a: '#ff8a5c', g: '#2b1f3a', say: '我們差一點就到了。下一局，換我們站在台上。', dark: 1, hint: '最後一段路，別只看自己的錶。' },
+    treaty: { a: '#c9d6ff', g: '#25304f', say: '競賽停了。我不知道這是不是對的，但今晚大家都睡得著。', hint: '競賽快結束時，桌上會多一份不太一樣的文件。' },
+    steward: { a: '#7fe3d0', g: '#123f4a', say: '全世界都照我們寫的規則走。這比排行榜第一難多了。', hint: '不用跑第一，也能讓大家照你的方式跑。' },
+    state: { a: '#e8c36a', g: '#3a3222', say: '訂單和算力都不用愁了。只是，發表會的稿子要先送審。', hint: '有一通電話，接起來就不只是一家公司了。' },
+    everyman: { a: '#8fd46a', g: '#1f3f24', say: '我們不是最強的，但我們是大家每天都在用的那一個。', hint: '價格牌可以改到多低？' },
+    niche: { a: '#9ec5ff', g: '#1c2f4f', say: '不用當最大的。客戶每年都回來，這樣也很好。', hint: '外面再熱鬧，總有一塊市場只認你。' },
+    empire: { a: '#ffcf3f', g: '#1d3266', say: '帝國建好了。老闆，下一局要不要挑戰更難的開局？', hint: '等每一張榜單最上面都是你的名字。' },
+    open_legend: { a: '#5fe0b0', g: '#0f4044', say: '全世界都在用我們的模型。這樣的結局，我很喜歡。', hint: '把最好的東西分享出去，看看誰會記得你。' },
+    survive: { a: '#7fb2ff', g: '#1a2e55', say: '馬拉松還沒跑完。下一次，我們一定能跑到更前面。', hint: '一路跑到最後一天，還是沒有分出勝負。' },
+    acquired: { a: '#b7a6ff', g: '#2a2354', say: '新老闆人不錯……但我還是比較想念當初那間車庫。', dark: 1, hint: '有人開了一個漂亮的價錢，你會怎麼回？' },
+    bankrupt: { a: '#aab3c2', g: '#262b35', say: '對不起，沒能陪你撐到最後。再來一次好不好？', dark: 1, hint: '帳上的數字也有撐不住的一天。' },
   };
-  const FN_DEFAULT = { a: '#7fb2ff', g: '#1a2e55', say: '這一路辛苦了。下一局，我還跟著你。' };
+  const FN_DEFAULT = { a: '#7fb2ff', g: '#1a2e55', say: '這一路辛苦了。下一局，我還跟著你。', hint: '這條路還沒有人走完。' };
   function fnYM(w) { const d = ME.weekDate(w); return d.getUTCFullYear() + '.' + String(d.getUTCMonth() + 1).padStart(2, '0'); }
   // 一局的關鍵時刻：發布的模型從 s.models 算，其他來自引擎的 s.chron。太多就留重要的（c.p 是引擎給的重要度，沒有就看分類）
   function fnChronicle(E) {
@@ -2195,6 +2196,7 @@
   function hideFinale() { fnClear(); if (FN.ov) { FN.ov.remove(); FN.ov = null; modalOpen = false; } }
   function showEnding(replay) {
     const s = G.s; const e = s.ended; if (!e || FN.ov) return;
+    endRecord(s);
     const E = G.endingView(); const T = FN_TONE[e.type] || FN_DEFAULT; const m = mascot();
     pauseForModal(); modalOpen = true;
     const h = (s.hist || []).filter((p) => p && p.w != null); const chart = h.length >= 2 ? fnValChart(h) : null;
@@ -2221,7 +2223,7 @@
         <div class="fn-tiles">${tiles.map((x) => `<div class="stat-tile"><span class="l">${esc(x[0])}</span><span class="v">${esc(x[1])}</span><span class="s">${esc(x[2])}</span></div>`).join('')}</div>
         ${s.models.length ? `<ul class="fn-ms" aria-label="歷代模型">${s.models.map((x) => `<li class="${x === best ? 'best' : ''}"><b>${esc(x.name)}</b><span>${G.composite(x.stats).toFixed(1)}</span></li>`).join('')}</ul>` : ''}
         <div class="fn-bye"><img src="${m.avatar}" alt="" width="44" height="44"><p><b style="color:${m.color}">${esc(m.name)}</b>　${esc(T.say)}</p></div>
-        <div class="fn-foot"><button class="btn ghost" data-act="fn-replay">重看結局</button><span class="spacer"></span><button class="btn" data-act="fn-stay">留下來看看</button><button class="btn primary" data-act="to-title">再玩一次</button></div></div></section>`;
+        <div class="fn-foot"><button class="btn ghost" data-act="fn-replay">重看結局</button><button class="btn ghost" data-act="endbook" data-cur="${esc(e.type)}">結局圖鑑 ${endCount()} / ${Object.keys(D.ENDINGS).length}${(endBook()[e.type] || {}).fresh ? '<span class="eb-new">NEW</span>' : ''}</button><span class="spacer"></span><button class="btn" data-act="fn-card">存成圖片</button><button class="btn" data-act="fn-stay">留下來看看</button><button class="btn primary" data-act="to-title">再玩一次</button></div></div></section>`;
     const ov = document.createElement('div'); ov.className = 'finale' + (T.dark ? ' dark' : ''); ov.id = 'finale'; ov.tabIndex = -1;
     ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', '結局：' + E.title);
     ov.style.setProperty('--fa', T.a); ov.style.setProperty('--fg', T.g);
@@ -2300,6 +2302,168 @@
     fnGo(s.flags.endSeen && !replay ? FN.scenes.length - 1 : 0);
   }
 
+  /* ---------- 結局圖鑑 ----------
+     解鎖紀錄放在介面偏好，不進存檔，所以開新局、清存檔都不會消失。每個結局記次數和分數最高的那一局；
+     sig 是最近一局的指紋，同一局重看或讀檔不會重複計次；fresh 表示還沒在圖鑑看過 */
+  function endBook() { const b = uiPref('endings', null); return b && typeof b === 'object' && !Array.isArray(b) ? b : {}; }
+  function endCount() { const b = endBook(); return Object.keys(D.ENDINGS).filter((id) => b[id]).length; }
+  function endRecord(s) {
+    const e = s.ended; if (!e || !D.ENDINGS[e.type]) return;
+    const book = endBook(); const old = book[e.type]; const sig = hashStr([s.seed, s.company, e.w, e.score].join('|'));
+    if (old && old.sig === sig) return;
+    const best = !old || e.score > old.score ? { grade: e.grade, score: e.score, w: e.w, company: s.company, mascot: s.mascot } : {};
+    book[e.type] = Object.assign({}, old, best, { n: (old ? old.n : 0) + 1, sig, fresh: old ? old.fresh : 1 });
+    setUiPref('endings', book);
+  }
+  function showEndBook(cur, back) {
+    const book = endBook(); const ids = Object.keys(D.ENDINGS); const got = ids.filter((id) => book[id]); const runs = got.reduce((a, id) => a + (book[id].n || 1), 0);
+    const tone = (id) => FN_TONE[id] || FN_DEFAULT;
+    const left = (id, i) => `<div class="eb-l"><span class="eb-ic" aria-hidden="true">${D.ENDINGS[id].icon}</span><span class="eb-no">${String(i + 1).padStart(2, '0')}</span></div>`;
+    const tile = (id, i) => {
+      const T = tone(id); const r = book[id];
+      if (!r) return `<li class="eb-tile off">${left(id, i)}<div class="eb-r"><h4>？？？</h4><p>${esc(T.hint || FN_DEFAULT.hint)}</p></div></li>`;
+      const m = D.MASCOTS.find((x) => x.id === r.mascot);
+      return `<li class="eb-tile${id === cur ? ' cur' : ''}" id="eb-${esc(id)}" style="--fa:${T.a};--fg:${T.g}">${left(id, i)}<div class="eb-r"><h4>${esc(D.ENDINGS[id].title)}${r.fresh ? '<span class="eb-new">NEW</span>' : ''}</h4>
+        <p class="eb-meta">達成 <b>${num(r.n || 1)}</b> 次 · 最高 <b>${num(r.score)}</b> 分</p><p class="eb-meta">${esc(r.company)} · <b>${fnYM(r.w)}</b></p>
+        <p class="eb-say">${m ? `<img src="${m.avatar}" alt="${esc(m.name)}" width="26" height="26" loading="lazy">` : ''}<span>${esc(T.say)}</span></p></div><div class="fn-grade on g-${esc(r.grade)}" title="最高評級 ${esc(r.grade)}">${esc(r.grade)}</div></li>`;
+    };
+    openModal({ title: '🏅 結局圖鑑', cls: 'wide eb',
+      body: `<div class="eb-top"><div class="eb-count">${got.length}<small>/ ${ids.length}</small></div><div class="eb-bar" aria-hidden="true">${ids.map((id) => `<i class="${book[id] ? 'on' : ''}" style="--fa:${tone(id).a}"></i>`).join('')}</div>
+        <p class="eb-note">${got.length ? '已經跑完 <b>' + num(runs) + '</b> 局。' : '還沒有走到任何結局。'}解鎖過的結局會一直留在這裡，開新局也不會消失。</p></div><ol class="eb-grid">${ids.map(tile).join('')}</ol>`,
+      onClose: () => { if (back && back.isConnected) back.focus({ preventScroll: true }); } });
+    if (got.some((id) => book[id].fresh)) { got.forEach((id) => { delete book[id].fresh; }); setUiPref('endings', book); }  // 這次還看得到 NEW，下次就沒有了
+    const nw = back && back.querySelector('.eb-new'); if (nw) nw.remove();
+    const x = document.querySelector('#modal-root .mh .x'); if (x) x.focus({ preventScroll: true });
+    const at = cur && document.getElementById('eb-' + cur); if (at) setTimeout(() => at.scrollIntoView({ block: 'center' }), 40);
+  }
+
+  /* ---------- 分享卡 ----------
+     用 canvas 畫 1080×1350 的 PNG：手機直式剛好滿版，縮到 360px 寬字也看得清楚。內容只有公司名、結局、評級、估值、日期和吉祥物（加上立繪的署名），不放個人資料和網址。
+     先畫好再顯示預覽，下載和分享才是玩家的下一次點擊：navigator.share 要在點擊當下呼叫，等圖片畫完再呼叫，有些瀏覽器會擋 */
+  const CARD = { url: '', file: null, name: '', text: '', job: 0 };
+  const CARD_GRADE = { S: ['#ffe680', '#ffb12e', '#1d2433'], A: ['#d4e4ff', '#7fb2ff', '#1d2433'], B: ['#d8f7e8', '#5fe0b0', '#1d2433'], C: ['#f3f5f9', '#b8c1ce', '#1d2433'], D: ['#8b93a3', '#565d6b', '#fff'] };  // 跟 .fn-grade 同一組顏色
+  function cardImage(src) {
+    return new Promise((res) => {
+      const im = new Image(); const t = setTimeout(() => res(null), 4000);
+      im.onload = () => { clearTimeout(t); res(im); }; im.onerror = () => { clearTimeout(t); res(null); }; im.src = src;
+    });
+  }
+  // canvas 不會等字體：要先載入用得到的字（Noto 依字元分檔），網路不通就用系統字
+  function cardFonts(d) {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve();
+    const jobs = [['900 150px "Noto Serif TC"', d.title + d.grade], ['900 60px "Noto Sans TC"', d.company + d.val + d.mascot], ['700 32px "Noto Sans TC"', '評級公司估值結束日期結局模型帝國'], ['500 22px "Noto Sans TC"', d.credit], ['italic 800 88px "Barlow Semi Condensed"', 'ENDING$.,0123456789'], ['800 30px "Archivo"', 'MODEL EMPIRE']];
+    return Promise.race([Promise.all(jobs.map((j) => document.fonts.load(j[0], j[1]).catch(() => null))), new Promise((r) => setTimeout(r, 3000))]);
+  }
+  function cardDraw(d, img) {
+    const W = 1080, H = 1350, L = 64, CX = 830, CY = 760; const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+    const css = getComputedStyle(document.documentElement); const SERIF = css.getPropertyValue('--font-display').trim(), SANS = css.getPropertyValue('--font-body').trim(), NUM = css.getPropertyValue('--font-num').trim();
+    // 文字太寬就縮小，縮到 min 還放不下才加刪節號
+    const fit = (t, font, size, min, maxW) => {
+      c.font = font(size); const w = c.measureText(t).width; if (w <= maxW) return t;
+      c.font = font(Math.max(min, Math.floor(size * maxW / w))); if (c.measureText(t).width <= maxW) return t;
+      const ch = [...t]; while (ch.length > 1 && c.measureText(ch.join('') + '…').width > maxW) ch.pop();
+      return ch.join('') + '…';
+    };
+    // 數字用遊戲字體的斜體，中文單位維持正體（中文不做假斜體）
+    const runs = (t, x, y, size, color) => {
+      c.fillStyle = color;
+      for (const r of t.match(/[\x00-\x7f]+|[^\x00-\x7f]+/g) || []) { const ascii = r.charCodeAt(0) < 128; c.font = ascii ? `italic 800 ${size}px ${NUM}` : `900 ${Math.round(size * .72)}px ${SANS}`; c.fillText(r, x, y); x += c.measureText(r).width + (ascii ? 5 : 0); }
+      return x;
+    };
+    const rrect = (x, y, w, h, r) => { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); };
+    const label = (t, y) => { c.font = `700 32px ${SANS}`; c.fillStyle = '#b4bfd3'; c.fillText(t, L, y); };
+    // 背景：結局的代表色打光，加上細格線
+    const bg = c.createRadialGradient(CX, 620, 40, CX, 620, 1050); bg.addColorStop(0, d.g); bg.addColorStop(1, '#0d1424'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
+    c.strokeStyle = 'rgba(255, 255, 255, .035)'; c.lineWidth = 2; c.beginPath();
+    for (let x = 54; x < W; x += 54) { c.moveTo(x, 0); c.lineTo(x, H); }
+    for (let y = 54; y < H; y += 54) { c.moveTo(0, y); c.lineTo(W, y); }
+    c.stroke();
+    // 立繪頭部後面的圓環，呼應大廳和結局標題；左邊不壓到文字欄
+    c.strokeStyle = d.a; c.globalAlpha = .55; c.lineWidth = 3; c.setLineDash([4, 14]); c.beginPath(); c.arc(CX, CY, 310, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+    c.globalAlpha = .25; c.lineWidth = 2; c.beginPath(); c.arc(CX, CY, 340, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+    if (img) {
+      const mh = 990; const mw = Math.round(mh * img.naturalWidth / img.naturalHeight);
+      const off = document.createElement('canvas'); off.width = mw; off.height = mh; const o = off.getContext('2d'); o.drawImage(img, 0, 0, mw, mh);
+      if (d.dark) { o.globalCompositeOperation = 'source-atop'; o.fillStyle = 'rgba(18, 22, 34, .42)'; o.fillRect(0, 0, mw, mh); }  // 立繪只有開心的表情，壞結局把她調暗（同 .finale.dark）
+      c.shadowColor = 'rgba(0, 0, 0, .45)'; c.shadowBlur = 40; c.shadowOffsetY = 24; c.drawImage(off, W + 60 - mw, H + 36 - mh); c.shadowColor = 'transparent'; c.shadowBlur = 0; c.shadowOffsetY = 0;
+    } else {  // 立繪畫不進來（例如直接用檔案開啟）：改用吉祥物的圖示和名字
+      c.textAlign = 'center'; c.fillStyle = '#fff'; c.font = `280px ${SANS}`; c.fillText(d.icon, CX, CY + 90); c.font = `900 60px ${SANS}`; c.fillText(d.mascot, CX, CY + 220); c.textAlign = 'left';
+    }
+    // 上方：品牌條和結局名
+    c.fillStyle = '#16181d'; c.beginPath(); c.moveTo(0, 54); c.lineTo(404, 54); c.lineTo(380, 122); c.lineTo(0, 122); c.closePath(); c.fill();
+    c.fillStyle = '#c6ff1a'; c.fillRect(L, 82, 12, 12); c.fillStyle = '#fff'; c.font = `800 30px Archivo, ${SANS}`; c.fillText('MODEL EMPIRE', L + 28, 99);
+    const capEnd = runs('ENDING', L, 214, 40, d.a); c.font = `700 34px ${SANS}`; c.fillText('結局', capEnd + 18, 213);
+    const title = fit(d.title, (z) => `900 ${z}px ${SERIF}`, 150, 72, W - L * 2);
+    c.fillStyle = '#fff'; c.shadowColor = d.a; c.shadowBlur = 44; c.fillText(title, L, 362); c.shadowColor = 'transparent'; c.shadowBlur = 0;
+    // 左欄：評級、公司、估值、日期
+    label('評級', 452);
+    const tint = CARD_GRADE[d.grade] || CARD_GRADE.C;
+    c.save(); c.translate(L + 94, 568); c.rotate(-4 * Math.PI / 180);
+    const gr = c.createLinearGradient(-94, -94, 94, 94); gr.addColorStop(0, tint[0]); gr.addColorStop(1, tint[1]); c.fillStyle = gr; c.shadowColor = 'rgba(0, 0, 0, .35)'; c.shadowBlur = 26; c.shadowOffsetY = 10; rrect(-94, -94, 188, 188, 42); c.fill();
+    c.shadowColor = 'transparent'; c.fillStyle = tint[2]; c.font = `900 136px ${SERIF}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(d.grade, 0, 8); c.restore();
+    label('公司', 752);
+    // 公司名最多 16 個字：太長就分兩行，不要縮到手機上看不清楚
+    const coFont = (z) => `900 ${z}px ${SANS}`; const coW = 420; c.font = coFont(60); const coFull = c.measureText(d.company).width; c.fillStyle = '#fff';
+    if (coFull * 46 / 60 <= coW) c.fillText(fit(d.company, coFont, 60, 46, coW), L, 820);
+    else {
+      c.font = coFont(46); const ch = [...d.company]; let a = '';
+      while (ch.length && c.measureText(a + ch[0]).width <= coW) a += ch.shift();
+      const sp = a.lastIndexOf(' '); if (sp > 0) { ch.unshift(...a.slice(sp + 1)); a = a.slice(0, sp); }  // 英文盡量在空白處換行
+      c.fillText(a, L, 806); c.fillText(fit(ch.join(''), coFont, 46, 46, coW), L, 860);
+    }
+    label('估值', 918); runs(d.val, L, 1008, 92, '#fff');
+    label('結束日期', 1106); runs(d.date, L, 1186, 76, '#fff');
+    // 頁尾：遊戲名和立繪署名（二創圖片要署名）
+    c.fillStyle = '#0a0f1b'; c.fillRect(0, H - 76, W, 76);
+    c.font = `700 28px ${SANS}`; c.fillStyle = '#fff'; c.fillText('模型帝國', L, H - 27); const nameW = c.measureText('模型帝國').width;
+    if (d.credit) { const cr = fit(d.credit, (z) => `500 ${z}px ${SANS}`, 24, 16, W - L * 2 - nameW - 32); c.textAlign = 'right'; c.fillStyle = '#c9d3e3'; c.fillText(cr, W - L, H - 28); c.textAlign = 'left'; }
+    return cv;
+  }
+  function cardBlob(cv) { return new Promise((res, rej) => { try { cv.toBlob((b) => (b ? res(b) : rej(new Error('empty'))), 'image/png'); } catch (e) { rej(e); } }); }
+  // 用檔案（file://）開啟時畫了立繪就不能輸出，這時改畫沒有立繪的版本
+  async function cardMake(d) {
+    const r = await Promise.all([cardImage(d.img), cardFonts(d)]); const img = r[0];
+    try { return { blob: await cardBlob(cardDraw(d, img)), portrait: !!img }; } catch (e) { return { blob: await cardBlob(cardDraw(d, null)), portrait: false }; }
+  }
+  function cardDrop() { if (CARD.url) URL.revokeObjectURL(CARD.url); CARD.url = ''; CARD.file = null; }
+  function cardCanShare() { try { return !!(CARD.file && navigator.share && navigator.canShare && navigator.canShare({ files: [CARD.file] })); } catch (e) { return false; } }
+  function showShareCard(back) {
+    const s = G.s; const e = s.ended; const E = G.endingView(); if (!E) return;
+    const T = FN_TONE[e.type] || FN_DEFAULT; const m = mascot(); const val = money(s.valuation); const date = fnYM(e.w);
+    const d = { company: s.company, title: E.title, grade: e.grade, val, date, a: T.a, g: T.g, dark: !!T.dark, img: m.img, icon: m.icon, mascot: m.name, credit: m.credit || '' };
+    cardDrop(); const job = ++CARD.job;
+    CARD.name = 'model-empire-' + e.type + '-' + e.grade + '.png'; CARD.text = '我在《模型帝國》走到了「' + E.title + '」，評級 ' + e.grade + '。';
+    openModal({ title: '🖼️ 分享卡', cls: 'sc', body: '<figure class="sc-fig" id="sc-fig"><p class="sc-note">正在畫圖片…</p></figure>',
+      foot: '<button class="btn" data-act="close-modal">關閉</button><button class="btn primary" id="sc-save" data-act="sc-save" disabled>下載圖片</button>',
+      onClose: () => { CARD.job++; cardDrop(); if (back && back.isConnected) back.focus({ preventScroll: true }); } });
+    cardMake(d).then((r) => {
+      const fig = document.getElementById('sc-fig'); if (job !== CARD.job || !fig) return;
+      CARD.url = URL.createObjectURL(r.blob);
+      try { CARD.file = new File([r.blob], CARD.name, { type: 'image/png' }); } catch (err) { CARD.file = null; }
+      const alt = '分享卡：' + s.company + '，結局「' + E.title + '」，評級 ' + e.grade + '，估值 ' + val + '，' + date + ' 結束';
+      fig.innerHTML = `<img class="sc-img" src="${CARD.url}" width="1080" height="1350" alt="${esc(alt)}"><figcaption class="sc-note">${r.portrait ? '' : '這次沒辦法把立繪畫進圖片（直接用檔案開啟遊戲時會這樣），所以改用圖示。'}也可以長按或按右鍵另存圖片。圖裡只有這一局的公司名、結局、評級、估值、日期和吉祥物，沒有個人資料。</figcaption>`;
+      const save = document.getElementById('sc-save'); save.disabled = false; let main = save;
+      if (cardCanShare()) {  // 手機的分享選單可以直接存進相簿，所以手機以分享為主
+        const touch = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        save.insertAdjacentHTML(touch ? 'afterend' : 'beforebegin', `<button class="btn${touch ? ' primary' : ''}" id="sc-share" data-act="sc-share">分享</button>`);
+        if (touch) { save.classList.remove('primary'); main = document.getElementById('sc-share'); }
+      }
+      main.focus({ preventScroll: true });
+    }).catch(() => {
+      const fig = document.getElementById('sc-fig'); if (job !== CARD.job || !fig) return;
+      fig.innerHTML = '<p class="sc-note">這個瀏覽器畫不出圖片，可以直接截圖結算卡分享。</p>';
+    });
+  }
+  function cardSave() {
+    if (!CARD.url) return;
+    const a = document.createElement('a'); a.href = CARD.url; a.download = CARD.name; document.body.appendChild(a); a.click(); a.remove();
+    toast('已開始下載圖片');
+  }
+  function cardShare() {
+    if (!cardCanShare()) { cardSave(); return; }
+    navigator.share({ files: [CARD.file], title: '模型帝國', text: CARD.text }).catch((err) => { if (!err || err.name !== 'AbortError') toast('沒辦法開啟分享，可以改用下載', true); });
+  }
+
   /* ---------- 選單 ---------- */
   /* ---------- 史料庫：真實 AI 史（依遊戲日期解鎖） ---------- */
   const HCAT = { model: '模型', paper: '論文', hardware: '硬體', infra: '基礎設施', capital: '資本', policy: '政策法規', benchmark: '基準', safety: '安全與法律', product: '產品', culture: '文化', meme: '迷因', robotics: '機器人', talent: '人才' };
@@ -2354,6 +2518,7 @@
         <button class="btn" data-act="export">📤 匯出存檔代碼</button>
         <button class="btn" data-act="import">📥 匯入存檔代碼</button>
         <button class="btn" data-act="codex" data-tab="timeline">📜 史料庫（真實 AI 史）</button>
+        <button class="btn" data-act="endbook">🏅 結局圖鑑（${endCount()} / ${Object.keys(D.ENDINGS).length}）</button>
         <button class="btn" data-act="help">📖 玩法說明</button>
         <button class="btn" data-act="tour-reset">🧭 重看各頁導覽</button>
         <button class="btn" data-act="credits">🐳 致謝與授權</button>
@@ -2467,6 +2632,10 @@
       case 'fn-replay': hideFinale(); showEnding(true); break;
       case 'fn-stay': hideFinale(); render(); break;
       case 'fn-open': showEnding(); break;
+      case 'endbook': pauseForModal(); showEndBook(ds.cur, el); break;
+      case 'fn-card': showShareCard(el); break;
+      case 'sc-save': cardSave(); break;
+      case 'sc-share': cardShare(); break;
       // 研發
       case 'open-wizard': if (!G.canStartJob()) { toast('同時進行的訓練已達上限，升級辦公室可增加', true); tab = 'models'; renderAll(); return; } pauseForModal(); openWizard(); break;
       case 'wiz-arch': wiz.arch = ds.id; if (wiz.arch !== 'dense' && wiz.size < 14) wiz.size = 14; renderWizard(); break;
@@ -2609,7 +2778,7 @@
     holdUntil = 0;
     act(name, a.dataset, a);
     holdUntil = Date.now() + 500;
-    sfx(name === 'close-modal' ? 'close' : /^(open-wizard|menu|open-log|codex|report|chat|open-synth|help|credits|export|import|ai-settings)$/.test(name) ? 'open' : 'click');
+    sfx(name === 'close-modal' ? 'close' : /^(open-wizard|menu|open-log|codex|report|chat|open-synth|help|credits|export|import|ai-settings|endbook|fn-card)$/.test(name) ? 'open' : 'click');
   });
   document.addEventListener('change', (e) => {
     const el = e.target;
@@ -2644,6 +2813,7 @@
   document.addEventListener('pointerdown', (e) => { if (e.target.closest && e.target.closest('#main')) holdUntil = Date.now() + 1500; });
   document.addEventListener('keydown', (e) => {
     if (G && e.key === 'Escape' && e.target.id === 'cb-text') { talkFold(false); return; }
+    if (e.key === 'Escape' && (!G || FN.ov) && !e.target.closest('input, textarea, select')) { const mr = document.getElementById('modal-root'); if (mr && mr.firstChild && mr._closable) { closeModal(); return; } }
     if (!G || e.target.closest('input, textarea, select')) return;
     if (FN.ov) {
       if (FN.i >= FN.scenes.length - 1 || e.target.closest('button')) return;
