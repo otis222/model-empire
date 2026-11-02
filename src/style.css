@@ -30,7 +30,7 @@
   --shadow: 0 18px 38px -22px rgba(17, 19, 24, .55);
   --font-display: "Noto Serif TC", "Songti TC", serif;
   --font-body: "Noto Sans TC", system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
-  --font-wide: "Archivo", "Noto Sans TC", sans-serif;
+  --font-wide: "Archivo", var(--font-body);
   --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --r: 10px;
   --mx: 0; --my: 0;
@@ -729,7 +729,8 @@ input[type="text"], select, textarea { border-radius: 10px; }
    - 按鈕有厚度（下緣陰影），按下會沉；勾選框改成開關
    ===================================================================== */
 :root {
-  --font-num: "Barlow Semi Condensed", "Noto Sans TC", system-ui, sans-serif;
+  /* 連不上 Google Fonts 時先找系統的窄體數字，一般字體太寬，數字會被截斷 */
+  --font-num: "Barlow Semi Condensed", "Bahnschrift SemiCondensed", "Avenir Next Condensed", "Roboto Condensed", var(--font-body);
   --font-data: var(--font-num);
   --ink: #1b2333;
   --muted: #566176;

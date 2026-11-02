@@ -12,12 +12,15 @@ const css = read('style.css');
 const scripts = ['data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'globe.js', 'ui.js'].filter((f) => fs.existsSync(path.join(SRC, f)));
 if (scripts.indexOf('content.js') < 0) console.warn('⚠️ 找不到 content.js，事件與新聞將為空');
 
+// 字型先用 media="print" 載入，好了才切成 all：連不上 Google Fonts 時畫面不會卡住，直接用備用字型
+const FONTS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@900&family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Semi+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,600;1,800&display=swap';
 const head = `<title>模型帝國</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="大模型創業經營策略遊戲：設計模型配方、搶算力、挖人才、跟六家對手競爭，2030 年前打造最強 AI。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@900&family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Semi+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,600;1,800&display=swap">
+<link rel="stylesheet" href="${FONTS}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="${FONTS}"></noscript>
 <style>
 ${css}
 </style>`;

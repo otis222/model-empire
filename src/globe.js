@@ -252,6 +252,9 @@
     el.append(cv, tip);
     const ctx = cv.getContext('2d');
     const reduced = () => !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    // 畫布文字用和畫面相同的字型和備用字型，語言換了才重讀 CSS 變數
+    let fontLang = null; let fontBody = ''; let fontNum = '';
+    const readFonts = () => { const h = root.document.documentElement; if (h.lang === fontLang) return; fontLang = h.lang; const cs = root.getComputedStyle(h); fontBody = cs.getPropertyValue('--font-body').trim(); fontNum = cs.getPropertyValue('--font-num').trim(); };
     const owner = new Int16Array(N).fill(-1);
     let data = null; let compKey = ''; let pal = []; let anchorD = []; let regionState = []; let hq = null; let hqRing = [];
     let yaw = 121 * RAD; let pitch = 18 * RAD; let spin = opts.spin !== false; let sel = -1; let hover = -1;
@@ -362,6 +365,7 @@
     function draw(now) {
       if (!W || !data) return;
       if (!grads) gradients();
+      readFonts();
       const sy = Math.sin(yaw); const cyw = Math.cos(yaw); const sp = Math.sin(pitch); const cp = Math.cos(pitch); const R = RR; const X = cx; const Y = cy;
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
       ctx.fillStyle = grads.atm; ctx.beginPath(); ctx.arc(X, Y, R * 1.18, 0, TAU); ctx.fill();
@@ -448,7 +452,7 @@
       for (let a = 0; a < 360; a += 30) { const t = (a - deg) * RAD - Math.PI / 2; const c = Math.cos(t); const s = Math.sin(t); ctx.moveTo(cx + c * r0, cy + s * r0); ctx.lineTo(cx + c * (r0 + 7 * dpr), cy + s * (r0 + 7 * dpr)); }
       ctx.strokeStyle = 'rgba(190,220,255,.55)'; ctx.stroke();
       if (W > 420) {
-        ctx.font = '600 ' + 9.5 * dpr + 'px "Barlow Semi Condensed", system-ui, sans-serif'; ctx.fillStyle = 'rgba(190,215,255,.5)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = '600 ' + 9.5 * dpr + 'px ' + fontNum; ctx.fillStyle = 'rgba(190,215,255,.5)'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         for (let a = 0; a < 360; a += 60) { const t = (a - deg) * RAD - Math.PI / 2; const lon = a > 180 ? 360 - a : a; ctx.fillText(lon + (a === 0 || a === 180 ? '°' : a > 180 ? '°W' : '°E'), cx + Math.cos(t) * (r0 + 16 * dpr), cy + Math.sin(t) * (r0 + 16 * dpr)); }
       }
       // 兩段較亮的弧線
@@ -479,8 +483,8 @@
         const info = data.regions[it.i]; const top = info.ranked[0]; let want = 0; let box = null;
         if (top && it.z > 0.18) {
           const co = data.byId[top.id]; const name = small ? info.name.replace('與', '·').slice(0, 5) : info.name; const pct = Math.round(top.share * 100) + '%';
-          ctx.font = '700 ' + fs + 'px "Noto Sans TC", system-ui, sans-serif'; const w1 = ctx.measureText(name).width;
-          ctx.font = 'italic 800 ' + (fs * 1.08) + 'px "Barlow Semi Condensed", "Noto Sans TC", sans-serif'; const w2 = ctx.measureText(pct).width;
+          ctx.font = '700 ' + fs + 'px ' + fontBody; const w1 = ctx.measureText(name).width;
+          ctx.font = 'italic 800 ' + (fs * 1.08) + 'px ' + fontNum; const w2 = ctx.measureText(pct).width;
           const pad = 7 * dpr; const ic = fs * 1.25; const w = pad + ic + 3 * dpr + w1 + 5 * dpr + w2 + pad; const h = fs * 1.9;
           box = { x: it.x - w / 2, y: it.y - h / 2, w, h, name, pct, co, w1, ic, pad };
           const hit = placed.some((b) => box.x < b.x + b.w + 3 * dpr && b.x < box.x + box.w + 3 * dpr && box.y < b.y + b.h + 2 * dpr && b.y < box.y + box.h + 2 * dpr);
@@ -492,8 +496,8 @@
         ctx.fillStyle = 'rgba(8,12,28,.80)'; ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(box.x, box.y, box.w, box.h, box.h / 2.4); else ctx.rect(box.x, box.y, box.w, box.h); ctx.fill();
         ctx.strokeStyle = it.i === sel ? 'rgba(255,255,255,.9)' : 'rgba(255,255,255,.18)'; ctx.lineWidth = dpr; ctx.stroke();
         ctx.font = fs * 1.02 + 'px "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(box.co.icon, box.x + box.pad, it.y + dpr * 0.5);
-        ctx.fillStyle = '#eef3ff'; ctx.font = '700 ' + fs + 'px "Noto Sans TC", system-ui, sans-serif'; ctx.fillText(box.name, box.x + box.pad + box.ic + 3 * dpr, it.y + dpr * 0.5);
-        ctx.fillStyle = '#fff'; ctx.font = 'italic 800 ' + (fs * 1.08) + 'px "Barlow Semi Condensed", "Noto Sans TC", sans-serif'; ctx.fillText(box.pct, box.x + box.pad + box.ic + 3 * dpr + box.w1 + 5 * dpr, it.y + dpr * 0.5);
+        ctx.fillStyle = '#eef3ff'; ctx.font = '700 ' + fs + 'px ' + fontBody; ctx.fillText(box.name, box.x + box.pad + box.ic + 3 * dpr, it.y + dpr * 0.5);
+        ctx.fillStyle = '#fff'; ctx.font = 'italic 800 ' + (fs * 1.08) + 'px ' + fontNum; ctx.fillText(box.pct, box.x + box.pad + box.ic + 3 * dpr + box.w1 + 5 * dpr, it.y + dpr * 0.5);
         ctx.globalAlpha = 1;
       }
       drawnLabels = true;
@@ -502,7 +506,7 @@
     function readout() {
       if (W < 300) return;
       const lat = pitch / RAD; const lon = ((yaw / RAD + 540) % 360) - 180; const t = Math.abs(lat).toFixed(0).padStart(2, '0') + '°' + (lat >= 0 ? 'N' : 'S') + '  ' + Math.abs(lon).toFixed(0).padStart(3, '0') + '°' + (lon >= 0 ? 'E' : 'W');
-      ctx.font = '600 ' + 10.5 * dpr + 'px "Barlow Semi Condensed", system-ui, sans-serif'; ctx.fillStyle = 'rgba(190,215,255,.55)'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
+      ctx.font = '600 ' + 10.5 * dpr + 'px ' + fontNum; ctx.fillStyle = 'rgba(190,215,255,.55)'; ctx.textAlign = 'right'; ctx.textBaseline = 'alphabetic';
       ctx.fillText(t, cv.width - 6 * dpr, cv.height - 6 * dpr);
     }
 
@@ -576,6 +580,8 @@
     if (root.IntersectionObserver) { const io = new root.IntersectionObserver((en) => { visible = en[en.length - 1].isIntersecting; if (visible) kick(); }); io.observe(el); }
     if (root.ResizeObserver) { const ro = new root.ResizeObserver(() => { if (resize()) { draw(performance.now()); } }); ro.observe(el); }
     if (root.document) root.document.addEventListener('visibilitychange', () => { if (!root.document.hidden) kick(); });
+    // 字型晚到時重畫一次，地球沒在轉也會換上正確的字
+    if (root.document && root.document.fonts && root.document.fonts.addEventListener) root.document.fonts.addEventListener('loadingdone', () => { if (el.isConnected) draw(performance.now()); });
 
     return {
       el,
