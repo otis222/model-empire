@@ -639,6 +639,116 @@
     }
     openSource(id) { const m = this.s.models.find((x) => x.id === id); if (!m || !m.rel || m.rel.open) return; m.rel.open = true; this.applyOpen(m); this.log('🕊️ ' + m.name + ' 權重已開源，社群沸騰了。', 'good'); }
     setPrice(id, price) { const m = this.s.models.find((x) => x.id === id); if (m && m.rel) m.rel.price = price; }
+    // 每單位市佔能收到多少營收（1 ＝ 市場價）
+    revRate(m, k, plan) {
+      const pt = D.PRICE_TIERS.find((p) => p.id === m.rel.price) || D.PRICE_TIERS[2];
+      let rm = pt.rev; if (pt.id === 'free' && k !== 'chat') rm = 0.02;
+      if (k === 'chat' && plan) rm = plan.arpu;
+      if (m.rel.open) rm *= k === 'api' ? 0.25 : k === 'chat' ? 1 : k === 'ent' ? 0.7 : 0.6;
+      if (k === 'ent') rm *= 1 + 0.2 * this.starBonus('deal_maker');
+      return rm;
+    }
+
+    /* ================= 會員方案（對話 App） =================
+       沒有 s.plans 就照模型定價賣，所有數字都和沒有這個系統時一樣。玩家第一次調整方案時才會有 s.plans。
+       s.plans = { fq 免費額度, sp 標準版月費, sq 標準額度, mx 有沒有旗艦版, mp 旗艦版月費, mq 旗艦額度 }
+       回傳 price 價格倍率、util 吸引力加成、arpu 每單位市佔的營收倍率、load 算力用量倍率 */
+    planFx(c) {
+      c = c || this.s.plans; if (!c) return null;
+      const K = D.PLANS.k; const best = this.bestModel();
+      const strong = best ? clamp(1 - (this.frontierComp() - this.composite(best.stats)) / K.maxGap, 0.1, 1.2) : 0.1;  // 模型越強，旗艦版越賣得動
+      const take = c.mx ? K.maxTake * strong * Math.pow(c.mq / 10, K.maxQuota) * (200 / c.mp) : 0;
+      const conv = Math.pow(c.fq, -K.freeConv) * Math.pow(c.sq, K.stdConv) * Math.pow(20 / c.sp, K.priceConv) * (1 - take * K.cannibal);
+      return {
+        price: c.sp / 20, conv, take, strong,
+        util: K.freeUtil * Math.log(c.fq) + K.stdUtil * Math.log(c.sq) + (c.mx ? K.maxUtil * strong : 0),
+        arpu: conv * c.sp / 20 + take * c.mp / 20,
+        load: K.freeLoad * c.fq + (1 - K.freeLoad) * c.sq * conv + take * c.mq * K.maxUse,
+      };
+    }
+    chatLoad() { const fx = this.planFx(); return (fx ? fx.load : 1) * this.mod('chatLoad'); }
+    // 還沒調整過方案時，畫面上的起始值：標準版月費從目前賣得最好的模型定價換算
+    planDefaults() {
+      const s = this.s; const shares = s.market.chat ? s.market.chat.shares : {}; let top = null; let bs = -1;
+      for (const m of s.models) { if (!m.rel || m.rel.retired) continue; const v = shares['p' + m.id] || 0; if (v > bs) { bs = v; top = m; } }
+      return { fq: 1, sp: D.PLANS.tierPrice[top ? top.rel.price : 'mid'] || 20, sq: 1, mx: false, mp: 200, mq: 10 };
+    }
+    // 調整方案對聲望的影響：砍額度、漲價會挨罵，給得多會被稱讚；短時間內反覆調整只有壞處
+    planRepDelta(c) {
+      const s = this.s; const P = D.PLANS; const b = s.plans || this.planDefaults();
+      const i = (list, v) => list.findIndex((x) => (x.v == null ? x : x.v) === v);
+      const step = (list, from, to) => i(list, to) - i(list, from);
+      const df = step(P.free.quota, b.fq, c.fq); const ds = step(P.std.quota, b.sq, c.sq); const dp = step(P.std.prices, b.sp, c.sp);
+      const dm = b.mx && c.mx ? step(P.max.quota, b.mq, c.mq) : 0;
+      const cut = Math.max(0, -df) + Math.max(0, -ds) + Math.max(0, -dm); const up = Math.max(0, df) + Math.max(0, ds) + Math.max(0, dm);
+      let rep = -cut - Math.max(0, dp) * 0.5 + Math.min(2, (up + Math.max(0, -dp) * 0.5) * 0.5);
+      const fickle = s.planW != null && s.week - s.planW < 8;
+      if (fickle) rep = Math.min(rep, 0) - 1;
+      return { rep, cut, up, fickle };
+    }
+    setPlans(c) {
+      const s = this.s; const P = D.PLANS; const has = (list, v) => list.some((x) => (x.v == null ? x : x.v) === v);
+      if (!has(P.free.quota, c.fq) || !has(P.std.quota, c.sq) || !has(P.std.prices, c.sp) || !has(P.max.prices, c.mp) || !has(P.max.quota, c.mq)) return { ok: false, err: '方案設定不正確' };
+      if (c.mx && this.ym < P.max.from) return { ok: false, err: '旗艦版要 ' + P.max.from + ' 後才能推出' };
+      const d = this.planRepDelta(c); const hadMax = !!(s.plans && s.plans.mx);
+      s.plans = { fq: c.fq, sp: c.sp, sq: c.sq, mx: !!c.mx, mp: c.mp, mq: c.mq };
+      s.planW = s.week; s.flags.plans_on = 1; if (d.cut) s.planCutW = s.week;
+      s.rep = clamp(s.rep + d.rep, 0, 100);
+      this.log('📝 調整會員方案：標準版 $' + c.sp + '/月' + (c.mx ? '，旗艦版 $' + c.mp + '/月' : '') + '。' + (d.cut ? '額度縮水的消息馬上傳開了。' : ''), d.cut ? 'bad' : 'info');
+      if (c.mx && !hadMax) this.log('👑 推出旗艦版，$' + c.mp + ' 一個月，給用量最兇的那群人。', 'good');
+      const ev = this.EVT.plan_backlash;
+      if (d.cut && ev && this.eventOk(ev) && this.rand() < (d.cut >= 2 ? 0.8 : 0.35)) this.queueEvent(ev);
+      return { ok: true, rep: d.rep };
+    }
+    // 額度開得太大，遲早有人拿去轉售或二十四小時跑腳本
+    planTick() {
+      const c = this.s.plans; if (!c) return;
+      const ev = this.EVT.plan_abuse; const risky = (c.mx && c.mq >= 20) || c.sq >= 2.5;
+      if (risky && ev && this.eventOk(ev) && this.rand() < 0.03) this.queueEvent(ev);
+    }
+    // 試算：市佔算到穩定之後的樣子，其他市場維持現狀，不會改動任何狀態
+    planCalc(c) {
+      const s = this.s; const keep = s.plans; s.plans = c || null;
+      const fx = this.planFx(); const load = this.chatLoad(); const rp = this.rentPrice(); const V = this.segValue('chat');
+      this._front = this.frontierComp();
+      const ps = this.segActive('chat') ? this.products('chat') : []; const T = ps.length ? this.segTargets('chat', ps) : { targets: [] };
+      let share = 0; let rev = 0; let need = 0;
+      ps.forEach((p, i) => { if (p.player == null) return; const m = s.models.find((x) => x.id === p.player); const sh = T.targets[i]; share += sh; rev += sh * V * this.revRate(m, 'chat', fx); need += sh * V * m.costRatio / rp * load; });
+      const chatNeed = need;
+      for (const m of s.models) {
+        if (!m.rel || m.rel.retired) continue;
+        for (const k of D.SEG_ORDER) { if (k === 'chat') continue; const sh = s.market[k].shares['p' + m.id] || 0; if (sh) { const v = this.segValue(k); rev += sh * v * this.revRate(m, k, fx); need += sh * v * m.costRatio / rp; } }
+      }
+      s.plans = keep;
+      const owned = this.ownedEq(); const own = Math.min(s.trainFirst ? Math.max(0, owned - this.reservedEq()) : owned, need);
+      const rent = s.autoRent ? Math.max(0, Math.min(this.inferRentCap(), need - own)) : 0;
+      const served = need > 0 ? Math.min(1, (own + rent) / need) : 1;
+      const active = share * V / (20 / 4.33) * 9; const payers = active / 9;
+      return { share, need, chatNeed, own, rent, served, rev: rev * served * this.mod('revenueMul'), rentCost: rent * rp, active, paid: payers * (fx ? fx.conv : 1), flag: payers * (fx ? fx.take : 0), strong: fx ? fx.strong : null, fx };
+    }
+    /* 發放額度重置：送用戶一輪額度，換聲望，代價是之後兩週算力用量暴增。
+       剛砍過額度或服務塞車時發，算是賠罪，效果加倍；發得太頻繁，大家就當成應該的了 */
+    resetState() {
+      const s = this.s; const R = D.PLANS.reset; const last = s.planResetW;
+      return {
+        wait: last == null ? 0 : Math.max(0, last + R.gap - s.week),
+        tired: last != null && s.week - last < R.tire,
+        sorry: (s.planCutW != null && s.week - s.planCutW <= R.sorry) || ((s.lastWeek || {}).served || 1) < 0.8,
+      };
+    }
+    resetGain(scope) { const R = D.PLANS.reset; const st = this.resetState(); return R[scope].rep * (st.sorry ? 2 : 1) * (st.tired ? 0.3 : 1); }
+    grantReset(scope) {
+      const s = this.s; const R = D.PLANS.reset; const o = R[scope]; if (!o) return { ok: false, err: '沒有這個選項' };
+      if (this.playerShare('chat') <= 0) return { ok: false, err: '對話 App 還沒有用戶' };
+      const st = this.resetState(); if (st.wait) return { ok: false, err: '才剛發過，再等 ' + st.wait + ' 週' };
+      const gain = this.resetGain(scope); s.rep = clamp(s.rep + gain, 0, 100);
+      this.addMod('chatLoad', o.load, R.weeks); if (scope === 'all') this.addMod('demand_chat', 1.05, 4);
+      s.planResetW = s.week; s.stat.resets = (s.stat.resets || 0) + 1;
+      const N = root.ME_RESET_POSTS || {}; const pick = (a) => (a && a.length ? a[Math.floor(this.frand() * a.length)] : '');
+      this.log('🎁 ' + (pick(st.sorry ? N.sorry : N[scope]) || '發放額度重置。') + '（' + o.name + '）', 'good');
+      const reply = pick(st.tired ? N.tired : N.reply); if (reply) this.log(reply, 'buzz');
+      return { ok: true, gain };
+    }
     retireModel(id) {
       const m = this.s.models.find((x) => x.id === id); if (!m || !m.rel) return;
       m.rel.retired = true; delete m.use; for (const k in this.s.market) delete this.s.market[k].shares['p' + m.id];
@@ -980,18 +1090,14 @@
       this.progressJobs(lw);
       // 市場
       this.computeMarket(false);
-      let rev = 0; const use = {};
+      let rev = 0; const use = {}; const plan = this.planFx();
       for (const m of s.models) {
         if (!m.rel || m.rel.retired) continue;
         let mr = 0; const mu = {};
         for (const k of D.SEG_ORDER) {
           const sh = s.market[k].shares['p' + m.id] || 0; if (!sh) continue;
           const V = this.segValue(k);
-          const pt = D.PRICE_TIERS.find((p) => p.id === m.rel.price) || D.PRICE_TIERS[2];
-          let rm = pt.rev; if (pt.id === 'free' && k !== 'chat') rm = 0.02;
-          if (m.rel.open) rm *= k === 'api' ? 0.25 : k === 'chat' ? 1 : k === 'ent' ? 0.7 : 0.6;
-          if (k === 'ent') rm *= 1 + 0.2 * this.starBonus('deal_maker');
-          const r = sh * V * rm * lw.served * this.mod('revenueMul');
+          const r = sh * V * this.revRate(m, k, plan) * lw.served * this.mod('revenueMul');
           lw.revSeg[k] = (lw.revSeg[k] || 0) + r; mr += r;
           const u = sh * V / this.refPrice(k) * USAGE[k].mul * lw.served; mu[k] = u; use[k] = (use[k] || 0) + u;
         }
@@ -1003,6 +1109,7 @@
       if (flag && !flag.staleLog && this.modelStale(flag) > 0) { flag.staleLog = 1; this.log('⏳ ' + flag.name + ' 上線快一年了，客戶開始被新模型吸引。該排下一代了。', 'info', { model: flag.id }); }
       this.trackReleases();
       this.checkRfps();
+      this.planTick();
       for (const m of s.models) if (m.rel && !m.rel.retired && m.badges && m.badges.some((b) => b.tier === 2)) this.unlockAch('gold_badge');
       if (lw.served < 0.97 && inferNeed > 50) {
         s.rep = clamp(s.rep - Math.min(0.8, (1 - lw.served) * 0.8), 0, 100);
@@ -1160,10 +1267,12 @@
           out.push({ key: 'r' + rid + ':' + m.v, stats: m.stats, price, util: u, rival: rid });
         }
       }
+      const plan = k === 'chat' ? this.planFx() : null;
       for (const m of s.models) {
         if (!m.rel || m.rel.retired || !this.playerEligible(m, k)) continue;
         const pt = D.PRICE_TIERS.find((p) => p.id === m.rel.price) || D.PRICE_TIERS[2];
         let u = B.REP_UTIL * s.rep;
+        if (plan) u += plan.util;
         if (k === 'chat' || k === 'creative') u += 0.22 * Math.log(1 + (D.MARKETING[s.marketing] || 0) / Math.max(30000, this.segValue(k) * B.MKT_REF)) + 0.25 * this.starBonus('product_genius');
         if (k === 'chat' && this.has('t_voice')) u += 0.4;
         if (k === 'creative' && this.has('t_video')) u += 0.5;
@@ -1173,9 +1282,23 @@
         u += this.badgeUtil(m.badges, k);
         if (s.rfpBoost && s.rfpBoost > s.week && k === 'ent') u += 0.3;
         u += this.techSeg(k) - this.modelStale(m);
-        out.push({ key: 'p' + m.id, stats: m.stats, price: pt.m, util: u, player: m.id });
+        out.push({ key: 'p' + m.id, stats: m.stats, price: plan ? plan.price : pt.m, util: u, player: m.id });
       }
       return out;
+    }
+    // 一個市場的穩定市佔：各產品的吸引力換算成比例，還有一部分客戶誰都不買
+    segTargets(k, ps) {
+      const g = D.SEGMENTS[k];
+      let maxFit = 0; for (const p of ps) { p.fit = this.fit(p.stats, k); if (p.fit > maxFit) maxFit = p.fit; }
+      const uA = B.UTIL_A * (1 + B.UTIL_RAMP * Math.max(0, this.yrs - 1));
+      const us = ps.map((p) => {
+        const gap = maxFit - p.fit;
+        return uA * p.fit - 0.05 * Math.pow(Math.max(0, gap - 6), 1.6) + p.util - g.beta * Math.log(Math.max(0.05, p.price));
+      });
+      const u0 = uA * (maxFit - B.OUTSIDE_GAP);
+      const mx = Math.max(u0, ...us);
+      const ex = us.map((u) => Math.exp(u - mx)); const e0 = Math.exp(u0 - mx); const tot = e0 + sum(ex);
+      return { maxFit, targets: ex.map((x) => x / tot) };
     }
     computeMarket(init) {
       const s = this.s;
@@ -1183,21 +1306,13 @@
       for (const k of D.SEG_ORDER) {
         const mk = s.market[k];
         if (!this.segActive(k)) { mk.shares = {}; mk.frontier = 0; continue; }
-        const g = D.SEGMENTS[k]; const ps = this.products(k);
+        const ps = this.products(k);
         if (!ps.length) { mk.shares = {}; continue; }
-        let maxFit = 0; for (const p of ps) { p.fit = this.fit(p.stats, k); if (p.fit > maxFit) maxFit = p.fit; }
-        const uA = B.UTIL_A * (1 + B.UTIL_RAMP * Math.max(0, this.yrs - 1));
-        mk.frontier = maxFit;
-        const us = ps.map((p) => {
-          const gap = maxFit - p.fit;
-          return uA * p.fit - 0.05 * Math.pow(Math.max(0, gap - 6), 1.6) + p.util - g.beta * Math.log(Math.max(0.05, p.price));
-        });
-        const u0 = uA * (maxFit - B.OUTSIDE_GAP);
-        const mx = Math.max(u0, ...us);
-        const ex = us.map((u) => Math.exp(u - mx)); const e0 = Math.exp(u0 - mx); const tot = e0 + sum(ex);
+        const T = this.segTargets(k, ps);
+        mk.frontier = T.maxFit;
         const ns = {};
         ps.forEach((p, i) => {
-          const target = ex[i] / tot; const prev = mk.shares[p.key] || 0;
+          const target = T.targets[i]; const prev = mk.shares[p.key] || 0;
           ns[p.key] = init ? target : prev + (target - prev) * (p.player ? 0.04 + 0.12 * s.rep / 100 : 0.35);
         });
         mk.shares = ns;
@@ -1208,7 +1323,7 @@
       for (const m of s.models) {
         if (!m.rel || m.rel.retired) continue;
         let cr = m.costRatio * (this.has('t_ttc') && m.stats.reason > 60 ? 1 : 1);
-        for (const k of D.SEG_ORDER) { const sh = s.market[k].shares['p' + m.id] || 0; if (sh) need += sh * this.segValue(k) * cr / rp; }
+        for (const k of D.SEG_ORDER) { const sh = s.market[k].shares['p' + m.id] || 0; if (sh) need += sh * this.segValue(k) * cr / rp * (k === 'chat' ? this.chatLoad() : 1); }
       }
       return need;
     }
@@ -2061,7 +2176,7 @@
   }
 
   function modLabel(m) {
-    const names = { agi: 'AGI 進度速度', rivalAgi: '對手 AGI 進度速度', rentPrice: '雲端租價', gpuPrice: 'GPU 價格', rpMul: '研究速度', trainSpeed: '訓練速度', salary: '薪資成本', hireQuality: '招募品質', incidentRisk: '事故風險', revenueMul: '營收', valuation: '估值' };
+    const names = { agi: 'AGI 進度速度', rivalAgi: '對手 AGI 進度速度', rentPrice: '雲端租價', gpuPrice: 'GPU 價格', rpMul: '研究速度', trainSpeed: '訓練速度', salary: '薪資成本', hireQuality: '招募品質', incidentRisk: '事故風險', revenueMul: '營收', valuation: '估值', chatLoad: '對話算力用量' };
     let n = names[m.key];
     if (!n && m.key.indexOf('demand_') === 0) { const sg = D.SEGMENTS[m.key.slice(7)]; n = (sg ? sg.name : '') + ' 需求'; }
     return (n || m.key) + ' ×' + m.mul + '（' + (m.weeks || 26) + ' 週）';

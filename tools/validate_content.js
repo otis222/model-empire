@@ -48,7 +48,7 @@ const TRAITS = ['scaling', 'infra', 'data_guru', 'safety_mom', 'open_evang', 'rl
   'mm_artist', 'agent_pioneer', 'efficiency_hacker', 'fundraiser', 'mentor', 'celebrity'];
 const CATS = ['talent', 'compute', 'data', 'market', 'capital', 'safety', 'research', 'regulation', 'fun', 'race'];
 const NEWS_TAGS = ['rival', 'tech', 'policy', 'hardware', 'market', 'culture'];
-const MOD_KEYS = ['agi', 'rentPrice', 'gpuPrice', 'rpMul', 'trainSpeed', 'salary', 'hireQuality', 'incidentRisk', 'revenueMul', 'valuation']
+const MOD_KEYS = ['agi', 'rentPrice', 'gpuPrice', 'rpMul', 'trainSpeed', 'salary', 'hireQuality', 'incidentRisk', 'revenueMul', 'valuation', 'chatLoad']
   .concat(SEGMENTS.map(s => 'demand_' + s));
 const DATA_KEYS = { web: [50, 800], code: [20, 300], science: [10, 200], mm: [20, 500], inst: [5, 100] };
 const EFFECT_KEYS = ['cash', 'cashRel', 'rep', 'reg', 'community', 'morale', 'rp', 'rpRel', 'data', 'dataRisk', 'gpu',
@@ -92,7 +92,7 @@ const REAL_NAMES = ['OpenAI', 'Google', 'DeepMind', 'Anthropic', 'Meta', 'Micros
 // ---------- 選項標籤 ↔ effects 一致性 ----------
 // 標籤裡寫的數字（如「聲望 +3」「估值 -5% 26週」）必須與 effects 相符；effects 有但標籤沒寫則警告。
 const MOD_LABEL = { 'AGI速度': 'agi', '雲端租價': 'rentPrice', '購卡價': 'gpuPrice', '研究速度': 'rpMul', '訓練速度': 'trainSpeed', '薪資成本': 'salary',
-  '招募品質': 'hireQuality', '安全事故率': 'incidentRisk', '營收': 'revenueMul', '估值': 'valuation', '對話需求': 'demand_chat',
+  '招募品質': 'hireQuality', '安全事故率': 'incidentRisk', '營收': 'revenueMul', '估值': 'valuation', '對話算力用量': 'chatLoad', '對話需求': 'demand_chat',
   'API 需求': 'demand_api', '企業需求': 'demand_ent', '程式碼助手需求': 'demand_coding', '創作需求': 'demand_creative',
   'Agent 需求': 'demand_agent', '具身機器人需求': 'demand_robot' };
 const STAFF_LABEL = [['資料工程師', 'data'], ['資料組', 'data'], ['基礎設施工程師', 'eng'], ['工程師', 'eng'], ['研究員', 'res'],
@@ -348,7 +348,8 @@ EVENTS.forEach((e, i) => {
   });
   if (e.choices.some(c => c.effects && c.effects.ending) && e.choices.length < 2) err(w, '結局事件必須有拒絕選項');
 });
-const ENGINE_QUEUED = ['race_open', 'race_rival_close', 'race_me_close', 'race_settle']; // 由引擎在條件達成時直接排入
+const ENGINE_QUEUED = ['race_open', 'race_rival_close', 'race_me_close', 'race_settle', 'plan_backlash', 'plan_abuse']; // 由引擎在條件達成時直接排入
+flagsSet.plans_on = ['engine:setPlans'];  // 玩家第一次調整會員方案時由引擎設定
 EVENTS.filter(e => e.chainOnly && ENGINE_QUEUED.indexOf(e.id) < 0).forEach(e => { if (!chainParents[e.id]) err('EVENT(' + e.id + ')', 'chainOnly 事件沒有任何 chain 指向它（永遠不會出現）'); });
 Object.keys(flagsUsed).forEach(f => { if (!flagsSet[f]) err('FLAG', 'cond 用到的旗標 ' + f + ' 從未被設定'); });
 if (oneChoice > 5) warn('ME_EVENTS', '單選項事件偏多：' + oneChoice);

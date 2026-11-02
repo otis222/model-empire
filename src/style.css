@@ -1391,6 +1391,41 @@ input[type="password"]:focus { outline: none; background-color: #fff; box-shadow
   .hw .dev { width: 36px; height: auto; }
 }
 
+/* ---------- 會員方案 ---------- */
+.pl { margin-bottom: 12px; }
+.pl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.pl-c { display: grid; gap: 6px; align-content: start; min-width: 0; padding: 13px 14px; border-radius: 16px; background: linear-gradient(180deg, var(--sec-soft), #fff 70%); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--sec) 22%, transparent); }
+.pl-c.std { box-shadow: inset 0 0 0 2px var(--sec); }
+.pl-c.max { background: linear-gradient(180deg, #fff4cf, #fff 70%); box-shadow: inset 0 0 0 1.5px #e6c766; }
+.pl-c .hd { display: flex; align-items: center; gap: 8px; }
+.pl-c .hd .ic { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; background: #fff; font-size: 17px; box-shadow: 0 4px 10px -6px rgba(28, 40, 80, .5); }
+.pl-c .hd b { font-size: 15px; font-weight: 900; }
+.pl-c .pr { font-size: 30px; line-height: 1.1; font-style: italic; font-weight: 800; }
+.pl-c .pr.off { font-size: 20px; font-style: normal; font-weight: 700; line-height: 1.65; color: var(--muted); }
+.pl-c .pr small { margin-left: 2px; font-size: 12px; font-style: normal; font-weight: 600; color: var(--muted); }
+.pl-c .l { margin-top: 2px; font-size: 12px; color: var(--muted); }
+.pl-c .seg-ctl { max-width: 100%; }
+.pl-c .seg-ctl button { padding: 5px 9px; }
+.pl-c .u { margin: 4px 0 0; font-size: 12.5px; }
+.pl-c .u b { font-size: 18px; font-style: italic; font-weight: 800; }
+.pl-c p.small { margin: 0; line-height: 1.5; }
+.pl-rivals { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 10px; font-size: 12.5px; }
+.pl-rv { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.pl-rv b { font-style: italic; font-weight: 800; }
+.pl-sum { margin-top: 10px; padding: 10px 12px; border-radius: 14px; background: var(--slot); }
+.pl-sum h4 { margin: 0 0 6px; font-size: 12.5px; font-weight: 800; color: var(--muted); }
+.pl-ms { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px 12px; }
+.pl-m { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 0 6px; min-width: 0; }
+.pl-m .l { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.pl-m .v { font-size: 16px; font-weight: 800; font-style: italic; }
+.pl-m .v s { margin-right: 2px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.pl-m .d { font-size: 11px; }
+.pl-act { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 8px; }
+.pl-reset { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 10px; padding: 10px 12px; border-radius: 14px; background: linear-gradient(90deg, #fff0f6, #fff 80%); box-shadow: inset 0 0 0 1.5px #f6cfe0; }
+.pl-reset .tx { flex: 1 1 240px; display: grid; gap: 1px; min-width: 0; }
+.pl-reset .tx b { font-size: 14.5px; font-weight: 900; }
+.pl-reset .btn { flex: 0 1 auto; display: grid; justify-items: center; gap: 0; padding: 6px 12px; white-space: normal; }
+.pl-reset .btn small { font-size: 11px; font-weight: 500; color: var(--muted); }
 /* ---------- 研究排程 ---------- */
 .tk-queue { margin: 0 0 12px; padding: 10px 14px; border-radius: 14px; background: var(--slot); }
 .tk-queue .hd { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
