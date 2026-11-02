@@ -1388,6 +1388,36 @@ input[type="password"]:focus { outline: none; background-color: #fff; box-shadow
   .hw .dev { width: 36px; height: auto; }
 }
 
+/* ---------- 研究排程 ---------- */
+.tk-queue { margin: 0 0 12px; padding: 10px 14px; border-radius: 14px; background: var(--slot); }
+.tk-queue .hd { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.tk-queue .hd > b { font-size: 14px; font-weight: 900; }
+.tk-queue p { margin: 4px 0 0; }
+.tk-queue ol { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.tk-q { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 4px 10px 4px 5px; border: 0; border-radius: 10px; background: #fff; font-size: 12.5px; text-align: left; box-shadow: 0 3px 8px -6px rgba(28, 40, 80, .5); }
+.tk-q.sel { box-shadow: inset 0 0 0 2px var(--sec); }
+.tk-q .no { flex: 0 0 auto; display: grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; background: var(--sec); color: #fff; font: italic 800 12.5px var(--font-num); }
+.tk-q .tk-ic { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 6px; }
+.tk-q b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk-q small { flex: 0 0 auto; font-size: 11px; color: var(--muted); }
+.tk-node { position: relative; }
+.tk-node .qn { position: absolute; z-index: 1; left: 4px; top: 4px; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--sec); color: #fff; font: italic 800 12px var(--font-num); box-shadow: 0 0 0 2px #fff; }
+/* ---------- 推理缺口 ---------- */
+.stat-tile .v small { font-size: .62em; font-weight: 700; }
+.gap { margin: -4px 0 14px; padding: 14px 16px; border-radius: 18px; background: linear-gradient(180deg, var(--bad-soft), var(--panel) 70%); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--bad) 30%, transparent); }
+.gap-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.gap-hd .ic { font-size: 24px; line-height: 1; }
+.gap-hd b { display: block; font-size: 16px; font-weight: 900; }
+.gap-hd em { font-style: italic; font-weight: 800; font-size: 20px; color: var(--bad); }
+.gap .alloc .short { background: repeating-linear-gradient(135deg, var(--bad) 0 4px, color-mix(in srgb, var(--bad) 45%, #fff) 4px 8px); }
+.gap .legend i.short { background: var(--bad); }
+.gap-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: var(--panel); box-shadow: 0 6px 14px -12px rgba(28, 40, 80, .6); }
+.gap-plan .tx { flex: 1 1 220px; display: grid; gap: 1px; min-width: 0; }
+.gap-plan .tx b { font-size: 15px; font-weight: 900; }
+.gap-none { margin: 10px 0 0; }
+.gap-more { display: grid; gap: 4px; margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+.gap-more > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; }
+.gap-more b { color: var(--ink); }
 /* ---------- 全球佔領圖 ---------- */
 .gb { container-type: inline-size; position: relative; margin: 0 0 12px; padding: 14px 16px 10px; border-radius: 18px; overflow: hidden; color: #e9eefb;
   background: radial-gradient(72% 92% at 32% 52%, #1c3069 0%, #101c45 48%, #0a1130 100%); box-shadow: 0 18px 38px -24px rgba(10, 16, 48, .9); }
