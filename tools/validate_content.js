@@ -41,6 +41,7 @@ vm.createContext(dataBox);
 vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'data.js'), 'utf8'), dataBox, { filename: 'data.js' });
 vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'history.js'), 'utf8'), dataBox, { filename: 'history.js' });
 vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'icons.js'), 'utf8'), dataBox, { filename: 'icons.js' });
+vm.runInContext(fs.readFileSync(path.join(path.dirname(file), 'globe.js'), 'utf8'), dataBox, { filename: 'globe.js' });
 const DATA = dataBox.window.ME_DATA; const PAPERS = (dataBox.window.ME_HISTORY || {}).papers || {};
 const TECHS = DATA.TECHS.map((x) => x.id);
 const TRAITS = ['scaling', 'infra', 'data_guru', 'safety_mom', 'open_evang', 'rl_wizard', 'product_genius', 'deal_maker',
@@ -612,6 +613,15 @@ const snake = (s) => /^[a-z][a-z0-9_]*$/.test(s || '');
   for (const x of DATA.ARCHS) if (!I.has('arch', x.id)) err('icons.js', '架構沒有圖示 ' + x.id);
   for (const x of DATA.DATA_DEALS) if (!I.has('deal', x.id)) err('icons.js', '資料授權沒有圖示 ' + x.id);
   for (const x of DATA.DATACENTERS) if (!I.dc(x.lv)) err('icons.js', '機房沒有圖示 ' + x.lv);
+}
+
+// ---------- 全球佔領圖 ----------
+{
+  const GB = dataBox.window.ME_GLOBE;
+  for (const x of DATA.RIVALS) if (!GB.HOMES[x.id]) err('globe.js', '對手沒有總部位置 ' + x.id);
+  for (const x of DATA.CITIES) if (!GB.CITY_POS[x.id]) err('globe.js', '城市沒有座標 ' + x.id);
+  const w = GB.REGIONS.reduce((a, r) => a + r.w, 0);
+  if (Math.abs(w - 1) > 1e-6) err('globe.js', '地區比重加起來不是 1：' + w);
 }
 
 // ---------- 報告 ----------

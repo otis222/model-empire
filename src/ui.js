@@ -38,6 +38,7 @@
   function svg(id, s, cls) { return `<svg class="ico${cls ? ' ' + cls : ''}" width="${s || 18}" height="${s || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[id] || ''}</svg>`; }
   // 科技、路線與設備的圖示（src/icons.js）
   const IC = window.ME_ICONS;
+  const GLOBE = window.ME_GLOBE;
   const techTile = (t, big) => `<span class="tk-ic${big ? ' big' : ''}" style="--ln:${IC.lineColor(t.line)}">${IC.tech(t.id, big ? 28 : 20)}</span>`;
   /* ================= 音樂與音效：Web Audio 即時合成，不用音檔 =================
      背景音樂是四和弦循環的氛圍曲：時間暫停時只有鋪底與琶音，時間跑起來才加鼓點，四倍速再加密集的鈸。
@@ -537,6 +538,7 @@
     el.dataset.tab = tab;  // 每頁的代表色，見 style.css 的 [data-tab]
     el.innerHTML = f().replace('<div class="view-head"><h2>', `<div class="view-head"><span class="vh-ic" aria-hidden="true">${svg(tab, 28)}</span><h2 data-no="${String(i).padStart(2, '0')} / ${i >= 0 ? TABS[i].en : ''}">`);
     sayHead(el); glossify(el);
+    if (tab === 'market') gbMount();
     el.scrollTop = y;
     if (lastTab !== tab) { lastTab = tab; el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); el.addEventListener('animationend', () => el.classList.remove('enter'), { once: true }); }
     syncChatbox(); layoutChatbox(); scheduleTour();
@@ -1186,6 +1188,7 @@
       [card('[data-act="deal"]'), '授權交易：花錢買高品質資料，每項每年可以買一次。'],
     ],
     market: [
+      ['.gb', '全球佔領圖：顏色是各公司的版圖，你的版圖最亮。拖曳可以轉動地球，點地區可以看誰領先、你還差多少。'],
       ['.seg-tiles', '各市場：每個市場看重的能力不同，這裡看得到規模、參考價和你的市佔。'],
       [card('.rank-t'), '排行榜：依綜合分排名，前三名有獎牌；名字旁的箭頭是和上週相比的名次變化。'],
       ['.rivals', '對手公司：每隔幾個月會發布新模型，排行榜的標竿會一直往上移。'],
@@ -1258,7 +1261,7 @@
     '開源': '公開模型權重：換到社群、聲望和人才，但 API 收入會被別人分走。',
   };
   const GLOSS_KEYS = Object.keys(GLOSS).sort((x, y) => y.length - x.length);
-  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org';
+  const GL_SKIP = 'button, a, select, option, input, textarea, label, script, style, svg, .gl, .tier, .msg, .chips, .seg-ctl, .tile, .rk, .org, .gb';
   function glossify(root) {
     if (!root) return;
     const nodes = [];
@@ -1876,13 +1879,34 @@
   };
 
   /* ---------- 市場 ---------- */
+  /* ---------- 全球佔領圖（src/globe.js）：畫面的 canvas 只建一次，每次重畫頁面時搬回新的插槽 ---------- */
+  let globe = null; let gbSel = null; let gbM = null;
+  function gbData() {
+    const s = G.s; const segs = D.SEG_ORDER.filter((k) => G.segActive(k));
+    const bySeg = (share) => segs.reduce((o, k) => { o[k] = share(k); return o; }, {});
+    const best = G.bestModel();
+    const me = { id: 'me', player: true, name: s.company, icon: mascot().icon, seg: bySeg((k) => G.playerShare(k)), city: G.city().id, open: !!(best && best.rel && best.rel.open), price: 1 };
+    const rivals = D.RIVALS.map((R) => ({ id: R.id, name: R.name, icon: R.icon, color: R.color, seg: G.ym >= R.start ? bySeg((k) => G.rivalShare(R.id, k)) : {}, open: R.open, price: R.price }));
+    return GLOBE.market({ companies: [me].concat(rivals), segs: bySeg((k) => G.segValue(k)), date: ME.weekDate(s.week) });
+  }
+  function gbPick(id) {
+    gbSel = id && id !== gbSel ? id : null;
+    renderView();
+    if (gbSel) globe.focus(gbSel);
+  }
+  function gbMount() {
+    const slot = document.getElementById('gb-slot'); if (!slot || !gbM) return;
+    if (!globe) globe = GLOBE.create({ onPick: gbPick, spin: uiPref('gbSpin', true) });
+    globe.setData(gbM, gbSel); globe.mount(slot);
+  }
   VIEWS.market = function () {
     const s = G.s; const lb = G.leaderboard().slice(0, 16); const lw = s.lastWeek || {};
+    gbM = gbData();
     const segs = D.SEG_ORDER.filter((k) => G.segActive(k));
-    const tot = segs.reduce((a, k) => a + G.segValue(k), 0) || 1;
     const refTxt = (ref, unit) => '$' + (ref < 1 ? ref.toFixed(2) : ref < 100 ? ref.toFixed(1) : Math.round(ref)) + unit;
     return `
     <div class="view-head"><h2>市場</h2><p>每個市場看重的能力不同，加上價格、品牌與通路決定市佔。對手每隔幾個月就會發布新模型。</p></div>
+    ${GLOBE.panel(gbM, { sel: gbSel, spin: uiPref('gbSpin', true), esc, money, ym: G.ym.replace('-', '.') })}
     <div class="card"><h3>各市場 <span class="right small muted">本週規模、參考價與你的市佔</span></h3>
       <div class="seg-tiles">${segs.map((k) => { const g = D.SEGMENTS[k]; const elig = !g.tech || G.has(g.tech); const sh = G.playerShare(k); return `<div class="seg-tile${elig ? '' : ' locked'}">
         <div class="st-hd"><span class="ic">${g.icon}</span><b>${g.name}</b></div>
@@ -1897,8 +1921,8 @@
         ${lb.map((r, i) => `<tr class="${r.player ? 'me' : ''}"><td class="n"><span class="rk r${i + 1}">${i + 1}</span></td><td><b>${esc(r.name)}</b>${mvHTML(r, i)}${r.open ? ' <span class="pill acc">開源</span>' : ''}</td><td><span class="org"><i style="--oc:${r.player ? 'var(--accent)' : r.color}">${r.icon}</i>${esc(r.org)}</span></td><td class="n"><b>${r.comp.toFixed(1)}</b></td><td class="n">${Math.round(r.stats.reason || 0)}</td><td class="n">${Math.round(r.stats.code || 0)}</td><td class="n">${Math.round(r.stats.agent || 0)}</td></tr>`).join('')}
         </tbody></table></div></div>
     <div class="grid g2" style="margin-top:12px">
-      <div class="card"><h3>對手公司</h3><div class="rivals">${D.RIVALS.filter((R) => G.ym >= R.start).map((R) => { const rv = s.rivals[R.id]; const m = rv.models[rv.models.length - 1]; let sh = 0; for (const k of segs) sh += G.rivalShare(R.id, k) * G.segValue(k); const wk = Math.max(0, rv.next - s.week); return `<div class="rival-card" style="--rc:${R.color}"><span class="ic">${R.icon}</span>
-          <div class="rv-main"><b>${R.name}</b><span class="small muted">${R.style} · 最新 ${m ? esc(m.name) : '—'}</span><div class="share"><div class="bar"><i style="width:${Math.min(100, sh / tot * 100).toFixed(1)}%"></i></div><span class="num small">市佔 ${pct(sh / tot)}</span></div></div>
+      <div class="card"><h3>對手公司</h3><div class="rivals">${D.RIVALS.filter((R) => G.ym >= R.start).map((R) => { const rv = s.rivals[R.id]; const m = rv.models[rv.models.length - 1]; const sh = gbM.byId[R.id].share; const wk = Math.max(0, rv.next - s.week); return `<div class="rival-card" style="--rc:${R.color}"><span class="ic">${R.icon}</span>
+          <div class="rv-main"><b>${R.name}</b><span class="small muted">${R.style} · 最新 ${m ? esc(m.name) : '—'}</span><div class="share"><div class="bar"><i style="width:${Math.min(100, sh * 100).toFixed(1)}%"></i></div><span class="num small">市佔 ${pct(sh)}</span></div></div>
           <div class="rv-score"><b class="num">${m ? G.composite(m.stats).toFixed(1) : '—'}</b><span class="small muted">${wk ? '下一代約 ' + wk + ' 週後' : '新模型即將發布'}</span></div></div>`; }).join('')}</div></div>
       <div class="card"><h3>企業標案 <span class="right small muted">任一上線模型達標就自動得標 · 已完成 ${s.rfpDone || 0} 個</span></h3>
       ${(s.rfps || []).length ? `<div class="stack">${s.rfps.map((r) => { const q = G.rfpQualifier(r); return `<div class="rfp"><div class="row"><b>${esc(r.client)}</b><span class="pill">${esc(r.need)}</span><span class="spacer"></span><b class="num">${money(r.reward)}</b></div><div class="badges" style="margin-top:6px">${Object.keys(r.req).map((k) => `<span class="pill">${D.STATS[k].name} ≥ ${r.req[k]}</span>`).join('')}${r.maxPrice ? '<span class="pill">定價 ≤ 市場價</span>' : ''}<span class="pill ${r.dl - s.week < 6 ? 'warn' : ''}">剩 ${r.dl - s.week} 週</span>${q ? '<span class="pill good">可交付</span>' : ''}</div></div>`; }).join('')}</div>` : '<div class="empty"><span class="em">📝</span><b>目前沒有開放中的標案</b><span class="small">2023 年中以後，每個月都可能有企業來招標。</span></div>'}
@@ -2386,6 +2410,8 @@
       }
       case 'research-cancel': { const r = G.cancelResearch(ds.id); if (!r.ok) toast(r.err, true); else toast('已取消，退回 ' + num(r.back) + ' 研究點'); render(); break; }
       case 'tech-tab': techTab = ds.id; techSel = null; renderView(); break;
+      case 'gb-region': gbPick(ds.id); break;
+      case 'gb-spin': { const v = !uiPref('gbSpin', true); setUiPref('gbSpin', v); if (globe) globe.setSpin(v); renderView(); break; }
       case 'tech-sel': {
         const t = ME.TECH[ds.id]; techSel = techSel === ds.id ? null : ds.id;
         if (techSel && techTab !== techGroupId(t) && !(techTab === 'can' && techReady().includes(t))) techTab = techGroupId(t);

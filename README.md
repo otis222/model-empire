@@ -37,6 +37,7 @@ node tools/build.js
 | `src/engine.js` | 遊戲引擎（純邏輯、無 DOM，可在 Node 執行） |
 | `src/ui.js`、`src/style.css` | 介面層和樣式 |
 | `src/icons.js` | 科技、路線的線條圖示，GPU、機房的物件圖示（SVG） |
+| `src/globe.js` | 全球佔領圖：六角格地球、各地區市佔的推算和面板 |
 | `src/history.js` | 真實 AI 史料，由 `research/` 產生 |
 | `src/assets/` | 美術資產（WebP）；授權見 [CREDITS.md](CREDITS.md) |
 | `research/` | 真實背景資料（JSON，含來源與可信度） |

@@ -27,6 +27,10 @@ GPU、機房的物件圖示是本專案自製，授權和程式碼相同（MIT�
 
 線條圖示有一部分的形狀來自或參考 [Lucide](https://lucide.dev)：Copyright (c) 2026 Lucide Icons and Contributors，ISC 授權，其中部分源自 Feather（MIT 授權）。授權全文見 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
+## 全球佔領圖（`src/globe.js`）
+
+海岸線和地區邊界是本專案手繪的示意圖，不是第三方地圖資料，也不代表實際疆界。授權和程式碼相同（MIT）。
+
 ## 真實 AI 史
 
 史料庫中的事件、論文與新聞保留原始名稱與出處，相關權利屬於各來源。`research/` 的摘要是本專案自行整理，每筆都附來源。
