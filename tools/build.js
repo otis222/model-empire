@@ -9,7 +9,7 @@ fs.mkdirSync(DIST, { recursive: true });
 const read = (f) => fs.readFileSync(path.join(SRC, f), 'utf8');
 const safe = (js) => js.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--');
 const css = read('style.css');
-const scripts = ['zh_table.js', 'zh.js', 'data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'globe.js', 'ui.js'].filter((f) => fs.existsSync(path.join(SRC, f)));
+const scripts = ['zh_table.js', 'zh.js', 'data.js', 'content.js', 'history.js', 'engine.js', 'icons.js', 'globe.js', 'social.js', 'ui.js'].filter((f) => fs.existsSync(path.join(SRC, f)));
 if (scripts.indexOf('content.js') < 0) console.warn('⚠️ 找不到 content.js，事件與新聞將為空');
 
 // 字型先用 media="print" 載入，好了才切成 all：連不上 Google Fonts 時畫面不會卡住，直接用備用字型
