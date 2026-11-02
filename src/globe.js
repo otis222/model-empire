@@ -252,6 +252,7 @@
     el.append(cv, tip);
     const ctx = cv.getContext('2d');
     const reduced = () => !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const tr = opts.t || ((s) => s);  // 畫布文字不經過畫面的簡體轉換，要自己轉
     // 畫布文字用和畫面相同的字型和備用字型，語言換了才重讀 CSS 變數
     let fontLang = null; let fontBody = ''; let fontNum = '';
     const readFonts = () => { const h = root.document.documentElement; if (h.lang === fontLang) return; fontLang = h.lang; const cs = root.getComputedStyle(h); fontBody = cs.getPropertyValue('--font-body').trim(); fontNum = cs.getPropertyValue('--font-num').trim(); };
@@ -482,7 +483,7 @@
       for (const it of items) {
         const info = data.regions[it.i]; const top = info.ranked[0]; let want = 0; let box = null;
         if (top && it.z > 0.18) {
-          const co = data.byId[top.id]; const name = small ? info.name.replace('與', '·').slice(0, 5) : info.name; const pct = Math.round(top.share * 100) + '%';
+          const co = data.byId[top.id]; const name = tr(small ? info.name.replace('與', '·').slice(0, 5) : info.name); const pct = Math.round(top.share * 100) + '%';
           ctx.font = '700 ' + fs + 'px ' + fontBody; const w1 = ctx.measureText(name).width;
           ctx.font = 'italic 800 ' + (fs * 1.08) + 'px ' + fontNum; const w2 = ctx.measureText(pct).width;
           const pad = 7 * dpr; const ic = fs * 1.25; const w = pad + ic + 3 * dpr + w1 + 5 * dpr + w2 + pad; const h = fs * 1.9;

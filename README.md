@@ -1,6 +1,6 @@
 # 模型帝國 Model Empire
 
-大模型創業經營策略遊戲（網頁版，繁體中文）。2023 年 1 月，你帶著種子輪和 64 張舊卡創立一家 AI 公司：設計模型配方、搶算力、挖人才、和六家對手搶排行榜與市佔。接近終點時進入最後一幕，比的是誰先安全抵達 AGI，而對手也可能搶先。
+大模型創業經營策略遊戲（網頁版，繁體中文，可切換簡體）。2023 年 1 月，你帶著種子輪和 64 張舊卡創立一家 AI 公司：設計模型配方、搶算力、挖人才、和六家對手搶排行榜與市佔。接近終點時進入最後一幕，比的是誰先安全抵達 AGI，而對手也可能搶先。
 
 ![大廳](docs/screenshots/lobby.jpg)
 
@@ -38,6 +38,7 @@ node tools/build.js
 | `src/ui.js`、`src/style.css` | 介面層和樣式 |
 | `src/icons.js` | 科技、路線的線條圖示，GPU、機房的物件圖示（SVG） |
 | `src/globe.js` | 全球佔領圖：六角格地球、各地區市佔的推算和面板 |
+| `src/zh.js`、`src/zh_table.js` | 簡體中文：顯示時才轉換，內容檔和存檔都維持繁體。字表由 `tools/zh_table.js` 產生，大陸用語寫在 `src/zh.js` |
 | `src/history.js` | 真實 AI 史料，由 `research/` 產生 |
 | `src/assets/` | 美術資產（WebP）；授權見 [CREDITS.md](CREDITS.md) |
 | `research/` | 真實背景資料（JSON，含來源與可信度） |
@@ -45,6 +46,7 @@ node tools/build.js
 | `tools/sim.js` | 無頭平衡模擬：`node tools/sim.js <seed> <balanced\|cheap\|open\|frontier> <garage\|spinoff\|embargo>` |
 | `tools/pacing.js` | 節奏與難度統計：`node tools/pacing.js 12 --detail` |
 | `tools/validate_content.js` | 內容檔驗證（id、效果鍵、條件鍵） |
+| `tools/zh_check.js` | 簡體轉換檢查：列出轉換後還留著的繁體字 |
 | `tools/uitest.js` | Playwright 介面煙霧測試（要另外安裝 Playwright） |
 | `tools/merge_research.js` | `research/*.json` → `src/history.js` 與 `docs/bible.html` |
 | `tools/cutout.py`、`tools/avatars.py`、`tools/bg_post.py`、`tools/blender/` | 美術流程腳本（需要 `art/` 的原始檔，原始檔不在這個 repo 裡） |
@@ -54,6 +56,7 @@ node tools/build.js
 
 ```bash
 node tools/validate_content.js   # 驗證內容
+node tools/zh_check.js           # 檢查簡體轉換有沒有殘留繁體
 node tools/sim.js 1 balanced     # 跑一局機器人模擬
 node tools/pacing.js 12          # 統計破產率、結局分布和評等
 ```
@@ -70,6 +73,7 @@ node tools/pacing.js 12          # 統計破產率、結局分布和評等
 
 - **程式碼：** [MIT](LICENSE)。
 - **美術：** 吉祥物圖片（`src/assets/char_*.webp`、`avatar_*.webp`）**不適用 MIT**。它們來自粉絲二次創作，僅限非商用，授權和出處見 [CREDITS.md](CREDITS.md)。
+- **簡體轉換表：** 來自 [OpenCC](https://github.com/BYVoid/OpenCC)，Apache License 2.0，見 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 - **靈感來源：** B 站 Toy《鯨魚娘養成計劃》（作者 Anria_）與《手機帝國》。
 
 吉祥物都是粉絲二次創作的虛構擬人角色，與各 AI 產品官方、運營主體及相關公司沒有任何關聯，也不代表對任何產品的評價。遊戲裡的對手公司都是虛構的。

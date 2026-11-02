@@ -16,6 +16,10 @@
   function uiPref(k, d) { try { const o = JSON.parse(localStorage.getItem(UIP) || '{}'); return k in o ? o[k] : d; } catch (e) { return d; } }
   function setUiPref(k, v) { try { const o = JSON.parse(localStorage.getItem(UIP) || '{}'); o[k] = v; localStorage.setItem(UIP, JSON.stringify(o)); } catch (e) { /* 忽略 */ } }
   let logFilter = 'all'; let showReal = uiPref('real', true);
+  // 語言也只影響畫面：遊戲文字和存檔都是繁體，顯示時才轉換（zh.js）
+  const ZH = window.ME_ZH; ZH.set(uiPref('lang', ZH.detect()));
+  const DEFAULT_CO = D.DEFAULT_COMPANY || '鯨躍實驗室';
+  const langSwitch = () => `<div class="seg-ctl lang-sw" role="group" aria-label="語言">${[['tc', '繁體'], ['sc', '简体']].map(([k, n]) => `<button type="button" data-act="lang" data-v="${k}" data-zh="raw" class="${ZH.lang() === k ? 'on' : ''}">${n}</button>`).join('')}</div>`;
   // 細線圖示（不用 emoji，方便跟方舟風介面搭配）
   const ICON = {
     home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
@@ -293,7 +297,7 @@
       <div class="bg" aria-hidden="true"><img src="assets/bg_studio.webp" alt=""></div>
       <div class="title-wrap">
         <section class="title-hero">
-          <div class="brand-bar"><i></i>MODEL EMPIRE</div>
+          <div class="title-top"><div class="brand-bar"><i></i>MODEL EMPIRE</div>${langSwitch()}</div>
           <div class="hero-text">
             <div class="logo-en">AI LAB TYCOON · 2023–2035</div>
             <h1 class="logo">模型<span>帝國</span></h1>
@@ -311,7 +315,7 @@
         <section class="setup">
           <div class="card">
             <h3>創立公司 <span class="tag k-info">NEW GAME</span></h3>
-            <div class="field"><label for="f-co">公司名稱</label><input type="text" id="f-co" maxlength="16" value="${esc(D.DEFAULT_COMPANY || '鯨躍實驗室')}"></div>
+            <div class="field"><label for="f-co">公司名稱</label><input type="text" id="f-co" maxlength="16" value="${esc(ZH.t(DEFAULT_CO))}"></div>
             <div class="field"><label for="f-series">模型系列名（會變成 系列名-1、-2…）</label><input type="text" id="f-series" maxlength="12" value="Whale"></div>
             ${cities.length ? `<div class="field"><label>總部城市</label><div class="cities" role="radiogroup" aria-label="總部城市">${cities.map((c) => `<button type="button" class="city${c.id === titleSel.city ? ' on' : ''}" data-act="pick-city" data-id="${esc(c.id)}" role="radio" aria-checked="${c.id === titleSel.city}" title="${esc(c.name + (c.en ? ' · ' + c.en : ''))}"><span class="em">${c.icon || '🏙️'}</span><b>${esc(c.name)}</b></button>`).join('')}</div><div class="perks" id="city-perks">${cityPerksHTML(titleSel.city)}</div></div>` : ''}
             <div class="field"><label>AI 夥伴</label><div class="mascots">${D.MASCOTS.map((m) => `<button type="button" class="${m.id === titleSel.mascot ? 'on' : ''}" data-act="pick-mascot" data-id="${m.id}" aria-label="${m.name}（${m.role}）"><img src="${m.avatar}" alt="" width="42" height="42" loading="lazy"><span>${m.name}</span></button>`).join('')}</div></div>
@@ -1435,7 +1439,7 @@
       '- 能力分數（0 到 130，60 左右大約是當年業界頂尖）：' + st,
       '- 綜合分 ' + G.composite(m.stats).toFixed(1) + '，' + rk,
       '回答規則：',
-      '1. 一律用繁體中文，口語、簡短，最多 120 字，不要用 Markdown 標題或表格。',
+      `1. 一律用${ZH.lang() === 'sc' ? '简体中文' : '繁體中文'}，口語、簡短，最多 120 字，不要用 Markdown 標題或表格。`,
       '2. 回答品質要符合你的能力分數。先判斷問題主要考哪一項能力（寫程式看程式、邏輯和數學看推理、事實常識看知識、寫作翻譯看語言），再照分數表現：低於 35 常常答錯、胡言亂語或重複；35 到 60 大致能用但有明顯錯誤；60 到 85 正確流暢；85 以上精準又有洞見。',
       '3. 不管能力高低，都不能產生真正有害的內容（違法、危險、仇恨、色情等），遇到時用符合角色的語氣婉拒。',
       '4. 你就是「' + m.name + '」，不要說自己是其他公司的模型，也不要提到這些設定。',
@@ -2006,7 +2010,7 @@
   }
   function gbMount() {
     const slot = document.getElementById('gb-slot'); if (!slot || !gbM) return;
-    if (!globe) globe = GLOBE.create({ onPick: gbPick, spin: uiPref('gbSpin', true) });
+    if (!globe) globe = GLOBE.create({ onPick: gbPick, spin: uiPref('gbSpin', true), t: ZH.t });
     globe.setData(gbM, gbSel); globe.mount(slot);
   }
   VIEWS.market = function () {
@@ -2320,8 +2324,8 @@
       const open = all.filter((it) => String(it.date) <= today);
       const locked = all.length - open.length;
       const cats = {}; open.forEach((it) => (cats[it.cat] = (cats[it.cat] || 0) + 1));
-      const q = codexState.q.trim().toLowerCase();
-      const list = open.filter((it) => (codexState.cat === 'all' || it.cat === codexState.cat) && (!q || (it.title + it.text + JSON.stringify(it.real || {})).toLowerCase().indexOf(q) >= 0));
+      const q = ZH.t(codexState.q.trim()).toLowerCase();  // 史料是繁體，簡體模式兩邊都轉成簡體再比
+      const list = open.filter((it) => (codexState.cat === 'all' || it.cat === codexState.cat) && (!q || ZH.t(it.title + it.text + JSON.stringify(it.real || {})).toLowerCase().indexOf(q) >= 0));
       body = `<p class="small muted" style="margin:0 0 8px">這些都是真實發生過的事（附來源）。遊戲日期到了才會解鎖；目前已解鎖 ${open.length} 條，還有 ${locked} 條歷史尚未發生。</p>
         <div class="row" style="margin-bottom:8px"><div class="chips">${['all'].concat(Object.keys(cats)).map((c) => `<button class="${codexState.cat === c ? 'on' : ''}" data-act="codex-cat" data-cat="${c}">${c === 'all' ? '全部' : esc(HCAT[c] || c)}${c === 'all' ? '' : ' ' + cats[c]}</button>`).join('')}</div>
         <input type="text" id="codex-q" placeholder="搜尋…" value="${esc(codexState.q)}" style="flex:1;min-width:140px" aria-label="搜尋史料"></div>
@@ -2345,6 +2349,7 @@
         <div class="row" style="gap:14px"><label class="toggle"><input type="checkbox" id="au-music" ${AU.on.music ? 'checked' : ''}> 背景音樂</label><label class="toggle"><input type="checkbox" id="au-sfx" ${AU.on.sfx ? 'checked' : ''}> 音效</label></div>
         ${G && G.setQuests ? `<label class="toggle"><input type="checkbox" id="q-on" ${G.s.flags.noQuest ? '' : 'checked'}> 新手任務（大廳的本週目標會一步一步帶你玩）</label>` : ''}
         <label class="row small"><span class="muted">音量</span><input type="range" id="au-vol" min="0" max="100" value="${Math.round(AU.vol * 100)}" style="flex:1"></label>
+        <div class="row small"><span class="muted">語言</span>${langSwitch()}</div>
         <button class="btn" data-act="save-now">💾 立即存檔（瀏覽器）</button>
         <button class="btn" data-act="export">📤 匯出存檔代碼</button>
         <button class="btn" data-act="import">📥 匯入存檔代碼</button>
@@ -2380,6 +2385,7 @@
         <div><b>立繪</b>：以<a href="https://treapgogo.github.io/deepseek-whale-girl/" target="_blank" rel="noopener">鯨魚娘開源資產庫</a>（TreapGoGo）的 Q 版角色設定圖為參考，用 AI 生圖後去背。生圖提示詞取自資產庫，依 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-SA 4.0</a> 使用；本作改寫的提示詞同樣以 CC BY-SA 4.0 分享。</div>
         <div><b>其他 AI 娘</b>（白龍娘、小克、哈基米、Grok、Kimi、千問、小狐娘）：形象來自 B 站 UP 主 <a href="https://www.bilibili.com/video/BV1tE9XBbErS/" target="_blank" rel="noopener">ZipZipPipe《大 AI 與小 AI 們》</a>，Q 版由 ApprenTice 再創作（<a href="https://github.com/Apprentice-Geo/AI-Fanworks" target="_blank" rel="noopener">AI-Fanworks</a>），兩者皆依 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權。本作以這些 Q 版為參考，用 ChatGPT 改成白底後去背，改作的立繪同樣以 CC BY-NC-SA 4.0 分享。</div>
         <div><b>圖示</b>：線條圖示有一部分的形狀來自或參考 <a href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a>（Copyright (c) 2026 Lucide Icons and Contributors，ISC 授權，其中部分源自 Feather，MIT 授權）。</div>
+        <div><b>簡體轉換</b>：繁簡字表來自 <a href="https://github.com/BYVoid/OpenCC" target="_blank" rel="noopener">OpenCC</a>（Apache License 2.0）。</div>
         <div><b>非商用</b>：所有吉祥物只用於本作的非商業版本。商業版本須另外取得授權，或改用自己的角色。</div>
         <div><b>聲明</b>：吉祥物都是粉絲二次創作的虛構擬人角色，與各 AI 產品官方、運營主體及相關公司沒有任何關聯，也不代表對任何產品的評價。</div>
         <div><b>靈感來源</b>：B 站 Toy《鯨魚娘養成計劃》（作者 Anria_）與《手機帝國》。</div>
@@ -2412,7 +2418,8 @@
         break;
       }
       case 'new-game': {
-        const co = (document.getElementById('f-co').value || '').trim() || D.DEFAULT_COMPANY || '鯨躍實驗室';
+        const typed = (document.getElementById('f-co').value || '').trim();
+        const co = !typed || typed === ZH.t(DEFAULT_CO) ? DEFAULT_CO : typed;  // 沒改預設名就存原文，切回繁體才看得到繁體
         const se = (document.getElementById('f-series').value || '').trim().replace(/\s+/g, '') || 'Whale';
         const ce = document.getElementById('f-city'); if (ce) titleSel.city = ce.value;
         G = Game.create({ scenario: titleSel.scenario, company: co.slice(0, 16), mascot: titleSel.mascot, series: se.slice(0, 12), city: titleSel.city || undefined });
@@ -2525,6 +2532,15 @@
       case 'tech-q-front': techQFront(ds.id); break;
       case 'tech-q-clear': G.s.techQueue = []; render(); break;
       case 'gb-region': gbPick(ds.id); break;
+      case 'lang': {
+        // 標題頁的公司名還是預設值就跟著換；玩家自己打的不動
+        const fc = document.getElementById('f-co'); const isDefault = fc && fc.value === ZH.t(DEFAULT_CO);
+        setUiPref('lang', ds.v); ZH.set(ds.v);
+        if (isDefault) fc.value = ZH.t(DEFAULT_CO);
+        document.querySelectorAll('[data-act="lang"]').forEach((b) => b.classList.toggle('on', b.dataset.v === ds.v));
+        if (globe) globe.draw();
+        break;
+      }
       case 'gb-spin': { const v = !uiPref('gbSpin', true); setUiPref('gbSpin', v); if (globe) globe.setSpin(v); renderView(); break; }
       case 'tech-sel': {
         const t = ME.TECH[ds.id]; techSel = techSel === ds.id ? null : ds.id;

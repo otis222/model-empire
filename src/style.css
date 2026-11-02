@@ -1495,6 +1495,18 @@ input[type="password"]:focus { outline: none; background-color: #fff; box-shadow
   .gb-me b small { font-size: 16px; }
 }
 
+/* ---------- 簡體中文：字型換成簡體版，連不上 Google Fonts 時用系統字型 ---------- */
+/* 簡體字型的 ·、×、≈、≥、→ 這些符號是全形，版面會被撐開、數字被截斷，所以這幾個字改用西文字型 */
+@font-face { font-family: "ME Symbols"; src: local("Segoe UI"), local("Helvetica Neue"), local("Roboto"), local("Arial"); unicode-range: U+00B1, U+00B7, U+00D7, U+00F7, U+2190-2193, U+2248, U+2260, U+2264, U+2265; }
+html:lang(zh-Hans) {
+  --font-display: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  --font-body: "ME Symbols", "Noto Sans SC", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.tile.mini .sub { font-family: var(--font-num); }  /* 大廳小格的數字用窄體，「7,189 張 · ≈9,305」才放得下 */
+.title-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.lang-sw { flex: 0 0 auto; flex-wrap: nowrap; }
+.lang-sw button { padding: 4px 11px; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .bg, .mascot-stage, .stage[data-mode="lobby"] .nav { transform: none !important; }
