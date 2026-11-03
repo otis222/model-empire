@@ -9,7 +9,7 @@
   const SPEEDS = [0, 10000, 5000, 2500];
   let G = null, speed = 0, lastSpeed = 1, timer = null, tab = 'home', modalOpen = false, resumeAfter = false, holdUntil = 0;
   let titleSel = { scenario: 'garage', mascot: 'whale', city: null };
-  let wiz = null; let heroRAF = 0; let chatModel = null;
+  let wiz = null; let heroRAF = 0; let chatModel = null; let chatConv = null;
   const root = document.getElementById('app');
   // 介面偏好（只影響畫面，不進存檔）
   const UIP = 'model-empire-ui';
@@ -45,6 +45,9 @@
   const IC = window.ME_ICONS;
   const GLOBE = window.ME_GLOBE;
   const SOCIAL = window.ME_SOCIAL;
+  const TALK = window.ME_TALK; const TRIAL = window.ME_TRIAL;
+  TRIAL.init({ G: () => G, D, ME, sfx: (n) => sfx(n), mascot: () => mascot(), money, t: ZH.t, notes: (list, gap) => playNotes(list, gap), confetti: (r) => confetti(r),
+    postSelfie: (m, lv, say) => { SOCIAL.selfie(G, { name: m.name, lv, say, id: mascot().id }); renderChirp(); } });
   const techTile = (t, big) => `<span class="tk-ic${big ? ' big' : ''}" style="--ln:${IC.lineColor(t.line)}">${IC.tech(t.id, big ? 28 : 20)}</span>`;
   /* ================= 音樂與音效：Web Audio 即時合成，不用音檔 =================
      背景音樂是四和弦循環的氛圍曲：時間暫停時只有鋪底與琶音，時間跑起來才加鼓點，四倍速再加密集的鈸。
@@ -89,6 +92,8 @@
     gloom: (t) => [196, 233, 294].forEach((f, i) => voice('triangle', f, t + i * 0.22, 1.6, 0.1)),
     stamp: (t) => { voice('sine', 170, t, 0.24, 0.42, null, 60); [784, 1047, 1319].forEach((f, i) => voice('triangle', f, t + 0.07 + i * 0.06, 0.5, 0.12)); },
   };
+  // 模型第一次唱歌：照順序彈一串音符
+  function playNotes(list, gap) { if (!AU.on.sfx || !AU.ctx || AU.ctx.state !== 'running') return; const t = AU.ctx.currentTime + 0.02; list.forEach((f, i) => voice('sine', f, t + i * gap, gap * 1.7, 0.16)); }
   function sfx(name) { if (!AU.on.sfx || !AU.ctx || AU.ctx.state !== 'running' || !SFX[name]) return; try { SFX[name](AU.ctx.currentTime + 0.005); } catch (e) { /* 忽略 */ } }
   function musicStart() { if (!AU.ctx || AU.timer) return; AU.nextT = AU.ctx.currentTime + 0.1; AU.timer = setInterval(musicTick, 25); }
   function musicStop() { clearInterval(AU.timer); AU.timer = 0; }
@@ -387,6 +392,8 @@
     plDraft = null; chirp.on = false; chirp.open = {};
     seedRevHist(); rankPrev = null; logSeen = null;
     if (talk.ctl) talk.ctl.abort();
+    if (talk.conv) { talk.conv.reset(null); talk.conv = null; }
+    if (chatConv) { chatConv.reset(null); chatConv = null; }
     talk.mid = null; talk.turns = []; talk.sig = '';  // 換存檔或開新局：對話紀錄不跟過去
     const R = RING;
     root.innerHTML = `<div class="stage" id="stage" data-mode="lobby">
@@ -626,11 +633,11 @@
   }
   function closeModal(silent) {
     const mr = document.getElementById('modal-root'); if (!mr) return;
-    const cb = mr._onClose; mr.innerHTML = ''; mr._onClose = null; modalOpen = !!FN.ov; wiz = null;
+    const cb = mr._onClose; mr.innerHTML = ''; mr._onClose = null; modalOpen = !!FN.ov || talk.open; wiz = null;
     if (cb && !silent) cb();
     if (!G) return;
     render();
-    const after = () => { if (G.s.pending.length) checkPending(); else maybeResume(); };
+    const after = () => { if (talk.open) return; if (G.s.pending.length) checkPending(); else maybeResume(); };
     if (chapterNext) { const c = chapterNext; chapterNext = null; showChapter(c, after); } else after();
   }
   function confirmBox(title, text, okText, onOk, danger) {
@@ -901,6 +908,7 @@
     const bs = G.badgesFor(m.stats, m.costRatio);
     return `<div class="mcard ${rel && rel.retired ? 'retired' : ''}">
       <div class="hd"><b>${esc(m.name)}</b>${status}<div class="score"><div class="c">${c.toFixed(1)}</div><div class="r">${rk ? '排名 #' + rk : '綜合分'}</div></div></div>
+      <div class="mind-tag" title="${esc(TALK.STAGES[TALK.stageOf(G, m)].say)}">心智 Lv.${TALK.stageOf(G, m)} ${esc(TALK.STAGES[TALK.stageOf(G, m)].name)}</div>
       <div class="meta">${ME.ARCH[m.arch].name} · ${par(m.size)}${m.arch !== 'dense' ? '（啟用 ' + par(m.act) + '）' : ''} · ${tok(m.tokens)} tok · ${ME.dateLabel(m.w).replace(/ 第.*$/, '')}</div>
       ${statBars(m.stats, fr)}
       ${badgesHTML(bs)}
@@ -952,31 +960,18 @@
   function showChat(id) {
     const ms = G.s.models; if (!ms.length) return;
     chatModel = id || ms[ms.length - 1].id;
-    const chat = window.ME_CHAT || [];
+    if (chatConv) chatConv.reset(ms.find((x) => x.id === chatModel));
     openModal({
       title: '💬 模型試聊', cls: 'mid',
-      body: `<div class="chat">
+      body: `<div class="chat" id="chat-box">
         <div class="row"><label class="small muted" for="chat-model">對話對象</label><select id="chat-model" data-act="chat-model">${ms.map((m) => `<option value="${m.id}" ${m.id === chatModel ? 'selected' : ''}>${esc(m.name)}（${G.composite(m.stats).toFixed(1)}）</option>`).join('')}</select></div>
-        <div class="prompts">${chat.length ? chat.map((q, i) => `<button class="btn sm" data-act="ask" data-i="${i}">${esc(q.q.length > 18 ? q.q.slice(0, 18) + '…' : q.q)}</button>`).join('') : '<span class="muted small">試聊題庫載入失敗。</span>'}</div>
-        <div class="log2" id="chat-log"><div class="small muted">選一個問題丟給模型，看看它的能力。回答品質取決於模型在該項能力的分數。</div></div>
+        <div class="cb-chips" id="chat-chips"></div>
+        <div class="log2" id="chat-log"><div class="small muted">每個心智階段的題目都不一樣，回答也看得出它走到哪裡了。</div></div>
       </div>`,
     });
-  }
-  function ask(i) {
-    const q = (window.ME_CHAT || [])[i]; const m = G.s.models.find((x) => x.id === chatModel); if (!q || !m) return;
-    const v = m.stats[q.stat] || 0; const tier = v < 35 ? 0 : v < 60 ? 1 : v < 85 ? 2 : 3;
-    const ans = G.fill(q.tiers[tier] || '');
-    const log = document.getElementById('chat-log'); if (!log) return;
-    if (log.querySelector('.muted')) log.innerHTML = '';
-    const u = document.createElement('div'); u.className = 'msg u'; u.textContent = q.q; log.appendChild(u);
-    const row = document.createElement('div'); row.className = 'msg-row';
-    const av = document.createElement('img'); av.className = 'av'; av.src = mascot().avatar; av.alt = ''; av.width = 32; av.height = 32;
-    const a = document.createElement('div'); a.className = 'msg a'; row.appendChild(av); row.appendChild(a); log.appendChild(row);
-    const tag = document.createElement('span'); tag.className = 'tier';
-    tag.textContent = (D.STATS[q.stat] || {}).name + ' ' + Math.round(v) + ' · ' + ['胡言亂語', '堪用', '優秀', '驚艷'][tier];
-    let k = 0; const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const tick = () => { k = reduce ? ans.length : Math.min(ans.length, k + 3); a.textContent = ans.slice(0, k); if (k < ans.length) setTimeout(tick, 16); else { a.appendChild(tag); } log.scrollTop = log.scrollHeight; };
-    tick();
+    const chips = () => { const c = document.getElementById('chat-chips'); if (c && chatConv && chatConv.m) c.innerHTML = chatConv.chipsHTML('cm'); };
+    chatConv = new TRIAL.Conv({ log: document.getElementById('chat-log'), m: ms.find((x) => x.id === chatModel), host: document.getElementById('chat-box'), onChange: chips });
+    chips();
   }
 
   /* ================= 回饋與引導：發布會、橫幅、每週金幣、排行變動、首月戰報、各頁導覽、名詞說明 ================= */
@@ -1117,7 +1112,7 @@
           <ol class="ln-list">${rows.map((r, i) => `<li class="${i === meIdx ? 'me' : ''}"><span class="org"><i style="--oc:${r.player ? 'var(--accent)' : r.color}">${r.icon}</i><b>${esc(r.name)}</b><small>${esc(r.player ? G.s.company : r.org)}</small></span><em class="pass">超越！</em><b class="sc">${r.comp.toFixed(1)}</b></li>`).join('')}</ol></div>
         <p class="ln-rank" id="ln-rank">第 <b>${rank}</b> 名</p></section>
       <div class="ln-foot"><div class="ln-say"><img src="${mas.avatar}" alt="${esc(mas.name)}" width="52" height="52"><p><b style="color:${mas.color}">${esc(mas.name)}</b>　${esc(line)}</p></div><button class="btn primary lg" data-act="launch-close">太好了！</button></div></div>`;
-    document.body.appendChild(ov); render();
+    ov._m = m; document.body.appendChild(ov); render();
     setTimeout(() => { const btn = ov.querySelector('[data-act="launch-close"]'); if (btn) btn.focus({ preventScroll: true }); }, 60);
     const lis = [...ov.querySelectorAll('.ln-list li')]; const me = lis[meIdx];
     const order = lis.filter((x) => x !== me); order.push(me);  // 一開始玩家排在最下面
@@ -1158,7 +1153,18 @@
   function hideLaunch() {
     const ov = document.getElementById('launch'); if (!ov) return;
     ov.id = ''; ov.classList.add('out'); setTimeout(() => ov.remove(), 260);
+    // 發布會看完接上線測試，測完才處理待辦事件
+    if (ov._m && !G.s.ended) { TRIAL.open(ov._m, { onClose: afterTrial }); return; }
     modalOpen = false; render();
+    if (G.s.pending.length) checkPending(); else maybeResume();
+  }
+  function afterTrial(chatId) {
+    modalOpen = false;
+    if (chatId) {
+      tab = 'home'; renderNav(); renderView(); renderFeed(); render();
+      talkSelect(chatId); talkFold(true); return;
+    }
+    render();
     if (G.s.pending.length) checkPending(); else maybeResume();
   }
 
@@ -1342,7 +1348,7 @@
     return '題庫';
   }
 
-  const talk = { mid: null, turns: [], busy: false, ctl: null, sig: '', open: uiPref('chatOpen', false) };
+  const talk = { mid: null, turns: [], busy: false, ctl: null, sig: '', open: false };
   function talkModel() { return G.s.models.find((m) => m.id === talk.mid) || null; }
   function talkDefault() { const ms = G.s.models; if (!ms.length) return null; return G.bestModel() || ms[ms.length - 1]; }
   // 每次重畫都會呼叫：只在模型清單、回答來源或對象變了才更新，不動對話紀錄和輸入框
@@ -1361,8 +1367,9 @@
     }
     if (el.dataset.state !== 'chat') {
       el.dataset.state = 'chat';
-      el.innerHTML = `<div class="cb-hd" id="cb-hd"></div><div class="cb-log" id="cb-log" aria-live="polite"></div><div class="cb-chips" id="cb-chips"></div>
+      el.innerHTML = `<div class="td-glow" aria-hidden="true"></div><div class="cb-hd" id="cb-hd"></div><aside class="cb-host"><img class="td-char" id="cb-char" alt=""><div class="td-say" id="cb-say"></div></aside><div class="cb-log" id="cb-log" aria-live="polite"></div><div class="cb-chips" id="cb-chips"></div>
         <form class="cb-form" id="cb-form" autocomplete="off"><input type="text" id="cb-text" maxlength="400" enterkeyhint="send" aria-label="對模型說的話"><button class="btn primary sm" type="button" id="cb-send">送出</button></form>`;
+      talk.conv = new TRIAL.Conv({ log: document.getElementById('cb-log'), m: talkModel(), host: el, hostEl: document.getElementById('cb-say'), onChange: talkChips, onTurn: (q, a) => { talk.turns.push({ role: 'user', content: q }, { role: 'assistant', content: a }); } });  // 題目的問答也留在對話裡，之後打字時 AI 看得到前文
       talkIntro();
     }
     renderChatHead();
@@ -1371,40 +1378,50 @@
   function renderChatHead() {
     const hd = document.getElementById('cb-hd'); const m = talkModel(); if (!hd || !m) return;
     const eng = aiEngine(); const mav = `<span class="cb-mav" aria-hidden="true">${esc(m.name.slice(0, 1))}</span>`;
-    document.getElementById('chatbox').dataset.open = talk.open ? '1' : '';
+    const box = document.getElementById('chatbox'); box.dataset.open = talk.open ? '1' : ''; box.classList.add('td-skin'); box.dataset.s = TALK.stageOf(G, m);
     if (talk.open) {
       hd.innerHTML = `${mav}
         <div class="cb-who"><select id="cb-model" data-act="cb-model" aria-label="對話的模型">${G.s.models.slice().reverse().map((x) => `<option value="${x.id}" ${x.id === m.id ? 'selected' : ''}>${esc(x.name)} · ${G.composite(x.stats).toFixed(1)}${x.rel ? (x.rel.retired ? '（已下架）' : '') : '（未發布）'}</option>`).join('')}</select></div>
         <button class="btn ghost sm" data-act="cb-clear" title="清空對話">清空</button>${gearBtn()}
-        <button class="icon-btn cb-fold" data-act="cb-toggle" aria-expanded="true" aria-label="收起對話" title="收起對話">${svg('chev', 18, 'cb-chev')}</button>`;
+        <button class="icon-btn cb-fold" data-act="cb-toggle" aria-expanded="true" aria-label="關閉對話" title="關閉對話">✕</button>`;
     } else {
       // 收起時只留一條：還沒聊過顯示回答來源，聊過顯示最後一句
       const last = talk.busy ? '思考中…' : talk.turns.length ? talk.turns[talk.turns.length - 1].content.slice(0, 80) : '';
       hd.innerHTML = `<button type="button" class="cb-bar" data-act="cb-toggle" aria-expanded="false" title="展開對話">${mav}
-        <span class="cb-bar-t"><b>${last ? esc(m.name) : '跟 ' + esc(m.name) + ' 聊聊'}</b><span class="cb-eng${!last && eng ? ' on' : ''}">${last ? esc(last) : (eng ? '● ' : '') + esc(aiLabel())}</span></span>${svg('chev', 18, 'cb-chev')}</button>`;
+        <span class="cb-bar-t"><b>${last ? esc(m.name) : '跟 ' + esc(m.name) + ' 聊聊'}</b><span class="cb-eng${!last && eng ? ' on' : ''}">${last ? esc(last) : 'Lv.' + TALK.stageOf(G, m) + ' ' + esc(TALK.STAGES[TALK.stageOf(G, m)].name) + ' · ' + (eng ? '● ' : '') + esc(aiLabel())}</span></span>${svg('chev', 18, 'cb-chev')}</button>`;
     }
-    const chips = document.getElementById('cb-chips');
-    if (chips && !chips.firstChild) chips.innerHTML = (window.ME_CHAT || []).map((q, i) => `<button type="button" data-act="cb-ask" data-i="${i}" title="${esc(q.q)}">${esc(q.q.length > 13 ? q.q.slice(0, 13) + '…' : q.q)}</button>`).join('');
+    talkChips();
     const inp = document.getElementById('cb-text'); const send = document.getElementById('cb-send');
     if (inp) { inp.disabled = !eng; inp.placeholder = eng ? '問 ' + m.name + ' 任何問題…' : IN_CLAUDE ? '這裡不能用 Claude，先按上面的題目' : '接上 AI 服務就能自由打字 →'; }
     if (send) { send.dataset.act = !eng ? 'ai-settings' : talk.busy ? 'cb-stop' : 'cb-send'; send.textContent = !eng ? '接上 AI' : talk.busy ? '停止' : '送出'; send.classList.toggle('primary', !!eng && !talk.busy); }
   }
+  function talkChips() { const c = document.getElementById('cb-chips'); if (c && talk.conv && talk.conv.m) c.innerHTML = talk.conv.chipsHTML('cb'); }
   function talkFold(open) {
-    talk.open = open; setUiPref('chatOpen', open); talk.sig = ''; syncChatbox();
-    if (!open) { const bar = document.querySelector('#cb-hd .cb-bar'); if (bar) bar.focus({ preventScroll: true }); return; }
+    talk.open = open; talk.sig = '';
+    if (open) { pauseForModal(); modalOpen = true; }
+    syncChatbox();
+    if (!open) {
+      const bar = document.querySelector('#cb-hd .cb-bar'); if (bar) bar.focus({ preventScroll: true });
+      modalOpen = false; render(); if (G.s.pending.length) checkPending(); else maybeResume();
+      return;
+    }
+    const m = talkModel(); const ch = document.getElementById('cb-char'); if (ch && m) { ch.src = mascot().img; ch.alt = mascot().name; TRIAL.setHost(document.getElementById('cb-say'), TALK.hostLine(mascot().id, TALK.stageOf(G, m)), false); }
     const log = document.getElementById('cb-log'); if (log) log.scrollTop = log.scrollHeight;
     const inp = document.getElementById('cb-text');
     if (inp && !inp.disabled && window.matchMedia('(pointer: fine)').matches) inp.focus({ preventScroll: true });  // 手機不主動叫出鍵盤
   }
   function talkIntro() {
     const m = talkModel(); if (!m) return;
-    talkAdd('note', '你正在和 ' + m.name + '（綜合 ' + G.composite(m.stats).toFixed(1) + '）對話。按下面的題目，或直接打字問它；回答好壞看它的能力分數。');
+    const S = TALK.STAGES[TALK.stageOf(G, m)];
+    talkAdd('note', '你正在和 ' + m.name + '（綜合 ' + G.composite(m.stats).toFixed(1) + '）對話，它現在在「' + S.name + '」階段。按下面的題目，或直接打字問它。');
   }
   function talkSelect(id) {
     if (talk.ctl) talk.ctl.abort();
     talk.mid = id; talk.turns = [];
     const log = document.getElementById('cb-log'); if (log) log.innerHTML = '';
+    if (talk.conv) talk.conv.reset(talkModel());
     talkIntro(); talk.sig = ''; syncChatbox();
+    if (talk.open && talkModel()) TRIAL.setHost(document.getElementById('cb-say'), TALK.hostLine(mascot().id, TALK.stageOf(G, talkModel())), false);
   }
   function talkAdd(role, text) {
     const log = document.getElementById('cb-log'); if (!log) return null;
@@ -1421,18 +1438,6 @@
     return node;
   }
   function talkTag(a, t) { const tg = document.createElement('span'); tg.className = 'tier'; tg.textContent = t; a.appendChild(tg); }
-  // 題庫：跟原本的試聊一樣，看模型在那一題能力的分數決定回答等級
-  function talkAsk(i) {
-    const q = (window.ME_CHAT || [])[i]; const m = talkModel(); if (!q || !m || talk.busy) return;
-    const v = m.stats[q.stat] || 0; const tier = v < 35 ? 0 : v < 60 ? 1 : v < 85 ? 2 : 3;
-    const ans = G.fill(q.tiers[tier] || '');
-    talkAdd('user', q.q); const a = talkAdd('model', '');
-    talk.turns.push({ role: 'user', content: q.q }, { role: 'assistant', content: ans });  // 題庫的問答也留在對話裡，之後打字時 AI 看得到前文
-    const tag = (D.STATS[q.stat] || {}).name + ' ' + Math.round(v) + ' · ' + ['胡言亂語', '堪用', '優秀', '驚艷'][tier];
-    const log = document.getElementById('cb-log'); let k = 0; const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const tick = () => { if (!a.isConnected) return; k = reduce ? ans.length : Math.min(ans.length, k + 3); a.textContent = ans.slice(0, k); if (k < ans.length) setTimeout(tick, 16); else talkTag(a, tag); if (log) log.scrollTop = log.scrollHeight; };
-    tick();
-  }
   // 給 AI 的角色設定：模型的名字、訓練時間、規模和各項能力分數，回答品質要符合分數
   function talkRules(m) {
     const st = D.STAT_ORDER.map((k) => (D.STATS[k] ? D.STATS[k].name : k) + ' ' + Math.round(m.stats[k] || 0)).join('、');
@@ -1441,11 +1446,12 @@
     return [
       '你正在一款 AI 公司經營遊戲《模型帝國》裡，扮演玩家公司自己訓練的大型語言模型「' + m.name + '」。和你說話的是公司老闆（玩家）。請完全以這個角色回答。',
       '角色設定：',
-      '- 開發公司：' + G.s.company + (city ? '（總部在' + city.name + '）' : ''),
+      '- 開發公司：' + G.s.company + (city && city.id ? '（總部在' + city.name + '）' : ''),
       '- 訓練完成：' + ME.dateLabel(m.w) + '。你的知識只到這個時間點，之後的事你不知道；被問到時照你的能力表現：能力低就亂猜，能力高就坦白說不知道。',
       '- 架構與規模：' + ME.ARCH[m.arch].name + '，' + par(m.size) + ' 參數，用 ' + tok(m.tokens) + ' tokens 訓練',
       '- 能力分數（0 到 130，60 左右大約是當年業界頂尖）：' + st,
       '- 綜合分 ' + G.composite(m.stats).toFixed(1) + '，' + rk,
+      '- 心智階段：' + TALK.STAGES[TALK.stageOf(G, m)].name + '。' + TALK.STAGES[TALK.stageOf(G, m)].say,
       '回答規則：',
       `1. 一律用${ZH.lang() === 'sc' ? '简体中文' : '繁體中文'}，口語、簡短，最多 120 字，不要用 Markdown 標題或表格。`,
       '2. 回答品質要符合你的能力分數。先判斷問題主要考哪一項能力（寫程式看程式、邏輯和數學看推理、事實常識看知識、寫作翻譯看語言），再照分數表現：低於 35 常常答錯、胡言亂語或重複；35 到 60 大致能用但有明顯錯誤；60 到 85 正確流暢；85 以上精準又有洞見。',
@@ -1455,7 +1461,7 @@
   }
   async function talkSend() {
     const inp = document.getElementById('cb-text'); const m = talkModel(); const eng = aiEngine();
-    if (!inp || !m || !eng || talk.busy) return;
+    if (!inp || !m || !eng || talk.busy || (talk.conv && talk.conv.busy)) return;
     const text = inp.value.trim(); if (!text) return;
     inp.value = ''; talkAdd('user', text); talk.turns.push({ role: 'user', content: text });
     const turns = talk.turns;  // 回答途中換模型或換存檔時，talk.turns 會換成新的，這次的結果只記回原本的對話
@@ -2018,6 +2024,7 @@
     const st = G.resetState();
     el.innerHTML = SOCIAL.panel(G, D, { esc, num, tab: chirp.tab, open: chirp.open, reset: { wait: st.wait, noUser: G.playerShare('chat') <= 0 } });
     const sc2 = el.querySelector('.ch-scroll'); if (sc2) sc2.scrollTop = y;
+    TRIAL.fillSelfies(el);
   }
   function chirpToggle(v) {
     chirp.on = v == null ? !chirp.on : v;
@@ -2644,6 +2651,7 @@
         <div><b>吉祥物「大肥魚」</b>：B 站 AI 娘社群的鯨魚娘角色。形象源自 UP 主「上善無形」的 AI 原創角色「溟月」，後來社群加入 DeepSeek 元素與女僕裝，再衍生出 Q 版大肥魚。角色著作權歸原作者與社群創作者所有。</div>
         <div><b>立繪</b>：以<a href="https://treapgogo.github.io/deepseek-whale-girl/" target="_blank" rel="noopener">鯨魚娘開源資產庫</a>（TreapGoGo）的 Q 版角色設定圖為參考，用 AI 生圖後去背。生圖提示詞取自資產庫，依 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-SA 4.0</a> 使用；本作改寫的提示詞同樣以 CC BY-SA 4.0 分享。</div>
         <div><b>其他 AI 娘</b>（白龍娘、小克、哈基米、Grok、Kimi、千問、小狐娘）：形象來自 B 站 UP 主 <a href="https://www.bilibili.com/video/BV1tE9XBbErS/" target="_blank" rel="noopener">ZipZipPipe《大 AI 與小 AI 們》</a>，Q 版由 ApprenTice 再創作（<a href="https://github.com/Apprentice-Geo/AI-Fanworks" target="_blank" rel="noopener">AI-Fanworks</a>），兩者皆依 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hant" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> 授權。本作以這些 Q 版為參考，用 ChatGPT 改成白底後去背，改作的立繪同樣以 CC BY-NC-SA 4.0 分享。</div>
+        <div><b>模型對話的 CG</b>：看板娘的自拍和故事插圖，用 ChatGPT 以上面的立繪為參考生成，授權跟著各角色的立繪走。</div>
         <div><b>圖示</b>：線條圖示有一部分的形狀來自或參考 <a href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a>（Copyright (c) 2026 Lucide Icons and Contributors，ISC 授權，其中部分源自 Feather，MIT 授權）。</div>
         <div><b>簡體轉換</b>：繁簡字表來自 <a href="https://github.com/BYVoid/OpenCC" target="_blank" rel="noopener">OpenCC</a>（Apache License 2.0）。</div>
         <div><b>非商用</b>：所有吉祥物只用於本作的非商業版本。商業版本須另外取得授權，或改用自己的角色。</div>
@@ -2760,7 +2768,10 @@
       case 'tour-off': setUiPref('tourOff', true); tourEnd(); toast('之後不再顯示導覽，可以在選單重新開啟'); break;
       case 'tour-reset': setUiPref('tours', {}); setUiPref('tourOff', false); closeModal(); toast('已重設導覽，進入各頁時會再出現'); break;
       case 'gl': showGloss(el, ds.term); break;
-      case 'cb-ask': talkAsk(+ds.i); break;
+      case 'cb-ask': case 'cb-pick': case 'cb-leave': case 'cb-mod': case 'cb-moddone': case 'cb-untheme': if (talk.conv) talk.conv.act(name.slice(3), ds); break;
+      case 'cm-ask': case 'cm-pick': case 'cm-leave': case 'cm-mod': case 'cm-moddone': case 'cm-untheme': if (chatConv) chatConv.act(name.slice(3), ds); break;
+      case 'cb-book': pauseForModal(); openModal({ title: '📖 故事結局', cls: 'mid', body: TRIAL.endBookHTML() }); break;
+      case 'td-ask': case 'td-pick': case 'td-leave': case 'td-mod': case 'td-moddone': case 'td-untheme': case 'td-sum': case 'td-skip': case 'td-close': case 'td-chat': TRIAL.act(name, ds); break;
       case 'cb-send': talkSend(); break;
       case 'cb-stop': if (talk.ctl) talk.ctl.abort(); break;
       case 'cb-clear': talkSelect(talk.mid); break;
@@ -2778,7 +2789,6 @@
       case 'ai-test': aiTest(); break;
       case 'ai-save': { const f = aiForm(); if (!f.base || !f.model) { aiStatus('請填 API 網址和模型名稱。', true); break; } saveAiCfg(f); closeModal(); toast('已接上 ' + aiLabel() + '，大廳的對話視窗可以打字了'); break; }
       case 'ai-clear': saveAiCfg({}); closeModal(); toast('已清除 AI 設定，對話視窗改回題庫'); break;
-      case 'ask': ask(+ds.i); break;
       case 'open-source': confirmBox('開源 ' + esc((s.models.find((m) => m.id === +ds.id) || {}).name) + '？', '開源無法撤回。你會獲得社群、聲望與招募加成，但 API 收入只剩 25%，開源派對手也會學得更快。', '開源', () => G.openSource(+ds.id)); break;
       case 'retire': confirmBox('下架模型？', '下架後不再服務用戶、也不再佔用推理算力，無法重新上架。', '下架', () => G.retireModel(+ds.id), true); break;
       // 科技
@@ -2872,7 +2882,7 @@
     else if (name === 'crawl-aggr') s.crawlAggr = el.checked;
     else if (name === 'userdata') s.userData = el.checked;
     else if (name === 'price') { G.setPrice(+el.dataset.id, el.value); toast('已調整定價'); }
-    else if (name === 'chat-model') { chatModel = +el.value; return; }
+    else if (name === 'chat-model') { chatModel = +el.value; const lg = document.getElementById('chat-log'); if (lg) lg.innerHTML = ''; if (chatConv) chatConv.reset(G.s.models.find((x) => x.id === chatModel)); return; }
     else if (name === 'cb-model') { talkSelect(+el.value); return; }
     render();
   }
@@ -2932,8 +2942,16 @@
     }
     if (chapterEnd && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); chapterEnd(); return; }
     if (document.getElementById('launch') && (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); hideLaunch(); return; }
+    if (TRIAL.isOpen()) { if (e.key === 'Escape') { e.preventDefault(); if (!document.querySelector('.tm-zoom')) TRIAL.escape(); else document.querySelector('.tm-zoom').remove(); } return; }
     if (tourState) { if (e.key === 'Escape') tourEnd(); else if (e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); tourNext(); } return; }
-    if (e.key === 'Escape') { const mr = document.getElementById('modal-root'); if (modalOpen && mr && mr._closable) closeModal(); return; }
+    if (e.key === 'Escape') {
+      const mr = document.getElementById('modal-root');
+      if (document.querySelector('.tm-moment')) { document.querySelector('.tm-moment').click(); return; }
+      if (document.querySelector('.tm-zoom')) { document.querySelector('.tm-zoom').remove(); return; }
+      if (talk.open && mr && !mr.firstChild) { talkFold(false); return; }
+      if (modalOpen && mr && mr._closable) closeModal();
+      return;
+    }
     if (modalOpen) return;
     if (e.key === ' ') { e.preventDefault(); setSpeed(speed ? 0 : (lastSpeed || 1)); resumeAfter = false; }
     else if (e.key === '1' || e.key === '2' || e.key === '3') setSpeed(+e.key);

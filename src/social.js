@@ -49,7 +49,7 @@
   const RIVAL_REPLY = ['{rival} 這次看起來有點東西。', '才剛學會上一代，又要換了。', '等第三方跑分再說。', '{company} 要怎麼接招？'];
   const OUTAGE = ['{company} 又在排隊了，我按了三次重試。', '「伺服器繁忙」已經是我這週看過最多次的中文。', '繳了月費還要排隊，{company} 你解釋一下。', '{company} 是不是又缺卡了？'];
   const EVENT_REPLY = { safety: ['這種事發生一次就夠了。', '公關部今晚不用睡了。'], regulation: ['法務應該已經在加班了。', '監管的信比新模型來得還快。'], capital: ['這條新聞財經版會寫三天。', '錢的事永遠最有戲。'], talent: ['矽島挖角大戰又開始了。', '人才市場比排行榜還熱鬧。'], compute: ['卡的問題，最後都是錢的問題。', '黃金都沒有顯卡保值。'], market: ['用戶永遠是最誠實的。', '這波操作我給及格。'], data: ['資料這件事早晚要算帳。'], research: ['論文還沒看完，又有新的。'], fun: ['這也能上新聞？', '笑死，已存圖。'], race: ['AGI 倒數計時又往前撥了一點。', '這真的是我們這輩子會看到的事嗎？'] };
-  const PLAN_REPLY = { cut: ['我付的錢呢？', '額度越來越少，月費倒是沒變。', '已經在看隔壁家的方案了。'], up: ['這額度是認真的嗎？感恩。', '財務長今晚應該睡不著。'], max: ['$200 一個月，比我的房租還有存在感。', '我算了一下，用得完就算賺。', '有錢真好。'] };
+  const PLAN_REPLY = { cut: ['我付的錢呢？', '額度越來越少，月費倒是沒變。', '已經在看隔壁家的方案了。'], cutRise: ['額度少了，月費還漲，真有你的。', '我付的錢呢？', '已經在看隔壁家的方案了。'], cutFall: ['便宜是便宜了，額度也跟著縮水。', '這不叫降價，這叫縮水。', '已經在看隔壁家的方案了。'], rise: ['又漲？', '月費又漲了，我的薪水倒是沒有。', '這個價錢，額度最好真的夠用。'], riseMore: ['漲是漲了，額度倒是真的有給。', '多付一點換多一點，還算老實。'], fall: ['降價了？先續一年再說。', '財務長今晚應該睡不著。'], up: ['這額度是認真的嗎？感恩。', '財務長今晚應該睡不著。'], max: ['{price} 一個月，比我的房租還有存在感。', '我算了一下，用得完就算賺。', '有錢真好。'] };
   // 閒聊：cond 回傳 true 才會被挑中；越具體的條件排越前面，會優先出現
   const CHATTER = [
     { w: 3, c: (x) => x.served < 0.7, t: ['{company} 現在開一次對話要等多久？我賭三分鐘。', '排隊的時間夠我自己寫完了。'] },
@@ -88,6 +88,17 @@
   // 從最新往回找一則符合條件的貼文（回覆要接在它底下）
   function lastPost(st, fn) { for (let i = st.posts.length - 1; i >= 0; i--) if (fn(st.posts[i])) return st.posts[i]; return null; }
   function replyTo(G, st, parent, text, who) { return add(G, st, { a: who || netKey(), t: text, r: parent ? parent.i : 0, m: parent ? parent.m : 0 }); }
+  // 留言要對得上這次改了什麼。日誌只看得出有沒有砍額度，價格和額度的升降要跟調整前的方案比
+  function planReplies(was, now, cut) {
+    const both = was.mx && now.mx;  // 旗艦版剛推出或剛下架時不算漲跌
+    const rose = now.sp > was.sp || (both && now.mp > was.mp);
+    const fell = now.sp < was.sp || (both && now.mp < was.mp);
+    const more = now.fq > was.fq || now.sq > was.sq || (both && now.mq > was.mq);
+    const kind = cut ? (rose ? 'cutRise' : fell ? 'cutFall' : 'cut') : rose ? (more ? 'riseMore' : 'rise') : fell ? 'fall' : more ? 'up' : null;
+    if (!kind) return [];  // 只推出或下架旗艦版：推出有自己的貼文，這則不用留言
+    const pool = PLAN_REPLY[kind]; const first = pick(pool);
+    return cut ? [first, pick(pool.filter((x) => x !== first))] : [first];
+  }
   function fromLog(G, D, st, e) {
     const t = String(e.t); const s = G.s; let m; const o = { company: s.company };
     if (e.k === 'buzz') {
@@ -141,10 +152,10 @@
       if (/^🎁/u.test(t)) {
         const q = /「(.*)」/.exec(t); const post = add(G, st, { a: /^🎁 工程負責人/u.test(t) ? 'eng' : 'me', t: q ? q[1] : t.replace(/^🎁\s*/u, ''), g: ['額度重置'], reset: 1, m: 1 }, 'own'); post.scope = /全部用戶/.test(t) ? 'all' : 'paid'; return;
       }
-      if (/^👑/u.test(t)) { const post = add(G, st, { a: 'me', t: t.replace(/^👑\s*/u, ''), g: ['旗艦版'], plan: 1, m: 1 }, 'own'); replyTo(G, st, post, pick(PLAN_REPLY.max)); return; }
+      if (/^👑/u.test(t)) { const post = add(G, st, { a: 'me', t: t.replace(/^👑\s*/u, ''), g: ['旗艦版'], plan: 1, m: 1 }, 'own'); replyTo(G, st, post, fill(pick(PLAN_REPLY.max), { price: (/\$\d+/.exec(t) || [''])[0] })); return; }
       if (/^📝 調整會員方案/u.test(t)) {
         const cut = /額度縮水/.test(t); const post = add(G, st, { a: 'me', t: t.replace(/^📝 調整會員方案：/u, '會員方案調整：').replace('額度縮水的消息馬上傳開了。', ''), g: ['會員方案'], plan: 1, m: 1 }, 'own');
-        replyTo(G, st, post, pick(cut ? PLAN_REPLY.cut : PLAN_REPLY.up)); if (cut) replyTo(G, st, post, pick(PLAN_REPLY.cut)); return;
+        const was = st.pl || G.planDefaults(); planReplies(was, G.s.plans || was, cut).forEach((x) => replyTo(G, st, post, x)); return;
       }
       if (/^🔥 推理算力不足/u.test(t)) { if (!lastPost(st, (p) => p.outage && G.s.week - p.w < 8)) { const post = add(G, st, { a: netKey(), t: fill(pick(OUTAGE), o), g: ['伺服器繁忙'], outage: 1, m: 1 }); if (Math.random() < 0.6) replyTo(G, st, post, fill(pick(OUTAGE), o)); } return; }
       if (/^🚨/u.test(t)) { const x = t.replace(/^🚨\s*/u, '').replace(/^(.+?) → .*?：/, '【$1】'); const post = add(G, st, { a: 'weekly', t: x, g: ['安全事故'], m: 1 }, 'big'); replyTo(G, st, post, pick(EVENT_REPLY.safety)); return; }
@@ -176,11 +187,18 @@
     const before = st.n;
     for (let i = fresh.length - 1; i >= 0; i--) { logWeek = fresh[i].w; fromLog(G, D, st, fresh[i]); }
     logWeek = null;
+    if (G.s.plans) st.pl = G.s.plans;  // 引擎調整方案時會換一個新物件，這裡留著的就是調整前的方案
     if (L.length) st.lk = key(L[0]);
     if (G.s.week - st.cw >= st.gap) { st.cw = G.s.week; st.gap = rnd(2, 5); chatter(G, D, st); }
     if (st.posts.length > MAX_POSTS) { const drop = st.posts.length - MAX_POSTS; st.posts.splice(0, drop); }
     if (first) st.seen = st.n;  // 第一次補的內容不算未讀
     return st.n - before;
+  }
+  // 模型第一次自拍時發一則，圖只記看板娘和等級，不存進存檔
+  function selfie(G, o) {
+    const st = state(G); const R = (root.ME_TALK ? root.ME_TALK.SELFIE.reply[o.lv] : null) || []; const post = add(G, st, { a: 'me', t: o.name + '：' + o.say, g: ['自拍', o.name], sf: o.id + ':' + o.lv, m: 1 }, 'own');
+    const a = pick(R); if (a) replyTo(G, st, post, a); const rest = R.filter((x) => x !== a); if (rest.length && Math.random() < 0.7) replyTo(G, st, post, pick(rest));
+    return post;
   }
   function unread(G) { const st = G.s.social; if (!st) return 0; let n = 0; for (let i = st.posts.length - 1; i >= 0; i--) { const p = st.posts[i]; if (p.i <= st.seen) break; if (!p.r) n++; } return n; }
 
@@ -203,7 +221,7 @@
     const quoteHTML = quote ? `<div class="ch-quote"><b>${e(account(quote.a, G, D).n)}</b><span>${e(quote.t)}</span></div>` : '';
     return `<article class="ch-p${p.r ? ' re' : ''}">${avatar(a)}<div class="bd">
       <div class="who"><b>${e(a.n)}</b>${a.v ? `<span class="v" title="已認證">${ico('check', 15)}</span>` : ''}<span class="h">@${e(a.h)} · ${ago(G, p.w)}</span></div>
-      <p>${e(p.t)}</p>${card}${hist}${quoteHTML}
+      <p>${e(p.t)}</p>${p.sf ? `<figure class="ch-photo" data-zoom="1"><img data-selfie="${e(p.sf)}" alt="${e(a.n)} 的自拍"></figure>` : ''}${card}${hist}${quoteHTML}
       ${(p.g || []).length ? `<div class="tags">${p.g.map((x) => `<span>#${e(x)}</span>`).join('')}</div>` : ''}
       <div class="ac"><button data-act="chirp-thread" data-id="${p.i}" aria-label="回覆 ${kids.length} 則" aria-expanded="${!!open}" ${kids.length > 2 ? '' : 'disabled'}>${ico('reply')}<span class="num">${h.num((p.rc || 0) + kids.length)}</span></button><span class="st">${ico('repost')}<span class="num">${h.num(p.b || 0)}</span></span><button class="${liked ? 'on' : ''}" data-act="chirp-like" data-id="${p.i}" aria-pressed="${liked}" aria-label="按讚">${ico('heart')}<span class="num">${h.num((p.l || 0) + (liked ? 1 : 0))}</span></button></div>
       ${shown.map((k) => postHTML(G, D, h, st, k, [], false)).join('')}${!open && kids.length > 2 ? `<button class="ch-more" data-act="chirp-thread" data-id="${p.i}">顯示另外 ${kids.length - 2} 則回覆</button>` : ''}
@@ -227,5 +245,5 @@
       </div>`;
   }
 
-  root.ME_SOCIAL = { sync, unread, panel, state, account, NET, FIXED, CHATTER };
+  root.ME_SOCIAL = { sync, selfie, unread, panel, state, account, NET, FIXED, CHATTER };
 })(typeof window !== 'undefined' ? window : globalThis);
